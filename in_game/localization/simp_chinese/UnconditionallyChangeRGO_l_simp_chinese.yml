@@ -31,7 +31,7 @@
 
  # 九个开关（点一次切换一次）
  RGO_toggle_cost:0 "花费开关"
- RGO_toggle_cost_desc:0 "开：按所选货物的市场实时价收费（随供需涨跌，约 5~60 金）。关：完全免费。"
+ RGO_toggle_cost_desc:0 "开：按所选货物在你市场里的实时价格分六档收费（约 5 / 10 / 16 / 24 / 34 / 50 金）；供不应求导致价格上跳时，收费自动跳到更高一档。关：完全免费。"
  RGO_toggle_cooldown:0 "冷却开关"
  RGO_toggle_cooldown_desc:0 "开：每次修改产生 6 个月冷却。关：无冷却，并立即清除当前冷却。"
  RGO_toggle_cat_industry:0 "工业开关"
@@ -43,3 +43,4 @@
  # 冷却修正器
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "原产物冷却"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "原产物修改的冷却尚未结束，冷却期间无法再次修改。"
+ RGO_GROUP_SWITCHES:0 "开关"

@@ -14,16 +14,60 @@ RGO_change_mining = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}
@@ -115,16 +159,60 @@ RGO_change_gathering = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}
@@ -210,16 +298,60 @@ RGO_change_crops = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}
@@ -312,16 +444,60 @@ RGO_change_food = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}
@@ -412,16 +588,60 @@ RGO_change_plantation = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}
@@ -503,16 +723,60 @@ RGO_change_wild = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}
@@ -595,16 +859,60 @@ RGO_change_industry = {
 	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
 	price = price:rgo_change
 	price_modifier = {
+		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
 				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
 			}
-			value = "scope:target_good.price_in_market(scope:target_location.market)"
-			multiply = 0.5
-			min = 0.5
-			max = 6
+			value = 0.5
 		}
+		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+			}
+			value = 1
+		}
+		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+			}
+			value = 1.6
+		}
+		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+			}
+			value = 2.4
+		}
+		# 阶梯五：高档（3.5 ~ 6）→ 34 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+				"scope:target_good.price_in_market(scope:target_location.market)" < 6
+			}
+			value = 3.4
+		}
+		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
+		else_if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
+			}
+			value = 5
+		}
+		# 花费开关关闭 / 地块不在任何市场内 → 免费
 		else = {
 			value = 0
 		}

@@ -52,81 +52,27 @@ RGO_opt_cooldown = {
 }
 
 RGO_cat_mining_enabled = {
-	OR = {
-		AND = {
-			has_variable = rgo_cat_mining
-			var:rgo_cat_mining > 0
-		}
-		AND = {
-			NOT = { has_variable = rgo_cat_mining }
-			RGO_cfg_cat_mining_default = yes
-		}
-	}
+	RGO_cfg_cat_mining_default = yes
 }
 
 RGO_cat_gathering_enabled = {
-	OR = {
-		AND = {
-			has_variable = rgo_cat_gathering
-			var:rgo_cat_gathering > 0
-		}
-		AND = {
-			NOT = { has_variable = rgo_cat_gathering }
-			RGO_cfg_cat_gathering_default = yes
-		}
-	}
+	RGO_cfg_cat_gathering_default = yes
 }
 
 RGO_cat_crops_enabled = {
-	OR = {
-		AND = {
-			has_variable = rgo_cat_crops
-			var:rgo_cat_crops > 0
-		}
-		AND = {
-			NOT = { has_variable = rgo_cat_crops }
-			RGO_cfg_cat_crops_default = yes
-		}
-	}
+	RGO_cfg_cat_crops_default = yes
 }
 
 RGO_cat_food_enabled = {
-	OR = {
-		AND = {
-			has_variable = rgo_cat_food
-			var:rgo_cat_food > 0
-		}
-		AND = {
-			NOT = { has_variable = rgo_cat_food }
-			RGO_cfg_cat_food_default = yes
-		}
-	}
+	RGO_cfg_cat_food_default = yes
 }
 
 RGO_cat_plantation_enabled = {
-	OR = {
-		AND = {
-			has_variable = rgo_cat_plantation
-			var:rgo_cat_plantation > 0
-		}
-		AND = {
-			NOT = { has_variable = rgo_cat_plantation }
-			RGO_cfg_cat_plantation_default = yes
-		}
-	}
+	RGO_cfg_cat_plantation_default = yes
 }
 
 RGO_cat_wild_enabled = {
-	OR = {
-		AND = {
-			has_variable = rgo_cat_wild
-			var:rgo_cat_wild > 0
-		}
-		AND = {
-			NOT = { has_variable = rgo_cat_wild }
-			RGO_cfg_cat_wild_default = yes
-		}
-	}
+	RGO_cfg_cat_wild_default = yes
 }
 
 RGO_cat_industry_enabled = {

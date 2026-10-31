@@ -1,4 +1,63 @@
-﻿situation_panel = {
+﻿# 单个动作按钮（模板，供两个分组的网格复用）
+template rgo_action_button {
+	targetted_button_regular = {
+		size = { 476 28 }
+		parentanchor = top
+
+		text = "[GenericAction.GetNameWithNoTooltip]"
+
+		button_tooltip_override = {
+			title = "[GenericAction.GetName]"
+		}
+
+		scripted_action_tooltip = {
+			click_type = left
+			click_mode = single
+			action_name = "[GenericAction.GetLeftClickKey]"
+			actor = "[SituationView.GetPlayer]"
+			parameter = {
+				parameter_name = "recipient"
+				parameter_value = "[SituationView.GetActiveSituation.GetSituation]"
+			}
+		}
+
+		scripted_action_tooltip = {
+			click_type = left
+			click_mode = confirm
+			action_name = "[GenericAction.GetLeftClickAndHoldKey]"
+			actor = "[SituationView.GetPlayer]"
+			parameter = {
+				parameter_name = "recipient"
+				parameter_value = "[SituationView.GetActiveSituation.GetSituation]"
+			}
+		}
+
+		blockoverride "tooltip" {
+			tooltipwidget = {
+				ContextualTooltipType = {
+					blockoverride "title_text" {
+						text = "[GenericAction.GetNameWithNoTooltip]"
+					}
+					blockoverride "concept_link" {
+						text = "[situation|e]"
+					}
+					blockoverride "title_icon" {
+						icon = {
+							using = tooltip_title_icon_size
+							texture = "[SituationView.GetActiveSituation.GetIcon]"
+						}
+					}
+					blockoverride "tooltip_content" {
+						using = action_tooltip_inner_content
+						blockoverride "conditions_list" { }
+					}
+				}
+			}
+		}
+	}
+}
+
+situation_panel = {
 
 	blockoverride "situation_subheader_content" { }
 
@@ -10,10 +69,9 @@
 	}
 
 	# ============================================================
-	# 采用最初版本的骨架：vbox(datamodel) → item → scrollarea → fixedgridbox
-	# 只是把按钮类型换成 EU5 真实存在的 targetted_button_regular，
-	# 点击/长按确认沿用官方动作按钮的 scripted_action_tooltip 写法。
-	# 行高 30px、区高 560px：当前 10 个按钮 ≈ 300px，一屏放得下，不需要拖动。
+	# 两组按钮：分类（前 7 个） / 开关（其余 3 个）
+	# 用 DataModelFirst + DataModelSkipFirst 切片，中间留空隙并加小标题
+	# 注：前 7 = RGO_change_* 的个数，若分类数量变化需同步改这两个数字
 	# ============================================================
 	blockoverride "situation_panel_main_content" {
 		vbox = {
@@ -35,73 +93,45 @@
 						}
 
 						scrollwidget = {
-							fixedgridbox = {
-								addrow = 30
-								addcolumn = 480
+							vbox = {
+								layoutpolicy_horizontal = expanding
 
-								datamodel = "[ActionGroup.GetActions]"
+								# ---------- 第一组：分类（7 个） ----------
+								fixedgridbox = {
+									addrow = 30
+									addcolumn = 480
 
-								item = {
-									widget = {
-										size = { 480 30 }
+									datamodel = "[DataModelFirst(ActionGroup.GetActions, '(int32)7')]"
 
-										targetted_button_regular = {
-											name = "rgo_action_button"
-											size = { 476 28 }
-											parentanchor = top
+									item = {
+										widget = {
+											size = { 480 30 }
+											using = rgo_action_button
+										}
+									}
+								}
 
-											text = "[GenericAction.GetNameWithNoTooltip]"
-											# 注意：自绘按钮上 IsUberButtonEnabled 可能求值为 false 导致整个按钮禁用（点不动），
-											# 因此不写 enabled；冷却期间点击会由动作自身的 allow 拒绝并给出提示。
+								# ---------- 间隔 ----------
+								widget = {
+									size = { -1 10 }
+								}
 
-											button_tooltip_override = {
-												title = "[GenericAction.GetName]"
-											}
+								# ---------- 分组小标题 ----------
+								text_single = {
+									text = "RGO_GROUP_SWITCHES"
+								}
 
-											scripted_action_tooltip = {
-												click_type = left
-												click_mode = single
-												action_name = "[GenericAction.GetLeftClickKey]"
-												actor = "[SituationView.GetPlayer]"
-												parameter = {
-													parameter_name = "recipient"
-													parameter_value = "[SituationView.GetActiveSituation.GetSituation]"
-												}
-											}
+								# ---------- 第二组：开关（3 个） ----------
+								fixedgridbox = {
+									addrow = 30
+									addcolumn = 480
 
-											scripted_action_tooltip = {
-												click_type = left
-												click_mode = confirm
-												action_name = "[GenericAction.GetLeftClickAndHoldKey]"
-												actor = "[SituationView.GetPlayer]"
-												parameter = {
-													parameter_name = "recipient"
-													parameter_value = "[SituationView.GetActiveSituation.GetSituation]"
-												}
-											}
+									datamodel = "[DataModelSkipFirst(ActionGroup.GetActions, '(int32)7')]"
 
-											blockoverride "tooltip" {
-												tooltipwidget = {
-													ContextualTooltipType = {
-														blockoverride "title_text" {
-															text = "[GenericAction.GetNameWithNoTooltip]"
-														}
-														blockoverride "concept_link" {
-															text = "[situation|e]"
-														}
-														blockoverride "title_icon" {
-															icon = {
-																using = tooltip_title_icon_size
-																texture = "[SituationView.GetActiveSituation.GetIcon]"
-															}
-														}
-														blockoverride "tooltip_content" {
-															using = action_tooltip_inner_content
-															blockoverride "conditions_list" { }
-														}
-													}
-												}
-											}
+									item = {
+										widget = {
+											size = { 480 30 }
+											using = rgo_action_button
 										}
 									}
 								}

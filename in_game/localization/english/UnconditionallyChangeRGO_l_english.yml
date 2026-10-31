@@ -31,7 +31,7 @@
 
  # Nine switches (each click toggles)
  RGO_toggle_cost:0 "Cost on/off"
- RGO_toggle_cost_desc:0 "On: you pay the live market price of the chosen good (roughly 5-60 gold, it rises and falls with supply and demand). Off: completely free."
+ RGO_toggle_cost_desc:0 "On: charges one of six tiers based on the chosen good's live market price (about 5 / 10 / 16 / 24 / 34 / 50 gold). When demand outstrips supply the price jumps to a higher tier. Off: completely free."
  RGO_toggle_cooldown:0 "Cooldown on/off"
  RGO_toggle_cooldown_desc:0 "On: every change starts a 6 month cooldown. Off: no cooldown, and any running one is cleared immediately."
  RGO_toggle_cat_industry:0 "Industry on/off"
@@ -42,3 +42,4 @@
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "The raw material change is on cooldown; no further changes are possible until it expires."
 
  rgo_change:0 "Change Raw Material"
+ RGO_GROUP_SWITCHES:0 "Switches"
