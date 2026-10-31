@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.0.5
+
+### 修复
+- **按钮错位 / 无法点击**：不再用 `fixedgridbox` 自绘整列按钮，改为使用引擎内建
+  `situation_card_actions` 卡片的官方钩子 `actions_override`（布局写法取自原版 `gui/ui_library.gui`
+  的「vertical buttons layout example」：`vbox` + `layoutpolicy_horizontal = expanding` + `size = { -1 30 }`），
+  既保留原生卡片外观，又避免自绘网格命中区域与视觉位置错开
+- **面板重复**：关闭 `situation_panel_main_actions`，同一面板只保留一组按钮
+- **分类与开关的分隔**：放弃名称前缀「—」，改为在两个列表之间插入**一个按钮高度**的空白（`size = { 480 30 }`）
+- **悬停查看开关状态**：开关动作的 `effect` 增加 `custom_tooltip`，
+  由 `RGO_cost_enabled` / `RGO_cooldown_enabled` / `RGO_cat_produced_enabled` 触发器决定显示
+  「当前：开启 —— 点击后关闭」还是「当前：关闭 —— 点击后开启」；
+  真正的变量切换移入 `hidden_effect`，tooltip 不再出现变量设置噪音
+- **卡片标题占位文字**：`situation_card_actions` 的默认标题是引擎 UI 库示例里的占位串
+  `IOs Card important title header`（连图标都是示例用的拳头）。现按原版 `situations_actions` 的做法
+  显式覆盖 `card_header_text` / `card_header_icon`，标题改用 11 种语言的「原材料操作 / Raw Material Actions」
+- 分类/开关仍用 `DataModelSubSpan` + `DataModelLast` 动态切片，隐藏制成品按钮时不会错位
+
+### 正确性（对照原版 columbian_exchange）
+- **地块候选过滤**：选择地块时新增
+  `is_goods_valid_for_location = scope:target_good`（该货物能否成为此地原材料，城市/地形等限制）
+  与 `NOT = { raw_material ?= scope:target_good }`（排除已经是该货物的地块，避免白花钱）。
+  之前会把城市等无法产出该原材料的地块也列出来，选中后等于白点
+- **价格成本修正器类型**：新增 `main_menu/common/modifier_type_definitions/00_rgo_modifier_types.txt`，
+  定义 `rgo_change_cost_modifier`，消除 error.log 中的
+  `Missing modifier type for price. rgo_change_cost_modifier`
+- 说明：本 mod 刻意不执行原版在改 RGO 前的 `change_max_raw_material_workers` / `change_prosperity`
+  惩罚（「无条件修改」的定位），如需与原版一致的惩罚可另行开启
+
+### 工程
+- `generate_rgo_actions.ps1`：GUI 校验改为「必须使用 actions_override + 必须关闭原生卡片 +
+  禁止 DataModelFirst/SkipFirst 写死切片」
+- `validate_mod.ps1`：新增 actions_override / 间隔 / 开关状态键检查；修正 `_desc` 推导对
+  `RGO_toggle_state_*` 的误判
+- 新增 11 种语言的 `RGO_toggle_state_on` / `RGO_toggle_state_off`
+
 ## 1.0.4
 
 ### 多语言
@@ -13,9 +49,18 @@
   「无可选目标」改用引擎的 `none_available_msg_key`
 - 术语与原版对齐：显示名「原产物」→「原材料」、「地块」→「地点」（与原版中文、日文、韩文的 location 用词一致）
 
+### 日志修复（依据 error.log）
+- 修复 `Invalid localization header indentation`：11 个语言文件的 `l_<lang>:` 语言头改为顶格
+- 修复 `Key RGO_no_*_available doesn't exist or doesn't start with trigger_no icon`：
+  「无可选目标」文案补上 `@trigger_no!` 图标前缀（与 `no_locations_available` 等原版键一致）
+
 ### 界面
+- 修复面板重复：关闭引擎自带的「主要行动」卡片（`situation_panel_main_actions`），
+  只保留一套「分类 / 开关」分组列表，不再出现两份按钮
+- 修复分组错位：分类与开关改用 `DataModelSubSpan` / `DataModelLast` 动态切片
+  （末尾 3 个固定为开关），制成品按钮默认隐藏时「花费开关」不会再被挤进分类
+- 去掉自定义列表里的嵌套滚动条与固定尺寸，改由面板自带的滚动区域承载，不再出现双滚动条
 - 局势面板新增「分类」标题，与「开关」分组对称
-- 分组的切片数字改由生成器自动同步（新增分类后无需手改 GUI）
 
 ### 代码结构
 - 新增 `tools/rgo_common.ps1`：货物解析、分组、价格阶梯、冷却、默认值的唯一真值源

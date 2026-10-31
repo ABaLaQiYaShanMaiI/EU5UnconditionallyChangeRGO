@@ -15,7 +15,9 @@ EU5（Europa Universalis V）模组：在局势面板里随时修改本国任意
 | 冷却开关 | 开启时每次修改挂 6 个月冷却；关闭会**立即清除**正在运行的冷却 |
 | 制成品开关 | 默认关闭。制成品由建筑产出，作为原材料属非原生玩法，可能影响建筑产出 |
 
-面板上方是「分类」分组、下方是「开关」分组，共 10 个按钮，单卡无滚动。
+面板使用引擎内建的 `situation_card_actions` 卡片（原生卡片背景与「主要行动」标题），并通过它的官方钩子 `actions_override` 重新排列按钮：**7 个分类 → 一个按钮高度的空位 → 3 个开关**。悬停任意开关，提示里会显示「当前：开启/关闭」以及点击后的结果。
+
+> 为什么不直接把按钮放在默认列表里：默认实现会把所有动作平铺，无法在两组之间插入间隔。
 
 ## 安装
 
@@ -65,7 +67,7 @@ powershell -ExecutionPolicy Bypass -File "tools\generate_rgo_actions.ps1" -Goods
 | `in_game/common/generic_actions/00_rgo_actions.txt` | `generate_rgo_actions.ps1` |
 | `in_game/common/generic_actions/01_rgo_toggles.txt` | `generate_rgo_actions.ps1` |
 | `in_game/common/scripted_triggers/00_rgo_config.txt` | `generate_rgo_actions.ps1` |
-| `in_game/gui/panels/situation/UnconditionallyChangeRGO.gui` 中的两个切片数字 | `generate_rgo_actions.ps1` |
+| `in_game/gui/panels/situation/UnconditionallyChangeRGO.gui` | 不由生成器改写；生成器只校验它没有覆盖原生卡片、也没有自绘动作列表 |
 | `in_game/localization/<lang>/UnconditionallyChangeRGO_l_<lang>.yml` | `generate_rgo_localization.ps1` |
 
 手写文件（`00_rgo_effects.txt`、`00_rgo_prices.txt`、局势、提示、GUI 模板）不受生成器覆盖，但生成器会校验其中与 `rgo_common.ps1` 重复的常量（冷却月数、基础价），不一致会直接报错。
@@ -74,7 +76,7 @@ powershell -ExecutionPolicy Bypass -File "tools\generate_rgo_actions.ps1" -Goods
 
 | 脚本 | 作用 |
 |---|---|
-| `tools/validate_mod.ps1` | 全量校验：生成物是否最新、11 种语言键集合是否一致、脚本引用的键是否都有本地化、括号是否平衡、UTF-8 BOM 是否齐全、动作/开关/GUI 切片数量是否正确 |
+| `tools/validate_mod.ps1` | 全量校验：生成物是否最新、11 种语言键集合是否一致、脚本引用的键是否都有本地化、括号是否平衡、UTF-8 BOM 是否齐全、动作/开关数量是否正确 |
 | `tools/ensure_utf8_bom.ps1` | 给 `.ps1` / `.txt` / `.gui` / `.yml` 补 UTF-8 BOM（Windows PowerShell 5.1 无 BOM 时会按 ANSI 解析导致中文乱码） |
 | `tools/toggle_mod.ps1` | 一键停用 / 恢复本模组，用于 A/B 隔离排错 |
 
@@ -87,12 +89,15 @@ powershell -ExecutionPolicy Bypass -File "tools\validate_mod.ps1"
 ## 兼容性说明
 
 - 只影响本国地点，不改地点归属、不改建筑产出公式。
+- 选择地点时按原版规则过滤：只列出「该货物可以作为此地原材料」的地点（城市等不满足的地点在列表里不可选），且不会重复列出已经是该货物的地点。
+- 本 mod 不执行原版改原材料时的工人上限调整与繁荣度惩罚（「无条件修改」的定位）。
 - 「制成品」分类是原版 `produced` 分类去掉奴隶；把建筑产出设为原材料属非原生玩法，默认关闭。
-- 分类数量变化时 GUI 切片数字会自动同步，不再需要手改界面文件。
+- 分类数量变化时不需要改界面：分类/开关用 `DataModelSubSpan` / `DataModelLast` 动态切片，按钮顺序 = `00_rgo_actions` → `01_rgo_toggles`。
+- 开关排在最后三个，并在两组之间留出一个按钮高度的空白；即使某个分类按钮被隐藏也不会与分类混排。
 
 ## 版本
 
-见 [CHANGELOG.md](CHANGELOG.md)。当前 **1.0.4**。
+见 [CHANGELOG.md](CHANGELOG.md)。当前 **1.0.5**。
 
 ## License
 

@@ -1,7 +1,7 @@
 name="Unconditionally Change RGO"
 path="mod/UnconditionallyChangeRGO"
 picture="thumbnail.png"
-version="1.0.4"
+version="1.0.5"
 tags={
     "Utilities"
     "Trade and Economics"

@@ -1,4 +1,4 @@
-﻿# 单个动作按钮（模板，供两个分组的网格复用）
+﻿# 单个动作按钮（供分类 / 开关两个列表复用；几何参数沿用 1.0.3 的可用版本）
 template rgo_action_button {
 	targetted_button_regular = {
 		size = { 476 28 }
@@ -57,6 +57,21 @@ template rgo_action_button {
 	}
 }
 
+# ============================================================
+# 局势面板
+#
+# 按钮外壳用引擎内建的 situation_card_actions（自带卡片背景与标题），
+# 但通过它官方提供的 actions_override 钩子自己排列按钮：
+#   [分类按钮…]  →  一个按钮高度的空位  →  [开关按钮…]
+# 这样既保留原生卡片外观，又能在分类与开关之间空出距离。
+#
+# 为什么不用默认列表：默认实现把所有动作平铺在一张卡里，无法插入间隔。
+# 为什么关掉 situation_panel_main_actions：否则同一面板会出现两份按钮。
+#
+# 分组用动态切片，不写死数字（制成品按钮隐藏时列表会变短）：
+#   分类 = 去掉末尾 3 个后的全部动作
+#   开关 = 末尾 3 个动作（定义顺序：00_rgo_actions → 01_rgo_toggles）
+# ============================================================
 situation_panel = {
 
 	blockoverride "situation_subheader_content" { }
@@ -68,46 +83,37 @@ situation_panel = {
 		}
 	}
 
-	# ============================================================
-	# 两组按钮：分类（前 N 个） / 开关（其余 3 个）
-	# 用 DataModelFirst + DataModelSkipFirst 切片，中间留空隙并加小标题
-	# 注：两个切片数字由 tools\generate_rgo_actions.ps1 自动同步，勿手改
-	# ============================================================
+	# 关掉引擎默认的动作卡片，避免与下面的自定义卡片重复
+	blockoverride "situation_panel_main_actions" { }
+
 	blockoverride "situation_panel_main_content" {
 		vbox = {
+			layoutpolicy_horizontal = expanding
 			visible = "[Not(IsDataModelEmpty(SituationView.GetActionGroups))]"
 			datamodel = "[SituationView.GetActionGroups]"
 
 			item = {
 				widget = {
-					layoutpolicy_vertical = expanding
-					size = { 500 560 }
+					situation_card_actions = {
+						set_parent_size_to_minimum = yes
 
-					scrollarea = {
-						layoutpolicy_vertical = expanding
-						size = { 500 560 }
-						scrollbarpolicy_horizontal = always_off
-
-						scrollbar_vertical = {
-							using = Scrollbar_Vertical
+						# 默认标题是引擎 UI 库的占位文字（IOs Card important title header），
+						# 默认图标也是占位图例里的拳头，这里都换成自己的
+						blockoverride "card_header_icon" { visible = no }
+						blockoverride "card_header_text" {
+							text = "RGO_CARD_HEADER"
 						}
 
-						scrollwidget = {
+						blockoverride "actions_override" {
 							vbox = {
 								layoutpolicy_horizontal = expanding
+								spacing = 4
+								margin = { 0 4 }
 
-								# ---------- 分组小标题：分类 ----------
-								text_single = {
-									text = "RGO_GROUP_CATEGORIES"
-								}
-
-								# ---------- 第一组：分类（7 个） ----------
-								fixedgridbox = {
-									addrow = 30
-									addcolumn = 480
-
-									datamodel = "[DataModelFirst(ActionGroup.GetActions, '(int32)7')]"
-
+								# ---------- 分类 ----------
+								vbox = {
+									layoutpolicy_horizontal = expanding
+									datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)0', Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)3'))]"
 									item = {
 										widget = {
 											size = { 480 30 }
@@ -116,23 +122,15 @@ situation_panel = {
 									}
 								}
 
-								# ---------- 间隔 ----------
+								# ---------- 间隔：一个按钮高度 ----------
 								widget = {
-									size = { -1 10 }
+									size = { 480 30 }
 								}
 
-								# ---------- 分组小标题 ----------
-								text_single = {
-									text = "RGO_GROUP_SWITCHES"
-								}
-
-								# ---------- 第二组：开关（3 个） ----------
-								fixedgridbox = {
-									addrow = 30
-									addcolumn = 480
-
-									datamodel = "[DataModelSkipFirst(ActionGroup.GetActions, '(int32)7')]"
-
+								# ---------- 开关 ----------
+								vbox = {
+									layoutpolicy_horizontal = expanding
+									datamodel = "[DataModelLast(ActionGroup.GetActions, '(int32)3')]"
 									item = {
 										widget = {
 											size = { 480 30 }
@@ -148,3 +146,4 @@ situation_panel = {
 		}
 	}
 }
+

@@ -43,8 +43,6 @@ $locales['english'] = @{
     desc            = 'Change the raw material of any location you own - free of charge or at market price.'
     hintTitle       = 'Raw Materials'
     hintText        = "Raw Materials\n\nClick a category button, then pick a raw material and a location. Click a switch to toggle it.\n\n- Cost: pay the live market price of the chosen good in that market, on six tiers (about {tiers} gold). Off: everything is free.\n- Cooldown: every change starts a {months} month cooldown and the buttons grey out. Turning it off clears a running cooldown immediately.\n- Manufactured: off by default. Manufactured goods are made by buildings, so using them as raw materials is not vanilla behaviour and may break building output.\n\nHover a button to see which goods its category contains."
-    groupCategories = 'Categories'
-    groupSwitches   = 'Switches'
     stepGoods       = 'Select Raw Material'
     stepLocation    = 'Select Location'
     noGoods         = 'No raw materials available'
@@ -65,6 +63,8 @@ $locales['english'] = @{
         cooldown = 'On: every change starts a {months} month cooldown. Off: no cooldown, and any running one is cleared immediately.'
         produced = 'Show or hide the Manufactured button. Off by default.'
     }
+    stateOn         = 'Current: ON - click to turn it off'
+    stateOff        = 'Current: OFF - click to turn it on'
     price           = 'Change Raw Material'
     modName         = 'Raw Material Cooldown'
     modDesc         = 'The raw material change is on cooldown; no further changes are possible until it expires.'
@@ -78,8 +78,6 @@ $locales['simp_chinese'] = @{
     desc            = '免费或按市场价，修改本国任意地点的原材料。'
     hintTitle       = '原材料'
     hintText        = "原材料\n\n上方 {cats} 个分类按钮：点一次后先选原材料，再选地点。下方 {toggles} 个开关：点一次切换一次。\n\n- 花费开关：开启后按所选货物在该地点市场的实时价格分六档收费（约 {tiers} 金）；供不应求时收费跳到更高一档。关闭则免费\n- 冷却开关：开启后每次修改产生 {months} 个月冷却，期间按钮变灰；关闭会立即清除冷却\n- 制成品开关：默认关闭。制成品是建筑产出，作为原材料属非原生玩法，可能影响建筑产出\n\n悬停任意按钮可看到该分类包含哪些货物。"
-    groupCategories = '分类'
-    groupSwitches   = '开关'
     stepGoods       = '选择原材料'
     stepLocation    = '选择地点'
     noGoods         = '没有可选的原材料'
@@ -100,6 +98,8 @@ $locales['simp_chinese'] = @{
         cooldown = '开：每次修改产生 {months} 个月冷却。关：无冷却，并立即清除当前冷却。'
         produced = '显示 / 隐藏「制成品」按钮。默认关闭。'
     }
+    stateOn         = '当前：开启 —— 点击后关闭'
+    stateOff        = '当前：关闭 —— 点击后开启'
     price           = '修改原材料'
     modName         = '原材料冷却'
     modDesc         = '原材料的修改仍在冷却中，冷却结束前无法再次修改。'
@@ -113,8 +113,6 @@ $locales['russian'] = @{
     desc            = 'Меняет сырьё любой принадлежащей вам территории: бесплатно или по рыночной цене.'
     hintTitle       = 'Ресурсы'
     hintText        = "Ресурсы\n\nНажмите кнопку категории, затем выберите сырьё и территорию. Переключатели срабатывают по нажатию.\n\n- Стоимость: оплата по текущей рыночной цене выбранного товара на рынке этой территории, шесть уровней (примерно {tiers} золота). Выкл.: всё бесплатно.\n- Перезарядка: каждое изменение даёт {months} месяцев перезарядки, кнопки становятся неактивными. Выключение сразу снимает текущую перезарядку.\n- Изделия: по умолчанию выключено. Изделия производят здания, поэтому использование их как сырья не является ванильным поведением и может нарушить производство.\n\nНаведите курсор на кнопку, чтобы увидеть список товаров категории."
-    groupCategories = 'Категории'
-    groupSwitches   = 'Переключатели'
     stepGoods       = 'Выбрать сырьё'
     stepLocation    = 'Выбрать территорию'
     noGoods         = 'Нет доступного сырья'
@@ -135,6 +133,8 @@ $locales['russian'] = @{
         cooldown = 'Вкл.: каждое изменение даёт {months} месяцев перезарядки. Выкл.: перезарядки нет, текущая снимается сразу.'
         produced = 'Показать или скрыть кнопку «Изделия». По умолчанию выключено.'
     }
+    stateOn         = 'Сейчас: ВКЛ. - нажмите, чтобы выключить'
+    stateOff        = 'Сейчас: ВЫКЛ. - нажмите, чтобы включить'
     price           = 'Изменить сырьё'
     modName         = 'Перезарядка сырья'
     modDesc         = 'Изменение сырья на перезарядке; новые изменения невозможны до её окончания.'
@@ -149,8 +149,6 @@ $locales['french'] = @{
     desc            = "Change la matière première de n'importe quel lieu vous appartenant, gratuitement ou au prix du marché."
     hintTitle       = 'Matières premières'
     hintText        = "Matières premières\n\nCliquez sur une catégorie, puis choisissez une matière première et un lieu. Les interrupteurs se basculent au clic.\n\n- Coût : paie le prix réel du marché local, en six paliers (environ {tiers} or). Désactivé : tout est gratuit.\n- Recharge : chaque changement impose {months} mois de recharge et grise les boutons. La désactiver annule immédiatement la recharge en cours.\n- Produits manufacturés : désactivé par défaut. Ils sont fabriqués par des bâtiments ; les utiliser comme matières premières n'est pas le comportement vanilla et peut perturber la production.\n\nSurvolez un bouton pour voir les biens de sa catégorie."
-    groupCategories = 'Catégories'
-    groupSwitches   = 'Interrupteurs'
     stepGoods       = 'Choisir une matière première'
     stepLocation    = 'Choisir un lieu'
     noGoods         = 'Aucune matière première disponible'
@@ -171,6 +169,8 @@ $locales['french'] = @{
         cooldown = "Activé : chaque changement impose {months} mois de recharge. Désactivé : aucune recharge, et celle en cours est annulée immédiatement."
         produced = "Affiche ou masque le bouton Manufacturés. Désactivé par défaut."
     }
+    stateOn         = 'Actuellement : ACTIVÉ - cliquez pour désactiver'
+    stateOff        = 'Actuellement : DÉSACTIVÉ - cliquez pour activer'
     price           = 'Changer la matière première'
     modName         = 'Recharge des matières premières'
     modDesc         = "Le changement de matière première est en recharge ; aucune modification n'est possible avant son expiration."
@@ -185,8 +185,6 @@ $locales['german'] = @{
     desc            = 'Ändert den Rohstoff jedes Ortes in eurem Besitz - kostenlos oder zum Marktpreis.'
     hintTitle       = 'Rohstoffe'
     hintText        = "Rohstoffe\n\nKlickt auf eine Kategorie und wählt dann einen Rohstoff und einen Ort. Die Schalter lassen sich per Klick umlegen.\n\n- Kosten: zahlt den aktuellen Marktpreis der Ware am Markt des Ortes in sechs Stufen (etwa {tiers} Gold). Aus: alles kostenlos.\n- Abklingzeit: Jede Änderung erzeugt {months} Monate Abklingzeit, die Buttons werden ausgegraut. Beim Ausschalten wird eine laufende Abklingzeit sofort entfernt.\n- Fertigwaren: standardmäßig aus. Fertigwaren entstehen in Gebäuden; sie als Rohstoff zu nutzen ist kein Vanilla-Verhalten und kann die Gebäudeproduktion stören.\n\nFahrt über einen Button, um die Waren der Kategorie zu sehen."
-    groupCategories = 'Kategorien'
-    groupSwitches   = 'Schalter'
     stepGoods       = 'Rohstoff wählen'
     stepLocation    = 'Ort wählen'
     noGoods         = 'Keine Rohstoffe verfügbar'
@@ -207,6 +205,8 @@ $locales['german'] = @{
         cooldown = 'An: Jede Änderung erzeugt {months} Monate Abklingzeit. Aus: keine Abklingzeit, eine laufende wird sofort entfernt.'
         produced = 'Zeigt oder verbirgt den Button Fertigwaren. Standardmäßig aus.'
     }
+    stateOn         = 'Aktuell: AN - klicken zum Ausschalten'
+    stateOff        = 'Aktuell: AUS - klicken zum Einschalten'
     price           = 'Rohstoff ändern'
     modName         = 'Rohstoff-Abklingzeit'
     modDesc         = 'Die Rohstoffänderung hat Abklingzeit; bis zu deren Ende sind keine weiteren Änderungen möglich.'
@@ -221,8 +221,6 @@ $locales['spanish'] = @{
     desc            = 'Cambia la materia prima de cualquier lugar que poseas: gratis o a precio de mercado.'
     hintTitle       = 'Materias primas'
     hintText        = "Materias primas\n\nPulsa una categoría y elige después una materia prima y un lugar. Los interruptores se cambian con un clic.\n\n- Coste: cobra el precio real del mercado del lugar en seis tramos (unos {tiers} de oro). Desactivado: todo gratis.\n- Enfriamiento: cada cambio impone {months} meses de enfriamiento y los botones se atenúan. Al desactivarlo se elimina de inmediato el enfriamiento activo.\n- Manufacturas: desactivado por defecto. Se fabrican en edificios; usarlas como materia prima no es comportamiento vanilla y puede afectar a la producción.\n\nPasa el cursor por un botón para ver las mercancías de su categoría."
-    groupCategories = 'Categorías'
-    groupSwitches   = 'Interruptores'
     stepGoods       = 'Elegir materia prima'
     stepLocation    = 'Elegir lugar'
     noGoods         = 'No hay materias primas disponibles'
@@ -243,6 +241,8 @@ $locales['spanish'] = @{
         cooldown = 'Activado: cada cambio impone {months} meses de enfriamiento. Desactivado: sin enfriamiento y se elimina el actual al instante.'
         produced = 'Muestra u oculta el botón Manufacturas. Desactivado por defecto.'
     }
+    stateOn         = 'Ahora: ACTIVADO - pulsa para desactivar'
+    stateOff        = 'Ahora: DESACTIVADO - pulsa para activar'
     price           = 'Cambiar materia prima'
     modName         = 'Enfriamiento de materias primas'
     modDesc         = 'El cambio de materia prima está en enfriamiento; no se pueden hacer más cambios hasta que termine.'
@@ -257,8 +257,6 @@ $locales['polish'] = @{
     desc            = 'Zmienia surowiec dowolnej należącej do was lokalizacji: bez opłat lub po cenie rynkowej.'
     hintTitle       = 'Surowce'
     hintText        = "Surowce\n\nKliknij kategorię, a następnie wybierz surowiec i lokalizację. Przełączniki zmieniają stan po kliknięciu.\n\n- Koszt: opłata według bieżącej ceny rynkowej towaru w sześciu progach (około {tiers} złota). Wył.: wszystko bezpłatnie.\n- Odnowienie: każde użycie daje {months} miesięcy odnowienia, a przyciski szarzeją. Wyłączenie natychmiast usuwa trwające odnowienie.\n- Wyroby: domyślnie wyłączone. Wyroby powstają w budynkach, więc użycie ich jako surowca nie jest zachowaniem vanilla i może zakłócić produkcję.\n\nNajedź na przycisk, aby zobaczyć towary w kategorii."
-    groupCategories = 'Kategorie'
-    groupSwitches   = 'Przełączniki'
     stepGoods       = 'Wybierz surowiec'
     stepLocation    = 'Wybierz lokalizację'
     noGoods         = 'Brak dostępnych surowców'
@@ -279,6 +277,8 @@ $locales['polish'] = @{
         cooldown = 'Wł.: każde użycie daje {months} miesięcy odnowienia. Wył.: brak odnowienia, a trwające jest natychmiast usuwane.'
         produced = 'Pokazuje lub ukrywa przycisk Wyroby. Domyślnie wyłączone.'
     }
+    stateOn         = 'Teraz: WŁ. - kliknij, aby wyłączyć'
+    stateOff        = 'Teraz: WYŁ. - kliknij, aby włączyć'
     price           = 'Zmień surowiec'
     modName         = 'Odnowienie surowców'
     modDesc         = 'Zmiana surowca jest w trakcie odnowienia; do jego końca nie można wykonać kolejnych zmian.'
@@ -293,8 +293,6 @@ $locales['turkish'] = @{
     desc            = 'Sahip olduğunuz herhangi bir yerin hammaddesini ücretsiz veya piyasa fiyatıyla değiştirir.'
     hintTitle       = 'Hammaddeler'
     hintText        = "Hammaddeler\n\nBir kategoriye tıklayın, ardından hammaddeyi ve yeri seçin. Anahtarlar her tıklamada açılıp kapanır.\n\n- Maliyet: seçilen malın o yerin piyasasındaki güncel fiyatını altı kademede tahsil eder (yaklaşık {tiers} altın). Kapalı: her şey ücretsiz.\n- Bekleme: her değişiklik {months} ay bekleme başlatır ve düğmeler grileşir. Kapatmak süren beklemeyi hemen siler.\n- Mamul mallar: varsayılan olarak kapalı. Binalarda üretilirler; hammadde olarak kullanmak vanilla davranışı değildir ve üretimi bozabilir.\n\nKategorideki malları görmek için bir düğmenin üzerine gelin."
-    groupCategories = 'Kategoriler'
-    groupSwitches   = 'Anahtarlar'
     stepGoods       = 'Hammadde seç'
     stepLocation    = 'Yer seç'
     noGoods         = 'Uygun hammadde yok'
@@ -315,6 +313,8 @@ $locales['turkish'] = @{
         cooldown = 'Açık: her değişiklik {months} ay bekleme başlatır. Kapalı: bekleme yoktur ve süren bekleme hemen silinir.'
         produced = 'Mamul mallar düğmesini gösterir veya gizler. Varsayılan olarak kapalı.'
     }
+    stateOn         = 'Şu an: AÇIK - kapatmak için tıklayın'
+    stateOff        = 'Şu an: KAPALI - açmak için tıklayın'
     price           = 'Hammaddeyi değiştir'
     modName         = 'Hammadde beklemesi'
     modDesc         = 'Hammadde değişikliği beklemede; süre bitene kadar yeni değişiklik yapılamaz.'
@@ -329,8 +329,6 @@ $locales['japanese'] = @{
     desc            = '自国が所有する任意の地点の原材料を、無料または市場価格で変更します。'
     hintTitle       = '原材料'
     hintText        = "原材料\n\nカテゴリボタンを押し、原材料と地点を選びます。スイッチはクリックするたびに切り替わります。\n\n- 費用：選択した財の現地市場価格を6段階で支払います（約 {tiers} 金）。オフならすべて無料。\n- クールダウン：変更ごとに {months} か月のクールダウンが発生し、ボタンが無効になります。オフにすると進行中のクールダウンは即座に解除されます。\n- 加工品：既定ではオフ。加工品は建物が生産するため、原材料として使うのは本来の仕様ではなく、建物の生産を壊す可能性があります。\n\nボタンにカーソルを合わせると、そのカテゴリの財が表示されます。"
-    groupCategories = 'カテゴリ'
-    groupSwitches   = 'スイッチ'
     stepGoods       = '原材料を選択'
     stepLocation    = '地点を選択'
     noGoods         = '選択できる原材料がありません'
@@ -351,6 +349,8 @@ $locales['japanese'] = @{
         cooldown = 'オン：変更ごとに {months} か月のクールダウン。オフ：クールダウンなし、進行中のものは即座に解除。'
         produced = '「加工品」ボタンの表示を切り替えます。既定ではオフ。'
     }
+    stateOn         = '現在：オン - クリックでオフ'
+    stateOff        = '現在：オフ - クリックでオン'
     price           = '原材料を変更'
     modName         = '原材料クールダウン'
     modDesc         = '原材料の変更はクールダウン中です。終了まで再変更できません。'
@@ -365,8 +365,6 @@ $locales['korean'] = @{
     desc            = '보유한 모든 지역의 원자재를 무료 또는 시장 가격으로 변경합니다.'
     hintTitle       = '원자재'
     hintText        = "원자재\n\n분류 버튼을 누른 뒤 원자재와 지역을 선택하세요. 스위치는 클릭할 때마다 전환됩니다.\n\n- 비용: 선택한 상품의 해당 지역 시장 실시간 가격을 6단계로 지불합니다(약 {tiers} 골드). 끄면 전부 무료.\n- 재사용 대기: 변경할 때마다 {months}개월 대기 시간이 생기고 버튼이 비활성화됩니다. 끄면 진행 중인 대기도 즉시 해제됩니다.\n- 가공품: 기본적으로 꺼져 있습니다. 가공품은 건물이 생산하므로 원자재로 쓰는 것은 원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다.\n\n버튼에 마우스를 올리면 해당 분류의 상품을 볼 수 있습니다."
-    groupCategories = '분류'
-    groupSwitches   = '스위치'
     stepGoods       = '원자재 선택'
     stepLocation    = '지역 선택'
     noGoods         = '선택 가능한 원자재가 없습니다'
@@ -387,6 +385,8 @@ $locales['korean'] = @{
         cooldown = '켜기: 변경할 때마다 {months}개월 대기. 끄기: 대기 없음, 진행 중인 대기는 즉시 해제.'
         produced = '가공품 버튼을 표시하거나 숨깁니다. 기본적으로 꺼져 있습니다.'
     }
+    stateOn         = '현재: 켜짐 - 클릭하면 꺼짐'
+    stateOff        = '현재: 꺼짐 - 클릭하면 켜짐'
     price           = '원자재 변경'
     modName         = '원자재 재사용 대기'
     modDesc         = '원자재 변경이 재사용 대기 중입니다. 끝날 때까지 다시 변경할 수 없습니다.'
@@ -401,8 +401,6 @@ $locales['braz_por'] = @{
     desc            = 'Muda a matéria-prima de qualquer local que você possua: de graça ou pelo preço de mercado.'
     hintTitle       = 'Matérias-primas'
     hintText        = "Matérias-primas\n\nClique em uma categoria e escolha a matéria-prima e o local. Os interruptores alternam a cada clique.\n\n- Custo: cobra o preço real do mercado local em seis faixas (cerca de {tiers} de ouro). Desligado: tudo grátis.\n- Recarga: cada mudança gera {months} meses de recarga e os botões ficam cinzas. Desligar remove a recarga em andamento na hora.\n- Manufaturados: desligado por padrão. São produzidos por edifícios; usá-los como matéria-prima não é o comportamento vanilla e pode afetar a produção.\n\nPasse o mouse sobre um botão para ver os bens da categoria."
-    groupCategories = 'Categorias'
-    groupSwitches   = 'Interruptores'
     stepGoods       = 'Escolher matéria-prima'
     stepLocation    = 'Escolher local'
     noGoods         = 'Nenhuma matéria-prima disponível'
@@ -423,6 +421,8 @@ $locales['braz_por'] = @{
         cooldown = 'Ligado: cada mudança gera {months} meses de recarga. Desligado: sem recarga, e a atual é removida na hora.'
         produced = 'Mostra ou oculta o botão Manufaturados. Desligado por padrão.'
     }
+    stateOn         = 'Agora: LIGADO - clique para desligar'
+    stateOff        = 'Agora: DESLIGADO - clique para ligar'
     price           = 'Mudar matéria-prima'
     modName         = 'Recarga de matérias-primas'
     modDesc         = 'A mudança de matéria-prima está em recarga; não é possível mudar novamente até acabar.'
@@ -433,6 +433,21 @@ $locales['braz_por'] = @{
 # 生成
 # ============================================================
 $catTextSep = @{ simp_chinese = '、'; japanese = '、'; korean = ', ' }
+
+# 动作卡片标题（原版 situation_card_actions 的默认标题是 UI 库占位文字，必须覆盖）
+$cardHeaders = @{
+    english      = 'Raw Material Actions'
+    braz_por     = 'Ações de matérias-primas'
+    french       = 'Actions sur les matières premières'
+    german       = 'Rohstoff-Aktionen'
+    spanish      = 'Acciones de materias primas'
+    polish       = 'Działania na surowcach'
+    russian      = 'Действия с сырьём'
+    turkish      = 'Hammadde işlemleri'
+    japanese     = '原材料の操作'
+    korean       = '원자재 작업'
+    simp_chinese = '原材料操作'
+}
 
 function Add-LocLine($sb, [string]$text) {
     if ($text -eq '') { [void]$sb.Append("`r`n") }
@@ -463,7 +478,8 @@ foreach ($lang in $languages) {
     $hintMap = @{ tiers = $tierText; months = $RGO_COOLDOWN_MONTHS; cats = $catCount; toggles = $toggleCount }
 
     $sb = New-Object System.Text.StringBuilder
-    Add-LocLine $sb ('l_' + $lang + ':')
+    # 语言头必须顶格（带缩进会被引擎判为 Invalid localization header indentation）
+    [void]$sb.Append(('l_' + $lang + ':') + "`r`n")
     Add-LocLine $sb '# Generated by tools\generate_rgo_localization.ps1 - do not edit by hand'
     Add-LocLine $sb '# Goods names come from the vanilla goods_l_<lang>.yml; counts and lists from common\goods'
     Add-LocLine $sb ''
@@ -475,15 +491,14 @@ foreach ($lang in $languages) {
     Add-LocLine $sb ('hint_UnconditionallyChangeRGO:0 "' + $t.hintTitle + '"')
     Add-LocLine $sb ('hint_UnconditionallyChangeRGO_hint_text:0 "' + (Resolve-RgoText $t.hintText $hintMap) + '"')
     Add-LocLine $sb ''
-    Add-LocLine $sb '# Situation panel headings'
-    Add-LocLine $sb ('RGO_GROUP_CATEGORIES:0 "' + $t.groupCategories + '"')
-    Add-LocLine $sb ('RGO_GROUP_SWITCHES:0 "' + $t.groupSwitches + '"')
+    Add-LocLine $sb '# Action card title (overrides the engine UI-library placeholder title)'
+    Add-LocLine $sb ('RGO_CARD_HEADER:0 "' + $cardHeaders[$lang] + '"')
     Add-LocLine $sb ''
     Add-LocLine $sb '# Selection steps'
     Add-LocLine $sb ('RGO_select_goods:0 "' + $t.stepGoods + '"')
     Add-LocLine $sb ('RGO_select_location:0 "' + $t.stepLocation + '"')
-    Add-LocLine $sb ('RGO_no_goods_available:0 "' + $t.noGoods + '"')
-    Add-LocLine $sb ('RGO_no_locations_available:0 "' + $t.noLocations + '"')
+    Add-LocLine $sb ('RGO_no_goods_available:0 "@trigger_no!' + $t.noGoods + '"')
+    Add-LocLine $sb ('RGO_no_locations_available:0 "@trigger_no!' + $t.noLocations + '"')
     Add-LocLine $sb ''
 
     Add-LocLine $sb ('# Category buttons (' + $catCount + ')')
@@ -502,6 +517,10 @@ foreach ($lang in $languages) {
         Add-LocLine $sb ('RGO_toggle_' + $g + ':0 "' + $t.toggle[$g] + '"')
         Add-LocLine $sb ('RGO_toggle_' + $g + '_desc:0 "' + $desc + '"')
     }
+    Add-LocLine $sb ''
+    Add-LocLine $sb '# Current state shown in the switch tooltip (chosen by trigger at hover time)'
+    Add-LocLine $sb ('RGO_toggle_state_on:0 "' + $t.stateOn + '"')
+    Add-LocLine $sb ('RGO_toggle_state_off:0 "' + $t.stateOff + '"')
     Add-LocLine $sb ''
 
     Add-LocLine $sb '# Price name (confirmation dialog)'

@@ -60,6 +60,20 @@ foreach ($f in (Get-ChildItem (Join-Path $root 'in_game\localization') -Recurse 
 }
 Check "no bare select_* keys" ($bareSelect.Count -eq 0) ($bareSelect -join ', ')
 
+# 3b. localization header must start at column 0; none_available_msg_key needs @trigger_no!
+$badHeader = @()
+$badNoKey = @()
+foreach ($l in $langs) {
+    $p = Join-Path $root ("in_game\localization\{0}\UnconditionallyChangeRGO_l_{0}.yml" -f $l)
+    $first = [System.IO.File]::ReadAllLines($p)[0]
+    if ($first -notmatch '^l_[a-z_]+:\s*$') { $badHeader += ($l + ': [' + $first + ']') }
+    $text = [System.IO.File]::ReadAllText($p)
+    if ($text -notmatch 'RGO_no_goods_available:0\s+"@trigger_no!') { $badNoKey += ($l + ':goods') }
+    if ($text -notmatch 'RGO_no_locations_available:0\s+"@trigger_no!') { $badNoKey += ($l + ':locations') }
+}
+Check "loc header starts at column 0" ($badHeader.Count -eq 0) ($badHeader -join ' | ')
+Check "no-target keys use @trigger_no!" ($badNoKey.Count -eq 0) ($badNoKey -join ' | ')
+
 # 4. every key referenced by script exists in every language
 $scriptText = ''
 foreach ($f in (Get-ChildItem (Join-Path $root 'in_game') -Recurse -File -Include *.txt, *.gui)) {
@@ -71,9 +85,9 @@ $referenced += [regex]::Matches($scriptText, '(?m)^\s*name = "([A-Za-z_0-9]+)"')
 $referenced += [regex]::Matches($scriptText, 'none_available_msg_key = "([A-Za-z_0-9]+)"') | ForEach-Object { $_.Groups[1].Value }
 $referenced += [regex]::Matches($scriptText, '(?m)^RGO_change_[a-z_]+ = \{') | ForEach-Object { $_.Value.Replace(' = {', '') }
 $referenced += [regex]::Matches($scriptText, '(?m)^RGO_toggle_[a-z_]+ = \{') | ForEach-Object { $_.Value.Replace(' = {', '') }
-$referenced += @('RGO_GROUP_CATEGORIES', 'RGO_GROUP_SWITCHES', 'rgo_change', 'UnconditionallyChangeRGO', 'hint_UnconditionallyChangeRGO')
+$referenced += @('rgo_change', 'UnconditionallyChangeRGO', 'hint_UnconditionallyChangeRGO', 'RGO_toggle_state_on', 'RGO_toggle_state_off', 'RGO_CARD_HEADER')
 $referenced += ($referenced | Where-Object { $_ -like 'RGO_change_*' } | ForEach-Object { $_ + '_desc' })
-$referenced += ($referenced | Where-Object { $_ -like 'RGO_toggle_*' } | ForEach-Object { $_ + '_desc' })
+$referenced += ($referenced | Where-Object { $_ -like 'RGO_toggle_*' -and $_ -notlike 'RGO_toggle_state_*' } | ForEach-Object { $_ + '_desc' })
 $referenced += @('UnconditionallyChangeRGO_desc', 'hint_UnconditionallyChangeRGO_hint_text', 'STATIC_MODIFIER_NAME_rgo_change_cooldown', 'STATIC_MODIFIER_DESC_rgo_change_cooldown')
 $referenced += ($referenced | Where-Object { $_ -eq 'choose_situation' } | ForEach-Object { $_ })
 $referenced = @($referenced | Where-Object { $_ -ne 'choose_situation' } | Sort-Object -Unique)
@@ -111,7 +125,31 @@ $gui = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\gui\panels\situat
 $slices = @([regex]::Matches($gui, "'\(int32\)(\d+)'") | ForEach-Object { $_.Groups[1].Value })
 Check ("action count = " + $actions) ($actions -eq 7)
 Check ("toggle count = " + $toggles) ($toggles -eq 3)
-Check ("gui slices = " + ($slices -join '/')) (($slices.Count -eq 2) -and ($slices[0] -eq '7') -and ($slices[1] -eq '7'))
+Check "gui: no hardcoded index slicing" (-not ($gui -match 'DataModel(First|SkipFirst)\(ActionGroup\.GetActions'))
+Check "gui: uses actions_override" ($gui -match 'blockoverride\s+"actions_override"')
+Check "gui: native card disabled" ($gui -match 'blockoverride\s+"situation_panel_main_actions"')
+Check "gui: one-button gap present" ($gui -match 'size = \{ 480 30 \}')
+Check "gui: card header overridden" (($gui -match 'blockoverride\s+"card_header_text"') -and ($gui -match 'blockoverride\s+"card_header_icon"'))
+
+# 7. gameplay guards: AI disabled, location validity, price cost-modifier type
+$actionsText = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\common\generic_actions\00_rgo_actions.txt'))
+$togglesText = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\common\generic_actions\01_rgo_toggles.txt'))
+$allActions = $actionsText + "`n" + $togglesText
+$aiNever = [regex]::Matches($allActions, '(?m)^\tai_tick = never').Count
+$autoNever = [regex]::Matches($allActions, '(?m)^\tautomation_tick = never').Count
+Check ("AI disabled: ai_tick=never x" + $aiNever) ($aiNever -eq 10)
+Check ("AI disabled: automation_tick=never x" + $autoNever) ($autoNever -eq 10)
+Check "no ai_will_do / ai_prerequisite" (-not ($allActions -match 'ai_will_do|ai_prerequisite|player_automated_category'))
+Check "location filtered by is_goods_valid_for_location x" ([regex]::Matches($actionsText, 'is_goods_valid_for_location = scope:target_good').Count) ([regex]::Matches($actionsText, 'is_goods_valid_for_location = scope:target_good').Count -eq 7)
+Check "location filtered by current raw material" ([regex]::Matches($actionsText, 'NOT = \{ raw_material \?= scope:target_good \}').Count -eq 7)
+$modType = Join-Path $root 'main_menu\common\modifier_type_definitions\00_rgo_modifier_types.txt'
+Check "price cost-modifier type defined" ((Test-Path $modType) -and ([System.IO.File]::ReadAllText($modType) -match 'rgo_change_cost_modifier'))
+Check "gui: hint button present" ($gui -match "selected_hint = hint_UnconditionallyChangeRGO")
+Check "loc: switch state keys present" (@(foreach ($l in $langs) {
+            $p = Join-Path $root ("in_game\localization\{0}\UnconditionallyChangeRGO_l_{0}.yml" -f $l)
+            $text = [System.IO.File]::ReadAllText($p)
+            if (-not ($text -match 'RGO_toggle_state_on:0' -and $text -match 'RGO_toggle_state_off:0')) { $l }
+        }).Count -eq 0)
 
 Write-Host ''
 if ($fail -eq 0) { Write-Host "ALL CHECKS PASSED" } else { Write-Host ("FAILED: " + $fail); exit 1 }

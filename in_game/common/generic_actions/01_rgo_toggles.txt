@@ -26,20 +26,31 @@ RGO_toggle_cost = {
 		}
 	}
 
-	# 当前为开 -> 关闭；否则 -> 开启
+	# 悬停时显示当前开/关状态（custom_tooltip 由触发器决定用哪一句）
 	effect = {
 		scope:actor ?= {
 			if = {
 				limit = { RGO_cost_enabled = yes }
-				set_variable = {
-					name = rgo_var_cost
-					value = 0
-				}
+				custom_tooltip = { text = RGO_toggle_state_on }
 			}
 			else = {
-				set_variable = {
-					name = rgo_var_cost
-					value = 1
+				custom_tooltip = { text = RGO_toggle_state_off }
+			}
+
+			# 真正的状态切换放在 hidden_effect 里，避免 tooltip 出现变量噪音
+			hidden_effect = {
+				if = {
+					limit = { RGO_cost_enabled = yes }
+					set_variable = {
+						name = rgo_var_cost
+						value = 0
+					}
+				}
+				else = {
+					set_variable = {
+						name = rgo_var_cost
+						value = 1
+					}
 				}
 			}
 		}
@@ -65,21 +76,32 @@ RGO_toggle_cooldown = {
 		}
 	}
 
-	# 当前为开 -> 关闭；否则 -> 开启
+	# 悬停时显示当前开/关状态（custom_tooltip 由触发器决定用哪一句）
 	effect = {
 		scope:actor ?= {
 			if = {
 				limit = { RGO_cooldown_enabled = yes }
-				set_variable = {
-					name = rgo_var_cooldown
-					value = 0
-				}
-				remove_country_modifier = rgo_change_cooldown
+				custom_tooltip = { text = RGO_toggle_state_on }
 			}
 			else = {
-				set_variable = {
-					name = rgo_var_cooldown
-					value = 1
+				custom_tooltip = { text = RGO_toggle_state_off }
+			}
+
+			# 真正的状态切换放在 hidden_effect 里，避免 tooltip 出现变量噪音
+			hidden_effect = {
+				if = {
+					limit = { RGO_cooldown_enabled = yes }
+					set_variable = {
+						name = rgo_var_cooldown
+						value = 0
+					}
+					remove_country_modifier = rgo_change_cooldown
+				}
+				else = {
+					set_variable = {
+						name = rgo_var_cooldown
+						value = 1
+					}
 				}
 			}
 		}
@@ -105,20 +127,31 @@ RGO_toggle_produced = {
 		}
 	}
 
-	# 当前为开 -> 关闭；否则 -> 开启
+	# 悬停时显示当前开/关状态（custom_tooltip 由触发器决定用哪一句）
 	effect = {
 		scope:actor ?= {
 			if = {
 				limit = { RGO_cat_produced_enabled = yes }
-				set_variable = {
-					name = rgo_var_produced
-					value = 0
-				}
+				custom_tooltip = { text = RGO_toggle_state_on }
 			}
 			else = {
-				set_variable = {
-					name = rgo_var_produced
-					value = 1
+				custom_tooltip = { text = RGO_toggle_state_off }
+			}
+
+			# 真正的状态切换放在 hidden_effect 里，避免 tooltip 出现变量噪音
+			hidden_effect = {
+				if = {
+					limit = { RGO_cat_produced_enabled = yes }
+					set_variable = {
+						name = rgo_var_produced
+						value = 0
+					}
+				}
+				else = {
+					set_variable = {
+						name = rgo_var_produced
+						value = 1
+					}
 				}
 			}
 		}

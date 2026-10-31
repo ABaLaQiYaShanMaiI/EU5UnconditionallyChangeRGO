@@ -1,6 +1,6 @@
 ﻿# 生成 in_game/common/generic_actions/00_rgo_actions.txt（7 个分类动作）
 #   与 in_game/common/generic_actions/01_rgo_toggles.txt（3 个开关）
-# 同时把 GUI 里的分类切片数字（DataModelFirst / DataModelSkipFirst）同步为当前分类数。
+# 同时校验 GUI 的分组方式（不能再用写死的 DataModelFirst/SkipFirst 切片）。
 #
 # 数据来源：原版 common\goods\*.txt；价格阶梯 / 冷却 / 默认值见 tools\rgo_common.ps1
 #
@@ -74,7 +74,7 @@ function Add-GoodsStep($sb, $ids) {
 }
 
 function Add-LocationStep($sb) {
-    Add-RgoLine $sb 1 '# 3) 选地块：仅本国地块'
+    Add-RgoLine $sb 1 '# 3) 选地块：仅本国地块，且必须能产出所选原材料'
     Add-RgoLine $sb 1 'select_trigger = {'
     Add-RgoLine $sb 2 'looking_for_a = location'
     Add-RgoLine $sb 2 'target_flag = target_location'
@@ -89,6 +89,13 @@ function Add-LocationStep($sb) {
     Add-RgoLine $sb 5 'add_to_list = source'
     Add-RgoLine $sb 4 '}'
     Add-RgoLine $sb 3 '}'
+    Add-RgoLine $sb 2 '}'
+    # 原版 columbian_exchange 同样用这两个条件过滤候选地块：
+    #   is_goods_valid_for_location —— 该货物能否作为此地原材料（城市/地形/气候等限制）
+    #   排除已经是该货物的地块，避免花冤枉钱
+    Add-RgoLine $sb 2 'visible = {'
+    Add-RgoLine $sb 3 'is_goods_valid_for_location = scope:target_good'
+    Add-RgoLine $sb 3 'NOT = { raw_material ?= scope:target_good }'
     Add-RgoLine $sb 2 '}'
     Add-RgoLine $sb 1 '}'
 }
@@ -207,21 +214,32 @@ foreach ($d in $toggleDefs) {
     Add-RgoLine $tb 2 '}'
     Add-RgoLine $tb 1 '}'
     Add-RgoLine $tb 0 ''
-    Add-RgoLine $tb 1 '# 当前为开 -> 关闭；否则 -> 开启'
+    Add-RgoLine $tb 1 '# 悬停时显示当前开/关状态（custom_tooltip 由触发器决定用哪一句）'
     Add-RgoLine $tb 1 'effect = {'
     Add-RgoLine $tb 2 'scope:actor ?= {'
     Add-RgoLine $tb 3 'if = {'
     Add-RgoLine $tb 4 ('limit = { ' + $d.check + ' = yes }')
-    Add-RgoLine $tb 4 'set_variable = {'
-    Add-RgoLine $tb 5 ('name = ' + $d.var)
-    Add-RgoLine $tb 5 'value = 0'
-    Add-RgoLine $tb 4 '}'
-    if ($d.cleanup) { Add-RgoLine $tb 4 $d.cleanup }
+    Add-RgoLine $tb 4 'custom_tooltip = { text = RGO_toggle_state_on }'
     Add-RgoLine $tb 3 '}'
     Add-RgoLine $tb 3 'else = {'
-    Add-RgoLine $tb 4 'set_variable = {'
-    Add-RgoLine $tb 5 ('name = ' + $d.var)
-    Add-RgoLine $tb 5 'value = 1'
+    Add-RgoLine $tb 4 'custom_tooltip = { text = RGO_toggle_state_off }'
+    Add-RgoLine $tb 3 '}'
+    Add-RgoLine $tb 0 ''
+    Add-RgoLine $tb 3 '# 真正的状态切换放在 hidden_effect 里，避免 tooltip 出现变量噪音'
+    Add-RgoLine $tb 3 'hidden_effect = {'
+    Add-RgoLine $tb 4 'if = {'
+    Add-RgoLine $tb 5 ('limit = { ' + $d.check + ' = yes }')
+    Add-RgoLine $tb 5 'set_variable = {'
+    Add-RgoLine $tb 6 ('name = ' + $d.var)
+    Add-RgoLine $tb 6 'value = 0'
+    Add-RgoLine $tb 5 '}'
+    if ($d.cleanup) { Add-RgoLine $tb 5 $d.cleanup }
+    Add-RgoLine $tb 4 '}'
+    Add-RgoLine $tb 4 'else = {'
+    Add-RgoLine $tb 5 'set_variable = {'
+    Add-RgoLine $tb 6 ('name = ' + $d.var)
+    Add-RgoLine $tb 6 'value = 1'
+    Add-RgoLine $tb 5 '}'
     Add-RgoLine $tb 4 '}'
     Add-RgoLine $tb 3 '}'
     Add-RgoLine $tb 2 '}'
@@ -311,18 +329,23 @@ $configText = $cb.ToString()
 Write-RgoTextFile -Path $configFile -Text $configText -CheckOnly:$Check
 
 # ============================================================
-# 4. GUI 切片数字同步（分类数变化时不再需要手改 GUI）
+# 4. GUI 一致性校验
 # ============================================================
 if (Test-Path -LiteralPath $guiFile) {
     $guiText = [System.IO.File]::ReadAllText($guiFile)
-    $guiNew = [regex]::Replace($guiText, "'\(int32\)\d+'", "`'(int32)$catCount`'")
-    Write-RgoTextFile -Path $guiFile -Text $guiNew -CheckOnly:$Check
-    if ($guiNew -eq $guiText) {
-        Write-Host ("[一致] GUI 切片数字 = " + $catCount)
+    if ($guiText -match 'DataModel(First|SkipFirst)\(ActionGroup\.GetActions') {
+        throw 'GUI 仍用 DataModelFirst/SkipFirst 的写死切片，隐藏分类时会把开关挤进分类区'
     }
+    if ($guiText -notmatch 'blockoverride\s+"actions_override"') {
+        throw 'GUI 没有使用 situation_card_actions 的 actions_override，无法在分类与开关之间留出间隔'
+    }
+    if ($guiText -notmatch 'blockoverride\s+"situation_panel_main_actions"') {
+        throw 'GUI 没有关闭 situation_panel_main_actions，会与自定义卡片重复渲染'
+    }
+    Write-Host '[一致] GUI：原生卡片 + actions_override 分组（中间留一个按钮高度）'
 }
 else {
-    Write-Warning ("找不到 GUI 文件，跳过切片数字同步: " + $guiFile)
+    Write-Warning ("找不到 GUI 文件，跳过一致性校验: " + $guiFile)
 }
 
 # ============================================================
@@ -361,7 +384,7 @@ Write-Host ("原版货物 {0} 种 -> {1} 个分类（排除: {2}）" -f $rows.Co
 foreach ($k in $groups.Keys) {
     Write-Host ("  {0,-11} {1,3} 种  {2}" -f $k, $groups[$k].Count, ($groups[$k] -join ', '))
 }
-Write-Host ("分类动作 {0} 个 / 开关 {1} 个 / GUI 切片 {2}" -f $actionCount, $toggleCount, $catCount)
+Write-Host ("分类动作 {0} 个 / 开关 {1} 个" -f $actionCount, $toggleCount)
 
 if ($actionCount -ne $catCount) { throw "分类动作数量（$actionCount）与分类数（$catCount）不一致" }
 if ($toggleCount -ne $toggleDefs.Count) { throw "开关数量（$toggleCount）与开关表（$($toggleDefs.Count)）不一致" }

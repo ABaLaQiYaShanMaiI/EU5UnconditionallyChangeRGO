@@ -1,0 +1,13 @@
+﻿# 价格 rgo_change 对应的“成本修正器类型”。
+# 原版每个价格 <id> 都配一个 <id>_cost_modifier 修正器类型（定义在
+# main_menu/common/modifier_type_definitions/00_modifier_types.txt），
+# 缺少它时 price_database 会在 error.log 里报：
+#   Missing modifier type for price. rgo_change_cost_modifier
+# 加上之后该报错消失，同时国家的“成本修正”类加成也能作用于本价格。
+rgo_change_cost_modifier={
+	color=bad
+	percent=yes
+	game_data={
+		category=country
+	}
+}
