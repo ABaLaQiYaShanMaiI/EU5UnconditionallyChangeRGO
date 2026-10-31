@@ -69,9 +69,9 @@ situation_panel = {
 	}
 
 	# ============================================================
-	# 两组按钮：分类（前 7 个） / 开关（其余 3 个）
+	# 两组按钮：分类（前 N 个） / 开关（其余 3 个）
 	# 用 DataModelFirst + DataModelSkipFirst 切片，中间留空隙并加小标题
-	# 注：前 7 = RGO_change_* 的个数，若分类数量变化需同步改这两个数字
+	# 注：两个切片数字由 tools\generate_rgo_actions.ps1 自动同步，勿手改
 	# ============================================================
 	blockoverride "situation_panel_main_content" {
 		vbox = {
@@ -95,6 +95,11 @@ situation_panel = {
 						scrollwidget = {
 							vbox = {
 								layoutpolicy_horizontal = expanding
+
+								# ---------- 分组小标题：分类 ----------
+								text_single = {
+									text = "RGO_GROUP_CATEGORIES"
+								}
 
 								# ---------- 第一组：分类（7 个） ----------
 								fixedgridbox = {

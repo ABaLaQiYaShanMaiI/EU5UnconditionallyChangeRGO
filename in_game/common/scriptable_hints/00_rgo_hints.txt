@@ -1,7 +1,10 @@
 ﻿hint_UnconditionallyChangeRGO = {
-	# 常驻提示：面板里的"打开提示"按钮会直接定位到这里
+	# 常驻提示：局势面板里的"打开提示"按钮会直接定位到这里
 	priority = { always = yes }
 	sort_priority = 900
 	hide = { }
+
+	# 标题与正文分别取本地化键 hint_UnconditionallyChangeRGO 与
+	# hint_UnconditionallyChangeRGO_hint_text（11 种语言由 tools\generate_rgo_localization.ps1 生成）
 	hint_tag = hint_UnconditionallyChangeRGO
 }

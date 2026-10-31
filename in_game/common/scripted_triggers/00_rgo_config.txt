@@ -1,89 +1,107 @@
 ﻿# ============================================================
-# 原产物无限制全修改 —— 开关配置
-# 说明：这里改的是"文件级默认值"（永久默认）。
-#       玩家在游戏内点"设置开关"按钮会写入国家变量，变量优先于这里的默认值。
-#       yes = 默认开启，no = 默认关闭
+# 原产物全修改 —— 开关与价格阶梯配置
+# 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改
+# 真值源：tools\rgo_common.ps1（默认值、价格阈值与系数、冷却月数）
+#
+# 判定优先级：玩家在局势面板点开关会写入国家变量（rgo_var_*）；
+#             有变量则以变量为准，没有变量才用下面的文件级默认值。
 # ============================================================
 
-# --- 花费开关（开启后按所选货物的市场价收费，随供需涨跌） ---
+# --- 花费开关（yes = 按市场价收费 / no = 全部免费） ---
 RGO_cfg_cost_default = { always = no }
 
-# --- 冷却开关（开启后每次修改会挂 6 个月冷却） ---
+# --- 冷却开关（yes = 每次修改挂 6 个月冷却 / no = 无冷却） ---
 RGO_cfg_cooldown_default = { always = no }
 
-# --- 七个分类的默认开关 ---
+# --- 七个分类的默认按钮开关 ---
 RGO_cfg_cat_mining_default     = { always = yes }
 RGO_cfg_cat_gathering_default  = { always = yes }
 RGO_cfg_cat_crops_default      = { always = yes }
 RGO_cfg_cat_food_default       = { always = yes }
 RGO_cfg_cat_plantation_default = { always = yes }
 RGO_cfg_cat_wild_default       = { always = yes }
-RGO_cfg_cat_industry_default   = { always = no }
+RGO_cfg_cat_produced_default   = { always = no }
 
 # ============================================================
-# 运行时判定：有国家变量则以变量为准，否则用上面的默认值
-# 这些 trigger 都以"国家"为 root 调用，例如 scope:actor ?= { RGO_opt_cost = yes }
+# 运行时判定（root 均为国家，可在任何国家作用域里直接调用）
 # ============================================================
 
-RGO_opt_cost = {
+RGO_cost_enabled = {
 	OR = {
 		AND = {
-			has_variable = rgo_opt_cost
-			var:rgo_opt_cost > 0
+			has_variable = rgo_var_cost
+			var:rgo_var_cost > 0
 		}
 		AND = {
-			NOT = { has_variable = rgo_opt_cost }
+			NOT = { has_variable = rgo_var_cost }
 			RGO_cfg_cost_default = yes
 		}
 	}
 }
 
-RGO_opt_cooldown = {
+RGO_cooldown_enabled = {
 	OR = {
 		AND = {
-			has_variable = rgo_opt_cooldown
-			var:rgo_opt_cooldown > 0
+			has_variable = rgo_var_cooldown
+			var:rgo_var_cooldown > 0
 		}
 		AND = {
-			NOT = { has_variable = rgo_opt_cooldown }
+			NOT = { has_variable = rgo_var_cooldown }
 			RGO_cfg_cooldown_default = yes
 		}
 	}
 }
 
-RGO_cat_mining_enabled = {
-	RGO_cfg_cat_mining_default = yes
-}
-
-RGO_cat_gathering_enabled = {
-	RGO_cfg_cat_gathering_default = yes
-}
-
-RGO_cat_crops_enabled = {
-	RGO_cfg_cat_crops_default = yes
-}
-
-RGO_cat_food_enabled = {
-	RGO_cfg_cat_food_default = yes
-}
-
-RGO_cat_plantation_enabled = {
-	RGO_cfg_cat_plantation_default = yes
-}
-
-RGO_cat_wild_enabled = {
-	RGO_cfg_cat_wild_default = yes
-}
-
-RGO_cat_industry_enabled = {
+RGO_cat_produced_enabled = {
 	OR = {
 		AND = {
-			has_variable = rgo_cat_industry
-			var:rgo_cat_industry > 0
+			has_variable = rgo_var_produced
+			var:rgo_var_produced > 0
 		}
 		AND = {
-			NOT = { has_variable = rgo_cat_industry }
-			RGO_cfg_cat_industry_default = yes
+			NOT = { has_variable = rgo_var_produced }
+			RGO_cfg_cat_produced_default = yes
 		}
 	}
+}
+
+# ============================================================
+# 价格阶梯（被各分类动作的 price_modifier 调用）
+# RGO_chargeable：花费开关开启 + 地块处于某个市场内，才谈得上收费
+# 阈值(<) -> 系数：0.75 / 1.5 / 2.5 / 3.5 / 6（其余为最高档） -> 0.5 / 1 / 1.6 / 2.4 / 3.4 / 5
+# ============================================================
+RGO_chargeable = {
+	scope:actor ?= {
+		RGO_cost_enabled = yes
+	}
+	exists = scope:target_location.market
+}
+
+RGO_price_tier_1 = {
+	RGO_chargeable = yes
+	"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
+}
+
+RGO_price_tier_2 = {
+	RGO_chargeable = yes
+	"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
+}
+
+RGO_price_tier_3 = {
+	RGO_chargeable = yes
+	"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
+}
+
+RGO_price_tier_4 = {
+	RGO_chargeable = yes
+	"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
+}
+
+RGO_price_tier_5 = {
+	RGO_chargeable = yes
+	"scope:target_good.price_in_market(scope:target_location.market)" < 6
+}
+
+RGO_price_tier_6 = {
+	RGO_chargeable = yes
 }

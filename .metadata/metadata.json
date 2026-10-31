@@ -1,10 +1,10 @@
 ﻿{
   "id": "UnconditionallyChangeRGO",
   "name": "原产物无限制全修改",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "supported_game_version": "1.*.*",
-  "short_description": "免费、无限次修改本国任意地块的原产物；53 种合法原材料按六大类分组，工业制成品自动排除",
-  "tags": ["Trade and Economics"],
+  "short_description": "免费或按市场价修改本国任意地点的原材料：74 种货物、七个分类，制成品默认关闭。Change the raw material of any owned location for free or at market price: 74 goods in 7 groups, manufactured goods optional.",
+  "tags": ["Utilities", "Trade and Economics"],
   "picture": "thumbnail.png",
   "relationships": [],
   "game_custom_data": {}

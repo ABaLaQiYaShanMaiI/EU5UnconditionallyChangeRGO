@@ -1,9 +1,10 @@
 ﻿# ============================================================
-# 两个"额外功能"开关（手写，不参与生成器）：
-#   1) 经济系统（花费）  RGO_toggle_cost
-#   2) 工业制品          RGO_toggle_cat_industry
-# 另附冷却开关          RGO_toggle_cooldown
-# 三者都出现在局势面板里与分类按钮同一张卡中，点击一次切换一次，免费。
+# 三个开关（与分类按钮同处局势面板的一张卡内，点击一次切换一次，免费）
+#   RGO_toggle_cost  ->  国家变量 rgo_var_cost
+#   RGO_toggle_cooldown  ->  国家变量 rgo_var_cooldown
+#   RGO_toggle_produced  ->  国家变量 rgo_var_produced
+# 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改
+# 开关判定与默认值见 in_game/common/scripted_triggers/00_rgo_config.txt
 # ============================================================
 
 RGO_toggle_cost = {
@@ -13,12 +14,7 @@ RGO_toggle_cost = {
 	automation_tick = never
 	show_message = no
 
-	potential = {
-	}
-
-	allow = {
-	}
-
+	# 按钮挂在局势面板上，需要一个 recipient（本局势）
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -30,18 +26,19 @@ RGO_toggle_cost = {
 		}
 	}
 
+	# 当前为开 -> 关闭；否则 -> 开启
 	effect = {
 		scope:actor ?= {
 			if = {
-				limit = { RGO_opt_cost = yes }
+				limit = { RGO_cost_enabled = yes }
 				set_variable = {
-					name = rgo_opt_cost
+					name = rgo_var_cost
 					value = 0
 				}
 			}
 			else = {
 				set_variable = {
-					name = rgo_opt_cost
+					name = rgo_var_cost
 					value = 1
 				}
 			}
@@ -56,12 +53,7 @@ RGO_toggle_cooldown = {
 	automation_tick = never
 	show_message = no
 
-	potential = {
-	}
-
-	allow = {
-	}
-
+	# 按钮挂在局势面板上，需要一个 recipient（本局势）
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -73,19 +65,20 @@ RGO_toggle_cooldown = {
 		}
 	}
 
+	# 当前为开 -> 关闭；否则 -> 开启
 	effect = {
 		scope:actor ?= {
 			if = {
-				limit = { RGO_opt_cooldown = yes }
+				limit = { RGO_cooldown_enabled = yes }
 				set_variable = {
-					name = rgo_opt_cooldown
+					name = rgo_var_cooldown
 					value = 0
 				}
 				remove_country_modifier = rgo_change_cooldown
 			}
 			else = {
 				set_variable = {
-					name = rgo_opt_cooldown
+					name = rgo_var_cooldown
 					value = 1
 				}
 			}
@@ -93,19 +86,14 @@ RGO_toggle_cooldown = {
 	}
 }
 
-RGO_toggle_cat_industry = {
+RGO_toggle_produced = {
 	type = situation
 
 	ai_tick = never
 	automation_tick = never
 	show_message = no
 
-	potential = {
-	}
-
-	allow = {
-	}
-
+	# 按钮挂在局势面板上，需要一个 recipient（本局势）
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -117,21 +105,23 @@ RGO_toggle_cat_industry = {
 		}
 	}
 
+	# 当前为开 -> 关闭；否则 -> 开启
 	effect = {
 		scope:actor ?= {
 			if = {
-				limit = { RGO_cat_industry_enabled = yes }
+				limit = { RGO_cat_produced_enabled = yes }
 				set_variable = {
-					name = rgo_cat_industry
+					name = rgo_var_produced
 					value = 0
 				}
 			}
 			else = {
 				set_variable = {
-					name = rgo_cat_industry
+					name = rgo_var_produced
 					value = 1
 				}
 			}
 		}
 	}
 }
+

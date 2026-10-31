@@ -4,10 +4,12 @@ RGO_apply_change = {
 		change_raw_material = scope:target_good
 	}
 
-	# 冷却开关开启时，给执行者挂 6 个月冷却（无任何数值效果，仅作判定与提示）
+	# 冷却：这里用自定义静态修正器，而不是 generic action 原生的 cooldown。
+	# 原因：玩家关闭冷却开关时必须能立刻清除冷却，原生 cooldown 一旦触发无法撤销。
+	# 月数必须与 tools/rgo_common.ps1 的 $RGO_COOLDOWN_MONTHS 一致（生成器会校验）。
 	if = {
 		limit = {
-			scope:actor ?= { RGO_opt_cooldown = yes }
+			scope:actor ?= { RGO_cooldown_enabled = yes }
 		}
 		scope:actor ?= {
 			add_country_modifier = {

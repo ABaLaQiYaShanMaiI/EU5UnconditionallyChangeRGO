@@ -1,6 +1,8 @@
 ﻿########################################################################
 # 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改
-# 七大分类：矿物 / 采集 / 经济作物 / 食物 / 种植园 / 狩猎林业 / 工业品
+# 七个分类：矿物 / 采集 / 经济作物 / 食物 / 种植园 / 狩猎林业 / 制成品
+# 货物清单来自原版 common\goods\*.txt；新增或改动货物后重跑生成器即可
+# 价格阶梯、冷却月数、分类默认值统一在 tools\rgo_common.ps1 里维护
 ########################################################################
 
 RGO_change_mining = {
@@ -11,82 +13,35 @@ RGO_change_mining = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_mining_enabled = yes
+			RGO_cfg_cat_mining_default = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -97,12 +52,16 @@ RGO_change_mining = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 13 种
+
+	# 2) 选原材料：本分类 13 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -131,10 +90,11 @@ RGO_change_mining = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
@@ -156,82 +116,35 @@ RGO_change_gathering = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_gathering_enabled = yes
+			RGO_cfg_cat_gathering_default = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -242,12 +155,16 @@ RGO_change_gathering = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 7 种
+
+	# 2) 选原材料：本分类 7 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -270,10 +187,11 @@ RGO_change_gathering = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
@@ -295,82 +213,35 @@ RGO_change_crops = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_crops_enabled = yes
+			RGO_cfg_cat_crops_default = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -381,12 +252,16 @@ RGO_change_crops = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 14 种
+
+	# 2) 选原材料：本分类 14 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -416,10 +291,11 @@ RGO_change_crops = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
@@ -441,82 +317,35 @@ RGO_change_food = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_food_enabled = yes
+			RGO_cfg_cat_food_default = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -527,12 +356,16 @@ RGO_change_food = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 12 种
+
+	# 2) 选原材料：本分类 12 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -560,10 +393,11 @@ RGO_change_food = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
@@ -585,82 +419,35 @@ RGO_change_plantation = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_plantation_enabled = yes
+			RGO_cfg_cat_plantation_default = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -671,12 +458,16 @@ RGO_change_plantation = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 3 种
+
+	# 2) 选原材料：本分类 3 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -695,10 +486,11 @@ RGO_change_plantation = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
@@ -720,82 +512,35 @@ RGO_change_wild = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_wild_enabled = yes
+			RGO_cfg_cat_wild_default = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -806,12 +551,16 @@ RGO_change_wild = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 4 种
+
+	# 2) 选原材料：本分类 4 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -831,10 +580,11 @@ RGO_change_wild = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
@@ -848,7 +598,7 @@ RGO_change_wild = {
 	}
 }
 
-RGO_change_industry = {
+RGO_change_produced = {
 	type = situation
 
 	ai_tick = never
@@ -856,82 +606,35 @@ RGO_change_industry = {
 	show_message = no
 	show_message_to_target = no
 
-	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
 	price = price:rgo_change
 	price_modifier = {
-		# 阶梯一：极廉价原料（市场价 < 0.75）→ 5 金
-		if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 0.75
-			}
-			value = 0.5
-		}
-		# 阶梯二：常见原料（0.75 ~ 1.5）→ 10 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 1.5
-			}
-			value = 1
-		}
-		# 阶梯三：中低档（1.5 ~ 2.5）→ 16 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 2.5
-			}
-			value = 1.6
-		}
-		# 阶梯四：中高档（2.5 ~ 3.5）→ 24 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 3.5
-			}
-			value = 2.4
-		}
-		# 阶梯五：高档（3.5 ~ 6）→ 34 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-				"scope:target_good.price_in_market(scope:target_location.market)" < 6
-			}
-			value = 3.4
-		}
-		# 阶梯六：短缺/奢侈（>= 6）→ 50 金
-		else_if = {
-			limit = {
-				scope:actor ?= { RGO_opt_cost = yes }
-				exists = scope:target_location.market
-			}
-			value = 5
-		}
-		# 花费开关关闭 / 地块不在任何市场内 → 免费
+		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
+		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
+		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
+		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
+		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
+		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
 		else = {
 			value = 0
 		}
 	}
 
-	# 分类开关：关闭后本按钮消失
+	# 分类开关：关闭后本按钮不再出现
 	potential = {
 		scope:actor ?= {
-			RGO_cat_industry_enabled = yes
+			RGO_cat_produced_enabled = yes
 		}
 	}
 
-	# 冷却开关：开启且冷却未结束时按钮不可用
+	# 冷却开关：冷却未结束时按钮不可用
 	allow = {
 		scope:actor ?= {
 			NOT = { has_country_modifier = rgo_change_cooldown }
 		}
 	}
 
+	# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步
 	select_trigger = {
 		looking_for_a = situation
 		target_flag = recipient
@@ -942,12 +645,16 @@ RGO_change_industry = {
 			situation_is_active = yes
 		}
 	}
-	# 2) 选原产物：本分类 22 种
+
+	# 2) 选原材料：本分类 21 种
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
-		name = "select_goods"
+		name = "RGO_select_goods"
 		column = { data = name }
+		none_available_msg_key = "RGO_no_goods_available"
+		cache_targets = yes
+		cache_interaction_source_list = yes
 		interaction_source_list = {
 			every_goods = {
 				limit = {
@@ -969,7 +676,6 @@ RGO_change_industry = {
 						this = goods:paper
 						this = goods:porcelain
 						this = goods:pottery
-						this = goods:slaves_goods
 						this = goods:steel
 						this = goods:tar
 						this = goods:tools
@@ -985,10 +691,11 @@ RGO_change_industry = {
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
-		name = "select_location"
+		name = "RGO_select_location"
 		map_mode = raw_material
 		column = { data = name }
 		column = { data = raw_material }
+		none_available_msg_key = "RGO_no_locations_available"
 		interaction_source_list = {
 			scope:actor = {
 				every_owned_location = {
