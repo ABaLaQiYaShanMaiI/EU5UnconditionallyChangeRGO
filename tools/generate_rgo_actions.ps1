@@ -123,6 +123,7 @@ foreach ($g in $groups.Keys) {
     [void]$out.AppendLine("		if = {")
     [void]$out.AppendLine("			limit = {")
     [void]$out.AppendLine("				scope:actor ?= { RGO_opt_cost = yes }")
+    [void]$out.AppendLine("				exists = scope:target_location.market")
     [void]$out.AppendLine("			}")
     [void]$out.AppendLine("			value = `"scope:target_good.price_in_market(scope:target_location.market)`"")
     [void]$out.AppendLine("			multiply = 0.5")
@@ -158,63 +159,6 @@ foreach ($g in $groups.Keys) {
     [void]$out.AppendLine("")
 }
 
-# ---------- 4. 设置开关动作 ----------
-$settings = @(
-    @{ tag = 'cost';           trig = 'RGO_opt_cost';                var = 'rgo_opt_cost';           extra = $null },
-    @{ tag = 'cooldown';       trig = 'RGO_opt_cooldown';            var = 'rgo_opt_cooldown';       extra = 'remove_country_modifier = rgo_change_cooldown' },
-    @{ tag = 'cat_mining';     trig = 'RGO_cat_mining_enabled';      var = 'rgo_cat_mining';         extra = $null },
-    @{ tag = 'cat_gathering';  trig = 'RGO_cat_gathering_enabled';   var = 'rgo_cat_gathering';      extra = $null },
-    @{ tag = 'cat_crops';      trig = 'RGO_cat_crops_enabled';       var = 'rgo_cat_crops';          extra = $null },
-    @{ tag = 'cat_food';       trig = 'RGO_cat_food_enabled';        var = 'rgo_cat_food';           extra = $null },
-    @{ tag = 'cat_plantation'; trig = 'RGO_cat_plantation_enabled';  var = 'rgo_cat_plantation';     extra = $null },
-    @{ tag = 'cat_wild';       trig = 'RGO_cat_wild_enabled';        var = 'rgo_cat_wild';           extra = $null },
-    @{ tag = 'cat_industry';   trig = 'RGO_cat_industry_enabled';    var = 'rgo_cat_industry';       extra = $null }
-)
-
-[void]$out.AppendLine('########################################################################')
-[void]$out.AppendLine('# 设置开关：点一次切换一次，免费')
-[void]$out.AppendLine('########################################################################')
-[void]$out.AppendLine('')
-
-foreach ($s in $settings) {
-    [void]$out.AppendLine("RGO_toggle_$($s.tag) = {")
-    [void]$out.AppendLine("	type = situation")
-    [void]$out.AppendLine("")
-    [void]$out.AppendLine("	ai_tick = never")
-    [void]$out.AppendLine("	automation_tick = never")
-    [void]$out.AppendLine("	show_message = no")
-    [void]$out.AppendLine("")
-    [void]$out.AppendLine("	potential = {")
-    [void]$out.AppendLine("	}")
-    [void]$out.AppendLine("")
-    [void]$out.AppendLine("	allow = {")
-    [void]$out.AppendLine("	}")
-    [void]$out.AppendLine("")
-    [void]$out.AppendLine($situationStep)
-    [void]$out.AppendLine("	effect = {")
-    [void]$out.AppendLine("		scope:actor ?= {")
-    [void]$out.AppendLine("			if = {")
-    [void]$out.AppendLine("				limit = {")
-    [void]$out.AppendLine("					$($s.trig) = yes")
-    [void]$out.AppendLine("				}")
-    [void]$out.AppendLine("				set_variable = {")
-    [void]$out.AppendLine("					name = $($s.var)")
-    [void]$out.AppendLine("					value = 0")
-    [void]$out.AppendLine("				}")
-    if ($s.extra) { [void]$out.AppendLine("				$($s.extra)") }
-    [void]$out.AppendLine("			}")
-    [void]$out.AppendLine("			else = {")
-    [void]$out.AppendLine("				set_variable = {")
-    [void]$out.AppendLine("					name = $($s.var)")
-    [void]$out.AppendLine("					value = 1")
-    [void]$out.AppendLine("				}")
-    [void]$out.AppendLine("			}")
-    [void]$out.AppendLine("		}")
-    [void]$out.AppendLine("	}")
-    [void]$out.AppendLine("}")
-    [void]$out.AppendLine("")
-}
-
 # ---------- 5. 写出（UTF-8 BOM） ----------
 $dir = Split-Path -Parent $outFile
 if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
@@ -224,4 +168,4 @@ Write-Host "已生成: $outFile"
 foreach ($k in $groups.Keys) {
     Write-Host ("  {0,-11} {1,3} 种: {2}" -f $k, $groups[$k].Count, ($groups[$k] -join ', '))
 }
-Write-Host ("动作数: {0}（变更 {1} + 设置 {2}）" -f ($groups.Count + $settings.Count), $groups.Count, $settings.Count)
+Write-Host ("动作数: {0}（变更 {1}）" -f $groups.Count, $groups.Count)

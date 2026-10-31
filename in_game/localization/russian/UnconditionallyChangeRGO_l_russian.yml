@@ -48,9 +48,23 @@
  RGO_toggle_cat_wild_desc:0 "Показать или скрыть кнопку «Охота»."
  RGO_toggle_cat_industry:0 "Промышл. вкл/выкл"
  RGO_toggle_cat_industry_desc:0 "Показать или скрыть кнопку «Промышленность». По умолчанию выключено."
+ RGO_toggle_reset:0 "Сброс переключателей"
+ RGO_toggle_reset_desc:0 "Возвращает все переключатели к значениям по умолчанию из файла конфигурации (стоимость выкл., перезарядка выкл., промышленность выкл., остальные категории вкл.) и снимает текущую перезарядку."
 
  # Модификатор перезарядки
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Перезарядка сырья"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "Изменение сырья на перезарядке; новые изменения невозможны до её окончания."
 
  rgo_change:0 "Изменить сырьё"
+ # Категория решений и подписи опций
+ RGO_DECISION_CATEGORY:0 "Переключатели сырья"
+ RGO_toggle_cost.a:0 "Переключить"
+ RGO_toggle_cooldown.a:0 "Переключить"
+ RGO_toggle_cat_mining.a:0 "Переключить"
+ RGO_toggle_cat_gathering.a:0 "Переключить"
+ RGO_toggle_cat_crops.a:0 "Переключить"
+ RGO_toggle_cat_food.a:0 "Переключить"
+ RGO_toggle_cat_plantation.a:0 "Переключить"
+ RGO_toggle_cat_wild.a:0 "Переключить"
+ RGO_toggle_cat_industry.a:0 "Переключить"
+ RGO_toggle_reset.a:0 "Сбросить"

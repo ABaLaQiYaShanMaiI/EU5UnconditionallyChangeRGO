@@ -48,6 +48,8 @@
  RGO_toggle_cat_wild_desc:0 "显示 / 隐藏「狩猎」按钮。"
  RGO_toggle_cat_industry:0 "工业开关"
  RGO_toggle_cat_industry_desc:0 "显示 / 隐藏「工业」按钮。默认关闭。"
+ RGO_toggle_reset:0 "重置开关"
+ RGO_toggle_reset_desc:0 "把所有开关恢复成配置文件里的默认状态（花费关、冷却关、工业关、其余分类开），并清除当前冷却。"
 
  # 价格名（确认页显示）
  rgo_change:0 "修改原产物"
@@ -55,3 +57,15 @@
  # 冷却修正器
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "原产物冷却"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "原产物修改的冷却尚未结束，冷却期间无法再次修改。"
+ # 决议分类与选项
+ RGO_DECISION_CATEGORY:0 "原产物开关"
+ RGO_toggle_cost.a:0 "切换"
+ RGO_toggle_cooldown.a:0 "切换"
+ RGO_toggle_cat_mining.a:0 "切换"
+ RGO_toggle_cat_gathering.a:0 "切换"
+ RGO_toggle_cat_crops.a:0 "切换"
+ RGO_toggle_cat_food.a:0 "切换"
+ RGO_toggle_cat_plantation.a:0 "切换"
+ RGO_toggle_cat_wild.a:0 "切换"
+ RGO_toggle_cat_industry.a:0 "切换"
+ RGO_toggle_reset.a:0 "重置"

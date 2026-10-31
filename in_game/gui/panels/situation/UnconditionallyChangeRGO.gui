@@ -10,119 +10,15 @@
 	}
 
 	# ============================================================
-	# 动作区：双列自适应网格（不滚动）
-	# 注意：普通 widget 不允许写 margin（会报 Property 'margin' not handled
-	#       并导致整个 uberwidget 创建失败），所以外层统一用 vbox/hbox。
+	# 官方方案：直接使用模板 situations_actions
+	# - 按钮 100% 由引擎生成：可点击、长按确认、冷却置灰、分类隐藏都由引擎处理
+	# - 顺序：分类动作 RGO_change_*（7 个）在前，开关动作 RGO_toggle_*（10 个）在后
 	# ============================================================
 	blockoverride "situation_panel_main_actions" {
 		vbox = {
 			layoutpolicy_horizontal = expanding
-			visible = "[Not(IsDataModelEmpty(SituationView.GetActionGroups))]"
 
-			# ---------- 卡头：图标 + 标题 ----------
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				size = { -1 34 }
-				margin = { 4 0 }
-				spacing = 6
-
-				icon = {
-					size = { 24 24 }
-					texture = "gfx/interface/icons/situations/UnconditionallyChangeRGO.dds"
-				}
-
-				text_single = {
-					align = nobaseline
-					text = "RGO_CARD_TITLE"
-				}
-
-				expand = { }
-			}
-
-			# ---------- 双列按钮网格 ----------
-			vbox = {
-				layoutpolicy_horizontal = expanding
-				margin = { 4 4 }
-
-				dynamicgridbox = {
-					datamodel = "[SituationView.GetActionGroups]"
-					ignoreinvisible = yes
-
-					item = {
-						widget = {
-							fixedgridbox = {
-								datamodel = "[ActionGroup.GetActions]"
-								addcolumn = 244
-								addrow = 32
-								maxhorizontalslots = 2
-								datamodel_wrap = 2
-
-								item = {
-									widget = {
-										size = { 240 30 }
-
-										targetted_button_regular = {
-											size = { 234 26 }
-											parentanchor = center
-											text = "[GenericAction.GetNameWithNoTooltip]"
-											enabled = "[PdxGuiWidget.IsUberButtonEnabled]"
-
-											button_tooltip_override = {
-												title = "[GenericAction.GetName]"
-											}
-
-											scripted_action_tooltip = {
-												click_type = left
-												click_mode = single
-												action_name = "[GenericAction.GetLeftClickKey]"
-												actor = "[SituationView.GetPlayer]"
-												parameter = {
-													parameter_name = "recipient"
-													parameter_value = "[SituationView.GetActiveSituation.GetSituation]"
-												}
-											}
-
-											scripted_action_tooltip = {
-												click_type = left
-												click_mode = confirm
-												action_name = "[GenericAction.GetLeftClickAndHoldKey]"
-												actor = "[SituationView.GetPlayer]"
-												parameter = {
-													parameter_name = "recipient"
-													parameter_value = "[SituationView.GetActiveSituation.GetSituation]"
-												}
-											}
-
-											blockoverride "tooltip" {
-												tooltipwidget = {
-													ContextualTooltipType = {
-														blockoverride "title_text" {
-															text = "[GenericAction.GetNameWithNoTooltip]"
-														}
-														blockoverride "concept_link" {
-															text = "[situation|e]"
-														}
-														blockoverride "title_icon" {
-															icon = {
-																using = tooltip_title_icon_size
-																texture = "[SituationView.GetActiveSituation.GetIcon]"
-															}
-														}
-														blockoverride "tooltip_content" {
-															using = action_tooltip_inner_content
-															blockoverride "conditions_list" { }
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			using = situations_actions
 		}
 	}
 }

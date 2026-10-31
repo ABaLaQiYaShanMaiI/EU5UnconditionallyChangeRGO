@@ -48,9 +48,23 @@
  RGO_toggle_cat_wild_desc:0 "Show or hide the Hunting button."
  RGO_toggle_cat_industry:0 "Industry on/off"
  RGO_toggle_cat_industry_desc:0 "Show or hide the Industry button. Off by default."
+ RGO_toggle_reset:0 "Reset switches"
+ RGO_toggle_reset_desc:0 "Restore every switch to the defaults from the config file (cost off, cooldown off, industry off, all other categories on) and clear any running cooldown."
 
  # Cooldown modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Raw Material Cooldown"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "The raw material change is on cooldown; no further changes are possible until it expires."
 
  rgo_change:0 "Change Raw Material"
+ # Decision category and option labels
+ RGO_DECISION_CATEGORY:0 "Raw Material Switches"
+ RGO_toggle_cost.a:0 "Toggle"
+ RGO_toggle_cooldown.a:0 "Toggle"
+ RGO_toggle_cat_mining.a:0 "Toggle"
+ RGO_toggle_cat_gathering.a:0 "Toggle"
+ RGO_toggle_cat_crops.a:0 "Toggle"
+ RGO_toggle_cat_food.a:0 "Toggle"
+ RGO_toggle_cat_plantation.a:0 "Toggle"
+ RGO_toggle_cat_wild.a:0 "Toggle"
+ RGO_toggle_cat_industry.a:0 "Toggle"
+ RGO_toggle_reset.a:0 "Reset"

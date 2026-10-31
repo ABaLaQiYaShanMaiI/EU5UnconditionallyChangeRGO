@@ -17,6 +17,7 @@ RGO_change_mining = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -117,6 +118,7 @@ RGO_change_gathering = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -211,6 +213,7 @@ RGO_change_crops = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -312,6 +315,7 @@ RGO_change_food = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -411,6 +415,7 @@ RGO_change_plantation = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -501,6 +506,7 @@ RGO_change_wild = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -592,6 +598,7 @@ RGO_change_industry = {
 		if = {
 			limit = {
 				scope:actor ?= { RGO_opt_cost = yes }
+				exists = scope:target_location.market
 			}
 			value = "scope:target_good.price_in_market(scope:target_location.market)"
 			multiply = 0.5
@@ -684,407 +691,6 @@ RGO_change_industry = {
 	}
 	effect = {
 		RGO_apply_change = yes
-	}
-}
-
-########################################################################
-# 设置开关：点一次切换一次，免费
-########################################################################
-
-RGO_toggle_cost = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_opt_cost = yes
-				}
-				set_variable = {
-					name = rgo_opt_cost
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_opt_cost
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cooldown = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_opt_cooldown = yes
-				}
-				set_variable = {
-					name = rgo_opt_cooldown
-					value = 0
-				}
-				remove_country_modifier = rgo_change_cooldown
-			}
-			else = {
-				set_variable = {
-					name = rgo_opt_cooldown
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_mining = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_mining_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_mining
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_mining
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_gathering = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_gathering_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_gathering
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_gathering
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_crops = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_crops_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_crops
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_crops
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_food = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_food_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_food
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_food
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_plantation = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_plantation_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_plantation
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_plantation
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_wild = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_wild_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_wild
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_wild
-					value = 1
-				}
-			}
-		}
-	}
-}
-
-RGO_toggle_cat_industry = {
-	type = situation
-
-	ai_tick = never
-	automation_tick = never
-	show_message = no
-
-	potential = {
-	}
-
-	allow = {
-	}
-
-	select_trigger = {
-		looking_for_a = situation
-		target_flag = recipient
-		name = "choose_situation"
-		column = { data = name }
-		visible = {
-			situation:UnconditionallyChangeRGO = this
-			situation_is_active = yes
-		}
-	}
-	effect = {
-		scope:actor ?= {
-			if = {
-				limit = {
-					RGO_cat_industry_enabled = yes
-				}
-				set_variable = {
-					name = rgo_cat_industry
-					value = 0
-				}
-			}
-			else = {
-				set_variable = {
-					name = rgo_cat_industry
-					value = 1
-				}
-			}
-		}
 	}
 }
 

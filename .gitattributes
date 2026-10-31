@@ -1,0 +1,12 @@
+# Paradox 脚本统一使用 UTF-8（部分文件带 BOM），行尾保持原样，避免跨平台差异
+* text=auto eol=lf
+
+*.yml text eol=lf
+*.txt text eol=lf
+*.gui text eol=lf
+*.mod text eol=lf
+*.json text eol=lf
+*.ps1 text eol=crlf
+
+*.dds binary
+*.png binary
