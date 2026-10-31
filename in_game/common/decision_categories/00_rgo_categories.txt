@@ -1,5 +1,0 @@
-﻿# 由 tools\generate_rgo_switches.ps1 自动生成
-rgo_switches = {
-	name_key = RGO_DECISION_CATEGORY
-	sort_order = 90
-}

@@ -1,0 +1,137 @@
+﻿# ============================================================
+# 两个"额外功能"开关（手写，不参与生成器）：
+#   1) 经济系统（花费）  RGO_toggle_cost
+#   2) 工业制品          RGO_toggle_cat_industry
+# 另附冷却开关          RGO_toggle_cooldown
+# 三者都出现在局势面板里与分类按钮同一张卡中，点击一次切换一次，免费。
+# ============================================================
+
+RGO_toggle_cost = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = { RGO_opt_cost = yes }
+				set_variable = {
+					name = rgo_opt_cost
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_opt_cost
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cooldown = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = { RGO_opt_cooldown = yes }
+				set_variable = {
+					name = rgo_opt_cooldown
+					value = 0
+				}
+				remove_country_modifier = rgo_change_cooldown
+			}
+			else = {
+				set_variable = {
+					name = rgo_opt_cooldown
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_industry = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = { RGO_cat_industry_enabled = yes }
+				set_variable = {
+					name = rgo_cat_industry
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_industry
+					value = 1
+				}
+			}
+		}
+	}
+}
