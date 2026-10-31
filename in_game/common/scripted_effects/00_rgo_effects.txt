@@ -1,0 +1,19 @@
+﻿# 原产物修改的唯一执行入口（7 个分类动作都调用它）
+RGO_apply_change = {
+	scope:target_location ?= {
+		change_raw_material = scope:target_good
+	}
+
+	# 冷却开关开启时，给执行者挂 6 个月冷却（无任何数值效果，仅作判定与提示）
+	if = {
+		limit = {
+			scope:actor ?= { RGO_opt_cooldown = yes }
+		}
+		scope:actor ?= {
+			add_country_modifier = {
+				modifier = rgo_change_cooldown
+				months = 6
+			}
+		}
+	}
+}

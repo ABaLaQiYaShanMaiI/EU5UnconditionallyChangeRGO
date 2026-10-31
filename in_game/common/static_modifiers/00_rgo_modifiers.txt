@@ -1,0 +1,7 @@
+﻿# 冷却修正器：开启冷却开关后，每次修改原产物给国家挂 6 个月
+# 本身不提供任何数值效果，只用于 has_country_modifier 判定 + UI 上可见的"冷却中"图标
+rgo_change_cooldown = {
+	game_data = { category = country }
+
+	trade_income = 0
+}

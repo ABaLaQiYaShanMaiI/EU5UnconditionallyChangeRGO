@@ -1,0 +1,1090 @@
+﻿########################################################################
+# 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改
+# 七大分类：矿物 / 采集 / 经济作物 / 食物 / 种植园 / 狩猎林业 / 工业品
+########################################################################
+
+RGO_change_mining = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_mining_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 13 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:alum
+						this = goods:coal
+						this = goods:copper
+						this = goods:gems
+						this = goods:goods_gold
+						this = goods:iron
+						this = goods:lead
+						this = goods:marble
+						this = goods:mercury
+						this = goods:saltpeter
+						this = goods:silver
+						this = goods:stone
+						this = goods:tin
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+RGO_change_gathering = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_gathering_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 7 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:amber
+						this = goods:clay
+						this = goods:fish
+						this = goods:medicaments
+						this = goods:pearls
+						this = goods:salt
+						this = goods:sand
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+RGO_change_crops = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_crops_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 14 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:camels
+						this = goods:chili
+						this = goods:cloves
+						this = goods:cocoa
+						this = goods:coffee
+						this = goods:dyes
+						this = goods:elephants
+						this = goods:fiber_crops
+						this = goods:incense
+						this = goods:pepper
+						this = goods:saffron
+						this = goods:silk
+						this = goods:tea
+						this = goods:wine
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+RGO_change_food = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_food_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 12 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:beeswax
+						this = goods:fruit
+						this = goods:horses
+						this = goods:legumes
+						this = goods:livestock
+						this = goods:maize
+						this = goods:millet
+						this = goods:olives
+						this = goods:potato
+						this = goods:rice
+						this = goods:wheat
+						this = goods:wool
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+RGO_change_plantation = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_plantation_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 3 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:cotton
+						this = goods:sugar
+						this = goods:tobacco
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+RGO_change_wild = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_wild_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 4 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:fur
+						this = goods:ivory
+						this = goods:lumber
+						this = goods:wild_game
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+RGO_change_industry = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+	show_message_to_target = no
+
+	# 花费 = 基础价 x 所选货物的市场价系数（开关关闭时系数为 0，即免费）
+	price = price:rgo_change
+	price_modifier = {
+		if = {
+			limit = {
+				scope:actor ?= { RGO_opt_cost = yes }
+			}
+			value = "scope:target_good.price_in_market(scope:target_location.market)"
+			multiply = 0.5
+			min = 0.5
+			max = 6
+		}
+		else = {
+			value = 0
+		}
+	}
+
+	# 分类开关：关闭后本按钮消失
+	potential = {
+		scope:actor ?= {
+			RGO_cat_industry_enabled = yes
+		}
+	}
+
+	# 冷却开关：开启且冷却未结束时按钮不可用
+	allow = {
+		scope:actor ?= {
+			NOT = { has_country_modifier = rgo_change_cooldown }
+		}
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	# 2) 选原产物：本分类 22 种
+	select_trigger = {
+		looking_for_a = goods
+		target_flag = target_good
+		name = "select_goods"
+		column = { data = name }
+		interaction_source_list = {
+			every_goods = {
+				limit = {
+					OR = {
+						this = goods:beer
+						this = goods:books
+						this = goods:cannons
+						this = goods:cloth
+						this = goods:fine_cloth
+						this = goods:firearms
+						this = goods:furniture
+						this = goods:glass
+						this = goods:jewelry
+						this = goods:lacquerware
+						this = goods:leather
+						this = goods:liquor
+						this = goods:masonry
+						this = goods:naval_supplies
+						this = goods:paper
+						this = goods:porcelain
+						this = goods:pottery
+						this = goods:slaves_goods
+						this = goods:steel
+						this = goods:tar
+						this = goods:tools
+						this = goods:weaponry
+					}
+				}
+				add_to_list = source
+			}
+		}
+	}
+
+	# 3) 选地块：仅本国地块
+	select_trigger = {
+		looking_for_a = location
+		target_flag = target_location
+		name = "select_location"
+		map_mode = raw_material
+		column = { data = name }
+		column = { data = raw_material }
+		interaction_source_list = {
+			scope:actor = {
+				every_owned_location = {
+					add_to_list = source
+				}
+			}
+		}
+	}
+	effect = {
+		RGO_apply_change = yes
+	}
+}
+
+########################################################################
+# 设置开关：点一次切换一次，免费
+########################################################################
+
+RGO_toggle_cost = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_opt_cost = yes
+				}
+				set_variable = {
+					name = rgo_opt_cost
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_opt_cost
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cooldown = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_opt_cooldown = yes
+				}
+				set_variable = {
+					name = rgo_opt_cooldown
+					value = 0
+				}
+				remove_country_modifier = rgo_change_cooldown
+			}
+			else = {
+				set_variable = {
+					name = rgo_opt_cooldown
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_mining = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_mining_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_mining
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_mining
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_gathering = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_gathering_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_gathering
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_gathering
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_crops = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_crops_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_crops
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_crops
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_food = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_food_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_food
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_food
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_plantation = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_plantation_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_plantation
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_plantation
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_wild = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_wild_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_wild
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_wild
+					value = 1
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_cat_industry = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	potential = {
+	}
+
+	allow = {
+	}
+
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = {
+					RGO_cat_industry_enabled = yes
+				}
+				set_variable = {
+					name = rgo_cat_industry
+					value = 0
+				}
+			}
+			else = {
+				set_variable = {
+					name = rgo_cat_industry
+					value = 1
+				}
+			}
+		}
+	}
+}
+

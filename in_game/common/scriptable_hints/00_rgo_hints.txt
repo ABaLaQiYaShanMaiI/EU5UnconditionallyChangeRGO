@@ -1,0 +1,7 @@
+﻿hint_UnconditionallyChangeRGO = {
+	# 常驻提示：面板里的"打开提示"按钮会直接定位到这里
+	priority = { always = yes }
+	sort_priority = 900
+	hide = { }
+	hint_tag = hint_UnconditionallyChangeRGO
+}

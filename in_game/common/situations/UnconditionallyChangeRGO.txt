@@ -1,0 +1,15 @@
+﻿UnconditionallyChangeRGO = {
+
+	# 开局概率：1 = 每月必定开启（0..1，见 common/situations/readme.txt）
+	monthly_spawn_chance = 1
+
+	# 与提示面板联动（定义在 common/scriptable_hints/00_rgo_hints.txt）
+	hint_tag = hint_UnconditionallyChangeRGO
+
+	# 永不自动结束：作为玩家的常驻工具面板
+	can_start = { always = yes }
+	can_end = { always = no }
+
+	# 仅玩家可见（AI 不会看到、也不会用）
+	visible = { is_ai = no }
+}

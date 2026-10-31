@@ -1,0 +1,143 @@
+﻿# ============================================================
+# 原产物无限制全修改 —— 开关配置
+# 说明：这里改的是"文件级默认值"（永久默认）。
+#       玩家在游戏内点"设置开关"按钮会写入国家变量，变量优先于这里的默认值。
+#       yes = 默认开启，no = 默认关闭
+# ============================================================
+
+# --- 花费开关（开启后按所选货物的市场价收费，随供需涨跌） ---
+RGO_cfg_cost_default = { always = no }
+
+# --- 冷却开关（开启后每次修改会挂 6 个月冷却） ---
+RGO_cfg_cooldown_default = { always = no }
+
+# --- 七个分类的默认开关 ---
+RGO_cfg_cat_mining_default     = { always = yes }
+RGO_cfg_cat_gathering_default  = { always = yes }
+RGO_cfg_cat_crops_default      = { always = yes }
+RGO_cfg_cat_food_default       = { always = yes }
+RGO_cfg_cat_plantation_default = { always = yes }
+RGO_cfg_cat_wild_default       = { always = yes }
+RGO_cfg_cat_industry_default   = { always = no }
+
+# ============================================================
+# 运行时判定：有国家变量则以变量为准，否则用上面的默认值
+# 这些 trigger 都以"国家"为 root 调用，例如 scope:actor ?= { RGO_opt_cost = yes }
+# ============================================================
+
+RGO_opt_cost = {
+	OR = {
+		AND = {
+			has_variable = rgo_opt_cost
+			var:rgo_opt_cost > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_opt_cost }
+			RGO_cfg_cost_default = yes
+		}
+	}
+}
+
+RGO_opt_cooldown = {
+	OR = {
+		AND = {
+			has_variable = rgo_opt_cooldown
+			var:rgo_opt_cooldown > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_opt_cooldown }
+			RGO_cfg_cooldown_default = yes
+		}
+	}
+}
+
+RGO_cat_mining_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_mining
+			var:rgo_cat_mining > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_mining }
+			RGO_cfg_cat_mining_default = yes
+		}
+	}
+}
+
+RGO_cat_gathering_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_gathering
+			var:rgo_cat_gathering > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_gathering }
+			RGO_cfg_cat_gathering_default = yes
+		}
+	}
+}
+
+RGO_cat_crops_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_crops
+			var:rgo_cat_crops > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_crops }
+			RGO_cfg_cat_crops_default = yes
+		}
+	}
+}
+
+RGO_cat_food_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_food
+			var:rgo_cat_food > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_food }
+			RGO_cfg_cat_food_default = yes
+		}
+	}
+}
+
+RGO_cat_plantation_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_plantation
+			var:rgo_cat_plantation > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_plantation }
+			RGO_cfg_cat_plantation_default = yes
+		}
+	}
+}
+
+RGO_cat_wild_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_wild
+			var:rgo_cat_wild > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_wild }
+			RGO_cfg_cat_wild_default = yes
+		}
+	}
+}
+
+RGO_cat_industry_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_cat_industry
+			var:rgo_cat_industry > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_cat_industry }
+			RGO_cfg_cat_industry_default = yes
+		}
+	}
+}

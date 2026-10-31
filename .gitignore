@@ -1,0 +1,10 @@
+# 临时/备份文件（正式文件不应出现在仓库）
+*.tmp
+*.bak
+*.disabled
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# 个人本地文件
+*.log

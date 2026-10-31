@@ -1,0 +1,56 @@
+﻿l_english:
+ # Situation
+ UnconditionallyChangeRGO:0 "Raw Materials"
+ UnconditionallyChangeRGO_desc:0 "Change the raw material of any location you own - free of charge or at market price."
+ hint_UnconditionallyChangeRGO:0 "Raw Materials\n\nThe seven buttons on top start a change (pick a raw material, then a location).\nThe nine switches below toggle each time you click them.\n\n- Cost: when on, you pay the live market price of the chosen good in that location's market, rising and falling with supply and demand (roughly 5-60 gold); when off everything is free\n- Cooldown: when on, every change starts a 6 month cooldown and the buttons grey out; turning it off clears any running cooldown immediately\n- Industrial: off by default. Industrial goods are produced by buildings, so using them as raw materials is not vanilla behaviour and may break building output\n\nHover any button to see which goods its category contains."
+
+ # Card title
+ RGO_CARD_TITLE:0 "Raw Materials"
+
+ # Selection steps
+ select_goods:0 "Select Raw Material"
+ select_location:0 "Select Location"
+ trigger_no_rgo_goods:0 "No raw materials available"
+ trigger_no_rgo_locations:0 "No eligible locations available"
+
+ # Seven categories (button text kept minimal, details in tooltips)
+ RGO_change_mining:0 "Mining"
+ RGO_change_mining_desc:0 "Change to a mining good (13): coal, iron, copper, gold, silver, gems, stone, tin, lead, saltpeter, alum, marble, mercury."
+ RGO_change_gathering:0 "Gathering"
+ RGO_change_gathering_desc:0 "Change to a gathered good (7): clay, sand, salt, medicaments, pearls, amber, fish."
+ RGO_change_crops:0 "Crops"
+ RGO_change_crops_desc:0 "Change to a cash crop or luxury raw material (14): silk, dyes, incense, tea, cocoa, coffee, fiber crops, wine, elephants, camels, saffron, pepper, cloves, chili."
+ RGO_change_food:0 "Food"
+ RGO_change_food_desc:0 "Change to a food good (12): wheat, maize, rice, millet, legumes, potato, livestock, wool, horses, olives, fruit, beeswax."
+ RGO_change_plantation:0 "Plantation"
+ RGO_change_plantation_desc:0 "Change to a plantation good (3): cotton, sugar, tobacco."
+ RGO_change_wild:0 "Hunting"
+ RGO_change_wild_desc:0 "Change to a hunting or forestry good (4): ivory, wild game, fur, lumber."
+ RGO_change_industry:0 "Industry"
+ RGO_change_industry_desc:0 "Change to an industrial good (22): cloth, paper, glass, porcelain, cannons, jewellery... Not vanilla behaviour and may break building output. Off by default - enable it with the switch below."
+
+ # Nine switches (each click toggles)
+ RGO_toggle_cost:0 "Cost on/off"
+ RGO_toggle_cost_desc:0 "On: you pay the live market price of the chosen good (roughly 5-60 gold, it rises and falls with supply and demand). Off: completely free."
+ RGO_toggle_cooldown:0 "Cooldown on/off"
+ RGO_toggle_cooldown_desc:0 "On: every change starts a 6 month cooldown. Off: no cooldown, and any running one is cleared immediately."
+ RGO_toggle_cat_mining:0 "Mining on/off"
+ RGO_toggle_cat_mining_desc:0 "Show or hide the Mining button."
+ RGO_toggle_cat_gathering:0 "Gathering on/off"
+ RGO_toggle_cat_gathering_desc:0 "Show or hide the Gathering button."
+ RGO_toggle_cat_crops:0 "Crops on/off"
+ RGO_toggle_cat_crops_desc:0 "Show or hide the Crops button."
+ RGO_toggle_cat_food:0 "Food on/off"
+ RGO_toggle_cat_food_desc:0 "Show or hide the Food button."
+ RGO_toggle_cat_plantation:0 "Plantation on/off"
+ RGO_toggle_cat_plantation_desc:0 "Show or hide the Plantation button."
+ RGO_toggle_cat_wild:0 "Hunting on/off"
+ RGO_toggle_cat_wild_desc:0 "Show or hide the Hunting button."
+ RGO_toggle_cat_industry:0 "Industry on/off"
+ RGO_toggle_cat_industry_desc:0 "Show or hide the Industry button. Off by default."
+
+ # Cooldown modifier
+ STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Raw Material Cooldown"
+ STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "The raw material change is on cooldown; no further changes are possible until it expires."
+
+ rgo_change:0 "Change Raw Material"
