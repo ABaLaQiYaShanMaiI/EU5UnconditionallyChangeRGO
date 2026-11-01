@@ -60,8 +60,11 @@ template rgo_action_button {
 # ============================================================
 # 局势面板
 #
-# 按钮外壳仍用引擎内建的 situation_card_actions（原生卡片背景与标题），
-# 只通过它官方提供的 actions_override 钩子自己排列按钮：
+# 按钮外壳仍用引擎内建的 situation_card_actions（原生卡片背景与标题）。
+# 关键：situation_card_actions 自己已经 blockoverride 了 "actions_override"，
+# 所以在实例上再覆盖它无效（列表会退回原版单列 + 卡片内滚动条）。
+# 原版 gui/panels/situation/black_death.gui 的正确写法是覆盖它内部那个
+# block "situation_card_action_list"，本文件照此实现。
 #
 #   [分类 两列，最多 4 行]  →  18px 间隔  →  [开关 两列，2 行]
 #
@@ -105,7 +108,7 @@ situation_panel = {
 							text = "RGO_CARD_HEADER"
 						}
 
-						blockoverride "actions_override" {
+						blockoverride "situation_card_action_list" {
 							vbox = {
 								layoutpolicy_horizontal = expanding
 								spacing = 4
@@ -121,9 +124,11 @@ situation_panel = {
 								}
 
 								# 第 2 行：分类 3、4
+								# visible：可见分类数（= 动作总数 - 开关数）不足 3 个时整行隐藏，避免取到开关按钮
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									spacing = 4
+									visible = "[GreaterThan_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)6')]"
 									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)2', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)3', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 								}
@@ -132,15 +137,18 @@ situation_panel = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									spacing = 4
+									visible = "[GreaterThan_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)8')]"
 									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)4', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)5', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 								}
 
-								# 第 4 行：分类 7（制成品；该分类隐藏时这一行自然为空）
+								# 第 4 行：分类 7（制成品）
+								# visible：只有 7 个分类都在时才显示，否则这一格会取到第一个开关（花费开关）
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									spacing = 4
-									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)6', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+									visible = "[GreaterThan_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)10')]"
+									vbox = { size = { 234 -1 } datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)6', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 								}
 
 								# ============ 分类与开关之间的间隔 ============

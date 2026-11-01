@@ -352,8 +352,8 @@ if (Test-Path -LiteralPath $guiFile) {
     if ($guiText -match 'DataModel(First|SkipFirst)\(ActionGroup\.GetActions') {
         throw 'GUI 仍用 DataModelFirst/SkipFirst 的写死切片，隐藏分类时会把开关挤进分类区'
     }
-    if ($guiText -notmatch 'blockoverride\s+"actions_override"') {
-        throw 'GUI 没有使用 situation_card_actions 的 actions_override，无法在分类与开关之间留出间隔'
+    if ($guiText -notmatch 'blockoverride\s+"situation_card_action_list"') {
+        throw 'GUI 没有覆盖 situation_card_actions 内部的 situation_card_action_list（覆盖 actions_override 无效，它已被该类型自己覆盖过）'
     }
     if ($guiText -notmatch 'blockoverride\s+"situation_panel_main_actions"') {
         throw 'GUI 没有关闭 situation_panel_main_actions，会与自定义卡片重复渲染'
@@ -376,6 +376,16 @@ if (Test-Path -LiteralPath $guiFile) {
     $guiRows = ([regex]::Matches($guiText, '(?m)^\t+hbox = \{')).Count
     if ($guiRows -ne $expectedRows) {
         throw ('GUI 的行数是 ' + $guiRows + '，按两列布局应为 ' + $expectedRows + ' 行（分类 ' + $catCount + ' 个 + 开关 ' + $RGO_TOGGLE_COUNT + ' 个）')
+    }
+    # 分类行的可见性：第 r 行要求「可见分类数 >= 2r+1」，即可见分类数（size - 开关数）> 2r
+    # 少了这个判断，分类被隐藏时该行会取到开关按钮（1.0.7 初版就把「花费开关」渲染了两遍）
+    $catRows = [int][Math]::Ceiling($catCount / 2)
+    for ($r = 1; $r -lt $catRows; $r++) {
+        $threshold = $RGO_TOGGLE_COUNT + 2 * $r
+        $needle = 'visible = "[GreaterThan_int32(GetDataModelSize(ActionGroup.GetActions), ' + "'(int32)$threshold'" + ')]"'
+        if (([regex]::Matches($guiText, [regex]::Escape($needle))).Count -ne 1) {
+            throw ('GUI 第 ' + ($r + 1) + ' 行缺少可见性判断 ' + $needle + '：分类被隐藏时这一行会取到开关按钮')
+        }
     }
     Write-Host ('[一致] GUI：原生卡片 + actions_override 两列网格（分类 ' + $catCount + ' 个 → ' + [Math]::Ceiling($catCount / 2) + ' 行，开关 ' + $RGO_TOGGLE_COUNT + ' 个 → ' + [Math]::Ceiling($RGO_TOGGLE_COUNT / 2) + ' 行，中间留 18px 间隔）')
 }

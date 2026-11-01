@@ -6,9 +6,17 @@
 - **按钮改为两列**：7 个分类排成 4 行 × 2 列，4 个开关排成 2 行 × 2 列（原来是一长列 7+4 行），
   一屏内更紧凑，也不用再滚很久才能点到开关
 - **分类与开关之间留 18px 间隔**（原来是一个按钮高度），两组不再连成一片
-- 分组仍用引擎官方钩子 `actions_override`；切片改用 `DataModelSubSpan(源, 起始索引, 数量)`
-  逐个取按钮（原版 `hre.gui` / `heir_selection.gui` 的多列写法），不写死条目总数
+- 分组改成覆盖 `situation_card_actions` 内部的 `situation_card_action_list`
+  （写法取自原版 `gui/panels/situation/black_death.gui`）。
+  之前 1.0.5/1.0.6 覆盖的 `actions_override` 其实**一直没生效**：该类型自己已经
+  `blockoverride` 过它，实例上再覆盖会被静默忽略，列表退回原版单列 + 卡片内滚动条，
+  所以之前既没有间隔、也一直显得拥挤
+- 切片用 `DataModelSubSpan(源, 起始索引, 数量)` 逐个取按钮（原版 `hre.gui` /
+  `heir_selection.gui` 的多列写法），不写死条目总数
 - 隐藏「制成品」时动作列表只剩 6 个分类，最后一行的两个格子自然为空，不会留下空行或错位
+- 修复分类第 4 行取到第一个开关的问题（制成品默认隐藏时「花费开关」会重复出现）：
+  每个分类行都加 `visible = "[GreaterThan_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)N')]"`，
+  可见分类数不足就整行隐藏；第 4 行只有一个按钮时用固定宽度，保持在左列
 - 按钮 476×28 → 230×28；为了塞进窄按钮，法语开关名改用「act./dés.」缩写
   （悬停说明与提示正文仍是完整文案）
 
