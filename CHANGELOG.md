@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.0.7
+
+### 界面：两列布局
+- **按钮改为两列**：7 个分类排成 4 行 × 2 列，4 个开关排成 2 行 × 2 列（原来是一长列 7+4 行），
+  一屏内更紧凑，也不用再滚很久才能点到开关
+- **分类与开关之间留 18px 间隔**（原来是一个按钮高度），两组不再连成一片
+- 分组仍用引擎官方钩子 `actions_override`；切片改用 `DataModelSubSpan(源, 起始索引, 数量)`
+  逐个取按钮（原版 `hre.gui` / `heir_selection.gui` 的多列写法），不写死条目总数
+- 隐藏「制成品」时动作列表只剩 6 个分类，最后一行的两个格子自然为空，不会留下空行或错位
+- 按钮 476×28 → 230×28；为了塞进窄按钮，法语开关名改用「act./dés.」缩写
+  （悬停说明与提示正文仍是完整文案）
+
+### 工程
+- `generate_rgo_actions.ps1`：GUI 校验改为「每个分类索引 / 开关倒数索引的切片必须存在且唯一」
+  +「行数 = ceil(分类数/2) + ceil(开关数/2)」，改数据没同步 GUI 会直接报错
+- `validate_mod.ps1`：新增两列切片完整性检查（替换原来的 `DataModelLast` / 切片数字检查）
+- 版本 1.0.6 → 1.0.7
+
+## 1.0.6
+
+### 新增：限定地理条件开关
+- 新增第 4 个开关 `RGO_toggle_geo`（国家变量 `rgo_var_geo`，判定触发器 `RGO_geo_enabled`），
+  按钮排在「制成品开关」之后，与其它开关一样点一次切换一次、悬停显示当前开/关
+- **默认关闭**：选地点不再检查原版地理条件，本国任意地点都能改成任意原材料
+- **开启后恢复原版限制**：使用 `is_goods_valid_for_location`，即货物 `location_potential` 里的
+  气候 / 植被 / 地形 / 区域等静态条件，只列出原版允许该货物的地点
+  （对照原版 `generic_actions/columbian_exchange.txt` 与 `common/goods/readme.txt` 的 `location_potential` 说明）
+- 判定集中在 `in_game/common/scripted_triggers/00_rgo_config.txt` 的 `RGO_geo_allows_target`：
+  开关关闭时恒为 `yes`，7 个分类动作都只调用这一个触发器，方便以后单独调整限制条件
+- 11 种语言新增 `RGO_toggle_geo` / `RGO_toggle_geo_desc`，并在提示正文末尾追加「地理条件」条目
+
+### 工程
+- 开关表 `$RGO_TOGGLES` 移入 `tools/rgo_common.ps1`（id / 变量 / 判定触发器 / 默认值 / 关闭清理），
+  `generate_rgo_actions.ps1`、`generate_rgo_localization.ps1`、`validate_mod.ps1` 不再各自写死「3 个开关」
+- GUI 的 `DataModelLast` / `Subtract_int32` 切片数字改为按开关数量校验：漏改会被生成器直接报错
+- `validate_mod.ps1` 改为从 `rgo_common.ps1` 读取分类数与开关数，并新增地理门控 / 默认关闭 / GUI 切片检查
+- 文档：README 更新功能表、默认值表与兼容性说明
+
 ## 1.0.5
 
 ### 修复

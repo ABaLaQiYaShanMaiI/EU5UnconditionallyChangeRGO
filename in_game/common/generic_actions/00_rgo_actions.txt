@@ -86,7 +86,7 @@ RGO_change_mining = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -103,7 +103,7 @@ RGO_change_mining = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}
@@ -187,7 +187,7 @@ RGO_change_gathering = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -204,7 +204,7 @@ RGO_change_gathering = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}
@@ -295,7 +295,7 @@ RGO_change_crops = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -312,7 +312,7 @@ RGO_change_crops = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}
@@ -401,7 +401,7 @@ RGO_change_food = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -418,7 +418,7 @@ RGO_change_food = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}
@@ -498,7 +498,7 @@ RGO_change_plantation = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -515,7 +515,7 @@ RGO_change_plantation = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}
@@ -596,7 +596,7 @@ RGO_change_wild = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -613,7 +613,7 @@ RGO_change_wild = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}
@@ -711,7 +711,7 @@ RGO_change_produced = {
 		}
 	}
 
-	# 3) 选地块：仅本国地块，且必须能产出所选原材料
+	# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料
 	select_trigger = {
 		looking_for_a = location
 		target_flag = target_location
@@ -728,7 +728,7 @@ RGO_change_produced = {
 			}
 		}
 		visible = {
-			is_goods_valid_for_location = scope:target_good
+			RGO_geo_allows_target = yes
 			NOT = { raw_material ?= scope:target_good }
 		}
 	}

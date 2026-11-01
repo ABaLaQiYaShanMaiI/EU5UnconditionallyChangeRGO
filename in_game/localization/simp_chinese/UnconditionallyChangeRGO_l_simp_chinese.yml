@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "原材料"
- hint_UnconditionallyChangeRGO_hint_text:0 "原材料\n\n上方 7 个分类按钮：点一次后先选原材料，再选地点。下方 3 个开关：点一次切换一次。\n\n- 花费开关：开启后按所选货物在该地点市场的实时价格分六档收费（约 5 / 10 / 16 / 24 / 34 / 50 金）；供不应求时收费跳到更高一档。关闭则免费\n- 冷却开关：开启后每次修改产生 6 个月冷却，期间按钮变灰；关闭会立即清除冷却\n- 制成品开关：默认关闭。制成品是建筑产出，作为原材料属非原生玩法，可能影响建筑产出\n\n悬停任意按钮可看到该分类包含哪些货物。"
+ hint_UnconditionallyChangeRGO_hint_text:0 "原材料\n\n上方 7 个分类按钮：点一次后先选原材料，再选地点。下方 4 个开关：点一次切换一次。\n\n- 花费开关：开启后按所选货物在该地点市场的实时价格分六档收费（约 5 / 10 / 16 / 24 / 34 / 50 金）；供不应求时收费跳到更高一档。关闭则免费\n- 冷却开关：开启后每次修改产生 6 个月冷却，期间按钮变灰；关闭会立即清除冷却\n- 制成品开关：默认关闭。制成品是建筑产出，作为原材料属非原生玩法，可能影响建筑产出\n- 地理条件开关：默认关闭。关闭时本国任意地点都能改成任意原材料，即使原版的气候、植被、地形并不允许；开启后只列出原版允许该货物的地点。\n\n悬停任意按钮可看到该分类包含哪些货物。"
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "原材料操作"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "制成品"
  RGO_change_produced_desc:0 "改为制成品（21 种）：啤酒、书籍、火炮、布匹、精纺品、火器、家具、玻璃、珠宝、漆器、皮革、烈酒、砖块、船具、纸张、瓷器、陶器、钢、焦油、工具、武器。\n非原生玩法，可能影响建筑产出。默认关闭，需先在下方开启。"
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "花费开关"
  RGO_toggle_cost_desc:0 "开：按所选货物在该市场里的实时价格分六档收费（约 5 / 10 / 16 / 24 / 34 / 50 金）；供不应求导致价格上跳时，收费自动跳到更高一档。关：完全免费。"
  RGO_toggle_cooldown:0 "冷却开关"
  RGO_toggle_cooldown_desc:0 "开：每次修改产生 6 个月冷却。关：无冷却，并立即清除当前冷却。"
  RGO_toggle_produced:0 "制成品开关"
  RGO_toggle_produced_desc:0 "显示 / 隐藏「制成品」按钮。默认关闭。"
+ RGO_toggle_geo:0 "地理条件开关"
+ RGO_toggle_geo_desc:0 "开：只列出原版允许该货物的地点（气候、植被、地形、区域等）。关：本国任意地点都能改成任意原材料。默认关闭。"
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "当前：开启 —— 点击后关闭"

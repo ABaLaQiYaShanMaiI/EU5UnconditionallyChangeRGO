@@ -13,6 +13,9 @@ RGO_cfg_cost_default = { always = no }
 # --- 冷却开关（yes = 每次修改挂 6 个月冷却 / no = 无冷却） ---
 RGO_cfg_cooldown_default = { always = no }
 
+# --- 地理条件开关（yes = 只列出原版允许该货物的地点 / no = 不限地理条件） ---
+RGO_cfg_geo_default = { always = no }
+
 # --- 七个分类的默认按钮开关 ---
 RGO_cfg_cat_mining_default     = { always = yes }
 RGO_cfg_cat_gathering_default  = { always = yes }
@@ -62,6 +65,36 @@ RGO_cat_produced_enabled = {
 			NOT = { has_variable = rgo_var_produced }
 			RGO_cfg_cat_produced_default = yes
 		}
+	}
+}
+
+RGO_geo_enabled = {
+	OR = {
+		AND = {
+			has_variable = rgo_var_geo
+			var:rgo_var_geo > 0
+		}
+		AND = {
+			NOT = { has_variable = rgo_var_geo }
+			RGO_cfg_geo_default = yes
+		}
+	}
+}
+
+# ============================================================
+# 地理条件限制（被各分类动作的「选地点」步骤调用）
+#   开关关闭（默认）：恒为 yes —— 本国任意地点都能改成任意原材料
+#   开关开启：沿用原版 is_goods_valid_for_location，即货物的 location_potential
+#             （气候 / 植被 / 地形 / 区域等静态地理条件，原版在开局缓存）
+# ============================================================
+RGO_geo_allows_target = {
+	OR = {
+		NOT = {
+			scope:actor ?= {
+				RGO_geo_enabled = yes
+			}
+		}
+		is_goods_valid_for_location = scope:target_good
 	}
 }
 

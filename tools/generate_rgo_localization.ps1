@@ -24,7 +24,7 @@ $groups   = Get-RgoGroups -Rows $rows
 Assert-RgoGroups -Rows $rows -Groups $groups
 
 $catCount    = @($groups.Keys).Count
-$toggleCount = 3
+$toggleCount = $RGO_TOGGLE_COUNT
 $tierText    = (($RGO_PRICE_TIERS | ForEach-Object { $_.gold }) -join ' / ')
 
 # 游戏内官方语言（顺序与启动器一致）
@@ -163,7 +163,7 @@ $locales['french'] = @{
         wild       = 'Biens de chasse et de forêt ({n}) : {goods}.'
         produced   = 'Produits manufacturés ({n}) : {goods}.\nComportement non vanilla, peut perturber la production. Désactivé par défaut.'
     }
-    toggle          = [ordered]@{ cost = 'Coût activé/désactivé'; cooldown = 'Recharge activée/désactivée'; produced = 'Manufacturés activés/désactivés' }
+    toggle          = [ordered]@{ cost = 'Coût act./dés.'; cooldown = 'Recharge act./dés.'; produced = 'Manufacturés act./dés.' }
     toggleDesc      = [ordered]@{
         cost     = "Activé : facture le prix réel du marché local en six paliers (environ {tiers} or) ; en cas de pénurie, le palier augmente. Désactivé : entièrement gratuit."
         cooldown = "Activé : chaque changement impose {months} mois de recharge. Désactivé : aucune recharge, et celle en cours est annulée immédiatement."
@@ -430,6 +430,71 @@ $locales['braz_por'] = @{
 
 
 # ============================================================
+# 地理条件开关（新增开关：文案集中在这里，不改上面 11 份长模板）
+#   toggle / desc : 按钮名与悬停说明
+#   hint          : 追加到「提示」正文最后一段之前的条目（不用写开头的 "- "）
+# 说明：默认关闭 = 不限地理条件；开启 = 只列出原版 location_potential 允许的地点
+# ============================================================
+$geoTexts = @{
+    english = @{
+        toggle = 'Geography on/off'
+        desc   = 'On: only locations where the game itself allows this good (climate, vegetation, topography, region) are listed. Off: any owned location can take any raw material. Off by default.'
+        hint   = 'Geography switch: off by default. When off, any owned location can take any raw material even if its climate, vegetation or terrain would not allow it in vanilla. When on, only the locations the game accepts for that good are listed.'
+    }
+    simp_chinese = @{
+        toggle = '地理条件开关'
+        desc   = '开：只列出原版允许该货物的地点（气候、植被、地形、区域等）。关：本国任意地点都能改成任意原材料。默认关闭。'
+        hint   = '地理条件开关：默认关闭。关闭时本国任意地点都能改成任意原材料，即使原版的气候、植被、地形并不允许；开启后只列出原版允许该货物的地点。'
+    }
+    russian = @{
+        toggle = 'География вкл/выкл'
+        desc   = 'Вкл.: показываются только территории, где игра сама допускает этот товар (климат, растительность, рельеф, регион). Выкл.: любую свою территорию можно сделать любым сырьём. По умолчанию выключено.'
+        hint   = 'География: по умолчанию выключено. Выкл.: любую свою территорию можно сделать любым сырьём, даже если климат, растительность или рельеф этого не допускают. Вкл.: только территории, допустимые в игре.'
+    }
+    french = @{
+        toggle = 'Géographie act./dés.'
+        desc   = "Activé : seuls les lieux où le jeu autorise ce bien (climat, végétation, relief, région) sont proposés. Désactivé : n'importe quel lieu vous appartenant accepte n'importe quelle matière première. Désactivé par défaut."
+        hint   = "Géographie : désactivée par défaut. Désactivée, n'importe quel lieu vous appartenant accepte n'importe quelle matière première, même si le climat, la végétation ou le relief ne le permettent pas en vanilla. Activée, seuls les lieux acceptés par le jeu sont proposés."
+    }
+    german = @{
+        toggle = 'Geografie an/aus'
+        desc   = 'An: nur Orte, an denen das Spiel diese Ware zulässt (Klima, Vegetation, Gelände, Region), werden angeboten. Aus: jeder eigene Ort kann jeden Rohstoff erhalten. Standardmäßig aus.'
+        hint   = 'Geografie: standardmäßig aus. Aus: jeder eigene Ort kann jeden Rohstoff erhalten, auch wenn Klima, Vegetation oder Gelände es in Vanilla nicht zulassen. An: nur Orte, die das Spiel zulässt.'
+    }
+    spanish = @{
+        toggle = 'Geografía on/off'
+        desc   = 'Activado: solo se ofrecen los lugares donde el juego permite ese bien (clima, vegetación, relieve, región). Desactivado: cualquier lugar propio puede recibir cualquier materia prima. Desactivado por defecto.'
+        hint   = 'Geografía: desactivada por defecto. Desactivada, cualquier lugar propio puede recibir cualquier materia prima aunque el clima, la vegetación o el relieve no lo permitan en vanilla. Activada, solo se ofrecen los lugares aceptados por el juego.'
+    }
+    polish = @{
+        toggle = 'Geografia wł./wył.'
+        desc   = 'Wł.: pokazywane są tylko lokalizacje, w których gra dopuszcza ten towar (klimat, roślinność, ukształtowanie, region). Wył.: każda własna lokalizacja może otrzymać dowolny surowiec. Domyślnie wyłączone.'
+        hint   = 'Geografia: domyślnie wyłączona. Wyłączona: każda własna lokalizacja może otrzymać dowolny surowiec, nawet jeśli klimat, roślinność lub ukształtowanie tego nie pozwalają. Włączona: tylko lokalizacje dopuszczane przez grę.'
+    }
+    turkish = @{
+        toggle = 'Coğrafya aç/kapa'
+        desc   = 'Açık: yalnızca oyunun bu malı kabul ettiği yerler (iklim, bitki örtüsü, arazi, bölge) listelenir. Kapalı: sahip olduğunuz her yer herhangi bir hammaddeye çevrilebilir. Varsayılan olarak kapalı.'
+        hint   = 'Coğrafya: varsayılan olarak kapalı. Kapalıyken iklim, bitki örtüsü veya arazi izin vermese de her yer herhangi bir hammaddeye çevrilebilir. Açıkken yalnızca oyunun kabul ettiği yerler listelenir.'
+    }
+    japanese = @{
+        toggle = '地理条件 オン/オフ'
+        desc   = 'オン：その財を原材料にできる地点（気候・植生・地形・地域）だけが候補になります。オフ：自国のどの地点でも任意の原材料に変更できます。既定ではオフ。'
+        hint   = '地理条件：既定ではオフ。オフなら気候・植生・地形が許さない場合でも自国のどの地点でも任意の原材料に変更できます。オンにすると原版で認められる地点だけが候補になります。'
+    }
+    korean = @{
+        toggle = '지리 조건 켜기/끄기'
+        desc   = '켜기: 게임이 해당 상품을 허용하는 지역(기후, 식생, 지형, 지방)만 표시됩니다. 끄기: 소유한 모든 지역을 어떤 원자재로든 바꿀 수 있습니다. 기본적으로 꺼져 있습니다.'
+        hint   = '지리 조건: 기본적으로 꺼져 있습니다. 끄면 기후·식생·지형이 허용하지 않아도 모든 지역을 어떤 원자재로든 바꿀 수 있습니다. 켜면 원작에서 허용되는 지역만 표시됩니다.'
+    }
+    braz_por = @{
+        toggle = 'Geografia lig/desl'
+        desc   = 'Ligado: só são listados locais onde o jogo permite o bem (clima, vegetação, relevo, região). Desligado: qualquer local seu aceita qualquer matéria-prima. Desligado por padrão.'
+        hint   = 'Geografia: desligada por padrão. Desligada, qualquer local seu aceita qualquer matéria-prima mesmo que o clima, a vegetação ou o relevo não permitam no vanilla. Ligada, só aparecem os locais aceitos pelo jogo.'
+    }
+}
+
+
+# ============================================================
 # 生成
 # ============================================================
 $catTextSep = @{ simp_chinese = '、'; japanese = '、'; korean = ', ' }
@@ -460,10 +525,25 @@ function Resolve-RgoText([string]$text, [hashtable]$map) {
     return $text
 }
 
+# 在提示正文的最后一个空行（“悬停查看”说明之前）插入一条列表项
+# 注意：正文里的换行是字面量 \n（两个字符），与 Paradox yml 一致
+function Add-RgoGeoHintBullet([string]$Text, [string]$Bullet) {
+    $sep = '\n\n'
+    $idx = $Text.LastIndexOf($sep)
+    if ($idx -lt 0) { throw ('提示正文里找不到空行，无法插入地理条件条目: ' + $Text) }
+    return $Text.Substring(0, $idx) + '\n- ' + $Bullet + $Text.Substring($idx)
+}
+
 $written = 0
 foreach ($lang in $languages) {
     if (-not $locales.Contains($lang)) { throw "缺少语言模板: $lang" }
     $t = $locales[$lang]
+
+    # 地理条件开关的文案（独立表）合并进当前语言的开关字典，后面的循环按 $RGO_TOGGLE_IDS 遍历
+    if (-not $geoTexts.ContainsKey($lang)) { throw "缺少地理条件开关文案: $lang" }
+    $geo = $geoTexts[$lang]
+    $t.toggle['geo'] = $geo.toggle
+    $t.toggleDesc['geo'] = $geo.desc
 
     # 该语言的官方货物译名
     $names = Get-RgoGoodsNames -GameRoot $gameRoot -Language $lang
@@ -489,7 +569,8 @@ foreach ($lang in $languages) {
     Add-LocLine $sb ''
     Add-LocLine $sb '# Scriptable hint: short title in the list, long text in _hint_text'
     Add-LocLine $sb ('hint_UnconditionallyChangeRGO:0 "' + $t.hintTitle + '"')
-    Add-LocLine $sb ('hint_UnconditionallyChangeRGO_hint_text:0 "' + (Resolve-RgoText $t.hintText $hintMap) + '"')
+    $hintBody = Add-RgoGeoHintBullet -Text (Resolve-RgoText $t.hintText $hintMap) -Bullet $geo.hint
+    Add-LocLine $sb ('hint_UnconditionallyChangeRGO_hint_text:0 "' + $hintBody + '"')
     Add-LocLine $sb ''
     Add-LocLine $sb '# Action card title (overrides the engine UI-library placeholder title)'
     Add-LocLine $sb ('RGO_CARD_HEADER:0 "' + $cardHeaders[$lang] + '"')
@@ -512,7 +593,7 @@ foreach ($lang in $languages) {
     Add-LocLine $sb ''
 
     Add-LocLine $sb ('# Switches (' + $toggleCount + ')')
-    foreach ($g in @('cost', 'cooldown', 'produced')) {
+    foreach ($g in $RGO_TOGGLE_IDS) {
         $desc = Resolve-RgoText $t.toggleDesc[$g] $hintMap
         Add-LocLine $sb ('RGO_toggle_' + $g + ':0 "' + $t.toggle[$g] + '"')
         Add-LocLine $sb ('RGO_toggle_' + $g + '_desc:0 "' + $desc + '"')

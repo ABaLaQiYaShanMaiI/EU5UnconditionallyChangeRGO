@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Materias primas"
- hint_UnconditionallyChangeRGO_hint_text:0 "Materias primas\n\nPulsa una categoría y elige después una materia prima y un lugar. Los interruptores se cambian con un clic.\n\n- Coste: cobra el precio real del mercado del lugar en seis tramos (unos 5 / 10 / 16 / 24 / 34 / 50 de oro). Desactivado: todo gratis.\n- Enfriamiento: cada cambio impone 6 meses de enfriamiento y los botones se atenúan. Al desactivarlo se elimina de inmediato el enfriamiento activo.\n- Manufacturas: desactivado por defecto. Se fabrican en edificios; usarlas como materia prima no es comportamiento vanilla y puede afectar a la producción.\n\nPasa el cursor por un botón para ver las mercancías de su categoría."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Materias primas\n\nPulsa una categoría y elige después una materia prima y un lugar. Los interruptores se cambian con un clic.\n\n- Coste: cobra el precio real del mercado del lugar en seis tramos (unos 5 / 10 / 16 / 24 / 34 / 50 de oro). Desactivado: todo gratis.\n- Enfriamiento: cada cambio impone 6 meses de enfriamiento y los botones se atenúan. Al desactivarlo se elimina de inmediato el enfriamiento activo.\n- Manufacturas: desactivado por defecto. Se fabrican en edificios; usarlas como materia prima no es comportamiento vanilla y puede afectar a la producción.\n- Geografía: desactivada por defecto. Desactivada, cualquier lugar propio puede recibir cualquier materia prima aunque el clima, la vegetación o el relieve no lo permitan en vanilla. Activada, solo se ofrecen los lugares aceptados por el juego.\n\nPasa el cursor por un botón para ver las mercancías de su categoría."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Acciones de materias primas"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Manufacturas"
  RGO_change_produced_desc:0 "Manufacturas (21): Cerveza, Libros, Cañones, Telas, Telas finas, Armas de fuego, Mobiliario, Vidrio, Joyería, Lacado, Cuero, Licor, Mampostería, Suministros navales, Papel, Porcelana, Cerámica, Acero, Alquitrán, Herramientas, Armamento.\nComportamiento no vanilla, puede afectar a la producción. Desactivado por defecto."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "Coste on/off"
  RGO_toggle_cost_desc:0 "Activado: cobra el precio real del mercado en seis tramos (unos 5 / 10 / 16 / 24 / 34 / 50 de oro); si escasea, sube de tramo. Desactivado: totalmente gratis."
  RGO_toggle_cooldown:0 "Enfriamiento on/off"
  RGO_toggle_cooldown_desc:0 "Activado: cada cambio impone 6 meses de enfriamiento. Desactivado: sin enfriamiento y se elimina el actual al instante."
  RGO_toggle_produced:0 "Manufacturas on/off"
  RGO_toggle_produced_desc:0 "Muestra u oculta el botón Manufacturas. Desactivado por defecto."
+ RGO_toggle_geo:0 "Geografía on/off"
+ RGO_toggle_geo_desc:0 "Activado: solo se ofrecen los lugares donde el juego permite ese bien (clima, vegetación, relieve, región). Desactivado: cualquier lugar propio puede recibir cualquier materia prima. Desactivado por defecto."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Ahora: ACTIVADO - pulsa para desactivar"

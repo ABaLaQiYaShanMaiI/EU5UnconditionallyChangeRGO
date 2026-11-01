@@ -1,5 +1,8 @@
 ﻿$ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
+# 数量、开关表、默认值的唯一真值源
+. (Join-Path $PSScriptRoot 'rgo_common.ps1')
+$catCount = @($RGO_GROUP_ORDER).Count
 $fail = 0
 
 function Check($name, [bool]$ok, [string]$detail = '') {
@@ -122,26 +125,37 @@ Check "UTF-8 BOM present" ($noBom.Count -eq 0) ($noBom -join ', ')
 $actions = [regex]::Matches($scriptText, '(?m)^RGO_change_[a-z_]+ = \{').Count
 $toggles = [regex]::Matches($scriptText, '(?m)^RGO_toggle_[a-z_]+ = \{').Count
 $gui = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\gui\panels\situation\UnconditionallyChangeRGO.gui'))
-$slices = @([regex]::Matches($gui, "'\(int32\)(\d+)'") | ForEach-Object { $_.Groups[1].Value })
-Check ("action count = " + $actions) ($actions -eq 7)
-Check ("toggle count = " + $toggles) ($toggles -eq 3)
+$catSlices = @([regex]::Matches($gui, "DataModelSubSpan\(ActionGroup\.GetActions, '\(int32\)(\d+)', '\(int32\)1'\)") | ForEach-Object { [int]$_.Groups[1].Value })
+$toggleSlices = @([regex]::Matches($gui, "DataModelSubSpan\(ActionGroup\.GetActions, Subtract_int32\(GetDataModelSize\(ActionGroup\.GetActions\), '\(int32\)(\d+)'\), '\(int32\)1'\)") | ForEach-Object { [int]$_.Groups[1].Value })
+$catGaps = @(0..($catCount - 1) | Where-Object { $catSlices -notcontains $_ })
+$toggleGaps = @(1..$RGO_TOGGLE_COUNT | Where-Object { $toggleSlices -notcontains $_ })
+Check ("action count = " + $actions) ($actions -eq $catCount)
+Check ("toggle count = " + $toggles) ($toggles -eq $RGO_TOGGLE_COUNT)
 Check "gui: no hardcoded index slicing" (-not ($gui -match 'DataModel(First|SkipFirst)\(ActionGroup\.GetActions'))
 Check "gui: uses actions_override" ($gui -match 'blockoverride\s+"actions_override"')
 Check "gui: native card disabled" ($gui -match 'blockoverride\s+"situation_panel_main_actions"')
-Check "gui: one-button gap present" ($gui -match 'size = \{ 480 30 \}')
+Check "gui: group gap present" ($gui -match 'size = \{ -1 18 \}')
 Check "gui: card header overridden" (($gui -match 'blockoverride\s+"card_header_text"') -and ($gui -match 'blockoverride\s+"card_header_icon"'))
+Check ("gui: two-column categories = " + $catCount) (($catSlices.Count -eq $catCount) -and ($catGaps.Count -eq 0))
+Check ("gui: two-column switches = " + $RGO_TOGGLE_COUNT) (($toggleSlices.Count -eq $RGO_TOGGLE_COUNT) -and ($toggleGaps.Count -eq 0))
 
-# 7. gameplay guards: AI disabled, location validity, price cost-modifier type
+# 7. gameplay guards: AI disabled, location validity, geo switch, price cost-modifier type
 $actionsText = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\common\generic_actions\00_rgo_actions.txt'))
 $togglesText = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\common\generic_actions\01_rgo_toggles.txt'))
+$configText  = [System.IO.File]::ReadAllText((Join-Path $root 'in_game\common\scripted_triggers\00_rgo_config.txt'))
 $allActions = $actionsText + "`n" + $togglesText
 $aiNever = [regex]::Matches($allActions, '(?m)^\tai_tick = never').Count
 $autoNever = [regex]::Matches($allActions, '(?m)^\tautomation_tick = never').Count
-Check ("AI disabled: ai_tick=never x" + $aiNever) ($aiNever -eq 10)
-Check ("AI disabled: automation_tick=never x" + $autoNever) ($autoNever -eq 10)
+$expectedActions = $catCount + $RGO_TOGGLE_COUNT
+Check ("AI disabled: ai_tick=never x" + $aiNever) ($aiNever -eq $expectedActions)
+Check ("AI disabled: automation_tick=never x" + $autoNever) ($autoNever -eq $expectedActions)
 Check "no ai_will_do / ai_prerequisite" (-not ($allActions -match 'ai_will_do|ai_prerequisite|player_automated_category'))
-Check "location filtered by is_goods_valid_for_location x" ([regex]::Matches($actionsText, 'is_goods_valid_for_location = scope:target_good').Count) ([regex]::Matches($actionsText, 'is_goods_valid_for_location = scope:target_good').Count -eq 7)
-Check "location filtered by current raw material" ([regex]::Matches($actionsText, 'NOT = \{ raw_material \?= scope:target_good \}').Count -eq 7)
+$geoGateCalls = [regex]::Matches($actionsText, 'RGO_geo_allows_target = yes').Count
+Check ("geo gate used by every action x" + $geoGateCalls) ($geoGateCalls -eq $catCount)
+Check "geo gate keeps vanilla location_potential" ($configText -match 'is_goods_valid_for_location = scope:target_good')
+Check "geo gate honours the geo switch" (($configText -match '(?m)^RGO_geo_allows_target = \{') -and ($configText -match 'RGO_geo_enabled = yes'))
+Check "geo restriction off by default" ($configText -match 'RGO_cfg_geo_default = \{ always = no \}')
+Check "location filtered by current raw material" ([regex]::Matches($actionsText, 'NOT = \{ raw_material \?= scope:target_good \}').Count -eq $catCount)
 $modType = Join-Path $root 'main_menu\common\modifier_type_definitions\00_rgo_modifier_types.txt'
 Check "price cost-modifier type defined" ((Test-Path $modType) -and ([System.IO.File]::ReadAllText($modType) -match 'rgo_change_cost_modifier'))
 Check "gui: hint button present" ($gui -match "selected_hint = hint_UnconditionallyChangeRGO")

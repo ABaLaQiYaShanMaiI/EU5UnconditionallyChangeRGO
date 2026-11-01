@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Rohstoffe"
- hint_UnconditionallyChangeRGO_hint_text:0 "Rohstoffe\n\nKlickt auf eine Kategorie und wählt dann einen Rohstoff und einen Ort. Die Schalter lassen sich per Klick umlegen.\n\n- Kosten: zahlt den aktuellen Marktpreis der Ware am Markt des Ortes in sechs Stufen (etwa 5 / 10 / 16 / 24 / 34 / 50 Gold). Aus: alles kostenlos.\n- Abklingzeit: Jede Änderung erzeugt 6 Monate Abklingzeit, die Buttons werden ausgegraut. Beim Ausschalten wird eine laufende Abklingzeit sofort entfernt.\n- Fertigwaren: standardmäßig aus. Fertigwaren entstehen in Gebäuden; sie als Rohstoff zu nutzen ist kein Vanilla-Verhalten und kann die Gebäudeproduktion stören.\n\nFahrt über einen Button, um die Waren der Kategorie zu sehen."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Rohstoffe\n\nKlickt auf eine Kategorie und wählt dann einen Rohstoff und einen Ort. Die Schalter lassen sich per Klick umlegen.\n\n- Kosten: zahlt den aktuellen Marktpreis der Ware am Markt des Ortes in sechs Stufen (etwa 5 / 10 / 16 / 24 / 34 / 50 Gold). Aus: alles kostenlos.\n- Abklingzeit: Jede Änderung erzeugt 6 Monate Abklingzeit, die Buttons werden ausgegraut. Beim Ausschalten wird eine laufende Abklingzeit sofort entfernt.\n- Fertigwaren: standardmäßig aus. Fertigwaren entstehen in Gebäuden; sie als Rohstoff zu nutzen ist kein Vanilla-Verhalten und kann die Gebäudeproduktion stören.\n- Geografie: standardmäßig aus. Aus: jeder eigene Ort kann jeden Rohstoff erhalten, auch wenn Klima, Vegetation oder Gelände es in Vanilla nicht zulassen. An: nur Orte, die das Spiel zulässt.\n\nFahrt über einen Button, um die Waren der Kategorie zu sehen."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Rohstoff-Aktionen"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Fertigwaren"
  RGO_change_produced_desc:0 "Fertigwaren (21): Bier, Bücher, Kanonen, Stoff, Feinstoff, Feuerwaffen, Möbel, Glas, Schmuck, Lackwaren, Leder, Spirituosen, Mauerwerk, Schiffsausrüstung, Papier, Porzellan, Keramik, Stahl, Pech, Werkzeuge, Waffen.\nKein Vanilla-Verhalten, kann die Gebäudeproduktion stören. Standardmäßig aus."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "Kosten an/aus"
  RGO_toggle_cost_desc:0 "An: berechnet den aktuellen Marktpreis der Ware in sechs Stufen (etwa 5 / 10 / 16 / 24 / 34 / 50 Gold); bei Knappheit steigt die Stufe. Aus: völlig kostenlos."
  RGO_toggle_cooldown:0 "Abklingzeit an/aus"
  RGO_toggle_cooldown_desc:0 "An: Jede Änderung erzeugt 6 Monate Abklingzeit. Aus: keine Abklingzeit, eine laufende wird sofort entfernt."
  RGO_toggle_produced:0 "Fertigwaren an/aus"
  RGO_toggle_produced_desc:0 "Zeigt oder verbirgt den Button Fertigwaren. Standardmäßig aus."
+ RGO_toggle_geo:0 "Geografie an/aus"
+ RGO_toggle_geo_desc:0 "An: nur Orte, an denen das Spiel diese Ware zulässt (Klima, Vegetation, Gelände, Region), werden angeboten. Aus: jeder eigene Ort kann jeden Rohstoff erhalten. Standardmäßig aus."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Aktuell: AN - klicken zum Ausschalten"

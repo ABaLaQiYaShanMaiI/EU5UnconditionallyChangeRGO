@@ -1,8 +1,9 @@
 ﻿# ============================================================
-# 三个开关（与分类按钮同处局势面板的一张卡内，点击一次切换一次，免费）
+# 4 个开关（与分类按钮同处局势面板的一张卡内，点击一次切换一次，免费）
 #   RGO_toggle_cost  ->  国家变量 rgo_var_cost
 #   RGO_toggle_cooldown  ->  国家变量 rgo_var_cooldown
 #   RGO_toggle_produced  ->  国家变量 rgo_var_produced
+#   RGO_toggle_geo  ->  国家变量 rgo_var_geo
 # 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改
 # 开关判定与默认值见 in_game/common/scripted_triggers/00_rgo_config.txt
 # ============================================================
@@ -150,6 +151,56 @@ RGO_toggle_produced = {
 				else = {
 					set_variable = {
 						name = rgo_var_produced
+						value = 1
+					}
+				}
+			}
+		}
+	}
+}
+
+RGO_toggle_geo = {
+	type = situation
+
+	ai_tick = never
+	automation_tick = never
+	show_message = no
+
+	# 按钮挂在局势面板上，需要一个 recipient（本局势）
+	select_trigger = {
+		looking_for_a = situation
+		target_flag = recipient
+		name = "choose_situation"
+		column = { data = name }
+		visible = {
+			situation:UnconditionallyChangeRGO = this
+			situation_is_active = yes
+		}
+	}
+
+	# 悬停时显示当前开/关状态（custom_tooltip 由触发器决定用哪一句）
+	effect = {
+		scope:actor ?= {
+			if = {
+				limit = { RGO_geo_enabled = yes }
+				custom_tooltip = { text = RGO_toggle_state_on }
+			}
+			else = {
+				custom_tooltip = { text = RGO_toggle_state_off }
+			}
+
+			# 真正的状态切换放在 hidden_effect 里，避免 tooltip 出现变量噪音
+			hidden_effect = {
+				if = {
+					limit = { RGO_geo_enabled = yes }
+					set_variable = {
+						name = rgo_var_geo
+						value = 0
+					}
+				}
+				else = {
+					set_variable = {
+						name = rgo_var_geo
 						value = 1
 					}
 				}

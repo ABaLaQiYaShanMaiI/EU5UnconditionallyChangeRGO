@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Matérias-primas"
- hint_UnconditionallyChangeRGO_hint_text:0 "Matérias-primas\n\nClique em uma categoria e escolha a matéria-prima e o local. Os interruptores alternam a cada clique.\n\n- Custo: cobra o preço real do mercado local em seis faixas (cerca de 5 / 10 / 16 / 24 / 34 / 50 de ouro). Desligado: tudo grátis.\n- Recarga: cada mudança gera 6 meses de recarga e os botões ficam cinzas. Desligar remove a recarga em andamento na hora.\n- Manufaturados: desligado por padrão. São produzidos por edifícios; usá-los como matéria-prima não é o comportamento vanilla e pode afetar a produção.\n\nPasse o mouse sobre um botão para ver os bens da categoria."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Matérias-primas\n\nClique em uma categoria e escolha a matéria-prima e o local. Os interruptores alternam a cada clique.\n\n- Custo: cobra o preço real do mercado local em seis faixas (cerca de 5 / 10 / 16 / 24 / 34 / 50 de ouro). Desligado: tudo grátis.\n- Recarga: cada mudança gera 6 meses de recarga e os botões ficam cinzas. Desligar remove a recarga em andamento na hora.\n- Manufaturados: desligado por padrão. São produzidos por edifícios; usá-los como matéria-prima não é o comportamento vanilla e pode afetar a produção.\n- Geografia: desligada por padrão. Desligada, qualquer local seu aceita qualquer matéria-prima mesmo que o clima, a vegetação ou o relevo não permitam no vanilla. Ligada, só aparecem os locais aceitos pelo jogo.\n\nPasse o mouse sobre um botão para ver os bens da categoria."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Ações de matérias-primas"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Manufaturados"
  RGO_change_produced_desc:0 "Manufaturados (21): Cerveja, Livros, Canhão, Tecido, Tecidos Finos, Armas de Fogo, Mobília, Vidro, Joias, Laca, Couro, Bebida Destilada, Alvenaria, Suprimentos Navais, Papel, Porcelana, Cerâmica, Aço, Alcatrão, Ferramentas, Armamento.\nComportamento não vanilla, pode afetar a produção. Desligado por padrão."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "Custo lig/desl"
  RGO_toggle_cost_desc:0 "Ligado: cobra o preço real do mercado em seis faixas (cerca de 5 / 10 / 16 / 24 / 34 / 50 de ouro); se faltar oferta, sobe de faixa. Desligado: totalmente grátis."
  RGO_toggle_cooldown:0 "Recarga lig/desl"
  RGO_toggle_cooldown_desc:0 "Ligado: cada mudança gera 6 meses de recarga. Desligado: sem recarga, e a atual é removida na hora."
  RGO_toggle_produced:0 "Manufaturados lig/desl"
  RGO_toggle_produced_desc:0 "Mostra ou oculta o botão Manufaturados. Desligado por padrão."
+ RGO_toggle_geo:0 "Geografia lig/desl"
+ RGO_toggle_geo_desc:0 "Ligado: só são listados locais onde o jogo permite o bem (clima, vegetação, relevo, região). Desligado: qualquer local seu aceita qualquer matéria-prima. Desligado por padrão."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Agora: LIGADO - clique para desligar"

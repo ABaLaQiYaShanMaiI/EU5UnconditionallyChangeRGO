@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Matières premières"
- hint_UnconditionallyChangeRGO_hint_text:0 "Matières premières\n\nCliquez sur une catégorie, puis choisissez une matière première et un lieu. Les interrupteurs se basculent au clic.\n\n- Coût : paie le prix réel du marché local, en six paliers (environ 5 / 10 / 16 / 24 / 34 / 50 or). Désactivé : tout est gratuit.\n- Recharge : chaque changement impose 6 mois de recharge et grise les boutons. La désactiver annule immédiatement la recharge en cours.\n- Produits manufacturés : désactivé par défaut. Ils sont fabriqués par des bâtiments ; les utiliser comme matières premières n'est pas le comportement vanilla et peut perturber la production.\n\nSurvolez un bouton pour voir les biens de sa catégorie."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Matières premières\n\nCliquez sur une catégorie, puis choisissez une matière première et un lieu. Les interrupteurs se basculent au clic.\n\n- Coût : paie le prix réel du marché local, en six paliers (environ 5 / 10 / 16 / 24 / 34 / 50 or). Désactivé : tout est gratuit.\n- Recharge : chaque changement impose 6 mois de recharge et grise les boutons. La désactiver annule immédiatement la recharge en cours.\n- Produits manufacturés : désactivé par défaut. Ils sont fabriqués par des bâtiments ; les utiliser comme matières premières n'est pas le comportement vanilla et peut perturber la production.\n- Géographie : désactivée par défaut. Désactivée, n'importe quel lieu vous appartenant accepte n'importe quelle matière première, même si le climat, la végétation ou le relief ne le permettent pas en vanilla. Activée, seuls les lieux acceptés par le jeu sont proposés.\n\nSurvolez un bouton pour voir les biens de sa catégorie."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Actions sur les matières premières"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Produits manufacturés"
  RGO_change_produced_desc:0 "Produits manufacturés (21) : Bière, Livres, Canons, Étoffes, Tissus fins, Armes à feu, Meubles, Verre, Bijoux, Objets laqués, Cuir, Spiritueux, Maçonnerie, Fournitures navales, Papier, Porcelaine, Poterie, Acier, Goudron, Outils, Armes.\nComportement non vanilla, peut perturber la production. Désactivé par défaut."
 
- # Switches (3)
- RGO_toggle_cost:0 "Coût activé/désactivé"
+ # Switches (4)
+ RGO_toggle_cost:0 "Coût act./dés."
  RGO_toggle_cost_desc:0 "Activé : facture le prix réel du marché local en six paliers (environ 5 / 10 / 16 / 24 / 34 / 50 or) ; en cas de pénurie, le palier augmente. Désactivé : entièrement gratuit."
- RGO_toggle_cooldown:0 "Recharge activée/désactivée"
+ RGO_toggle_cooldown:0 "Recharge act./dés."
  RGO_toggle_cooldown_desc:0 "Activé : chaque changement impose 6 mois de recharge. Désactivé : aucune recharge, et celle en cours est annulée immédiatement."
- RGO_toggle_produced:0 "Manufacturés activés/désactivés"
+ RGO_toggle_produced:0 "Manufacturés act./dés."
  RGO_toggle_produced_desc:0 "Affiche ou masque le bouton Manufacturés. Désactivé par défaut."
+ RGO_toggle_geo:0 "Géographie act./dés."
+ RGO_toggle_geo_desc:0 "Activé : seuls les lieux où le jeu autorise ce bien (climat, végétation, relief, région) sont proposés. Désactivé : n'importe quel lieu vous appartenant accepte n'importe quelle matière première. Désactivé par défaut."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Actuellement : ACTIVÉ - cliquez pour désactiver"

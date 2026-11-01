@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Surowce"
- hint_UnconditionallyChangeRGO_hint_text:0 "Surowce\n\nKliknij kategorię, a następnie wybierz surowiec i lokalizację. Przełączniki zmieniają stan po kliknięciu.\n\n- Koszt: opłata według bieżącej ceny rynkowej towaru w sześciu progach (około 5 / 10 / 16 / 24 / 34 / 50 złota). Wył.: wszystko bezpłatnie.\n- Odnowienie: każde użycie daje 6 miesięcy odnowienia, a przyciski szarzeją. Wyłączenie natychmiast usuwa trwające odnowienie.\n- Wyroby: domyślnie wyłączone. Wyroby powstają w budynkach, więc użycie ich jako surowca nie jest zachowaniem vanilla i może zakłócić produkcję.\n\nNajedź na przycisk, aby zobaczyć towary w kategorii."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Surowce\n\nKliknij kategorię, a następnie wybierz surowiec i lokalizację. Przełączniki zmieniają stan po kliknięciu.\n\n- Koszt: opłata według bieżącej ceny rynkowej towaru w sześciu progach (około 5 / 10 / 16 / 24 / 34 / 50 złota). Wył.: wszystko bezpłatnie.\n- Odnowienie: każde użycie daje 6 miesięcy odnowienia, a przyciski szarzeją. Wyłączenie natychmiast usuwa trwające odnowienie.\n- Wyroby: domyślnie wyłączone. Wyroby powstają w budynkach, więc użycie ich jako surowca nie jest zachowaniem vanilla i może zakłócić produkcję.\n- Geografia: domyślnie wyłączona. Wyłączona: każda własna lokalizacja może otrzymać dowolny surowiec, nawet jeśli klimat, roślinność lub ukształtowanie tego nie pozwalają. Włączona: tylko lokalizacje dopuszczane przez grę.\n\nNajedź na przycisk, aby zobaczyć towary w kategorii."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Działania na surowcach"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Wyroby"
  RGO_change_produced_desc:0 "Wyroby (21): Piwo, Księgi, Działa, Tkaniny, Odzież wysokiej jakości, Broń palna, Meble, Szkło, Biżuteria, Lakiernictwo artystyczne, Skóra, Alkohol, Ociosane kamienie, Zapasy okrętowe, Papier, Porcelana, Wyroby garncarskie, Stal, Smoła, Narzędzia, Broń.\nZachowanie inne niż vanilla, może zakłócić produkcję. Domyślnie wyłączone."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "Koszt wł./wył."
  RGO_toggle_cost_desc:0 "Wł.: opłata według bieżącej ceny rynkowej w sześciu progach (około 5 / 10 / 16 / 24 / 34 / 50 złota); przy niedoborze próg rośnie. Wył.: całkowicie bezpłatnie."
  RGO_toggle_cooldown:0 "Odnowienie wł./wył."
  RGO_toggle_cooldown_desc:0 "Wł.: każde użycie daje 6 miesięcy odnowienia. Wył.: brak odnowienia, a trwające jest natychmiast usuwane."
  RGO_toggle_produced:0 "Wyroby wł./wył."
  RGO_toggle_produced_desc:0 "Pokazuje lub ukrywa przycisk Wyroby. Domyślnie wyłączone."
+ RGO_toggle_geo:0 "Geografia wł./wył."
+ RGO_toggle_geo_desc:0 "Wł.: pokazywane są tylko lokalizacje, w których gra dopuszcza ten towar (klimat, roślinność, ukształtowanie, region). Wył.: każda własna lokalizacja może otrzymać dowolny surowiec. Domyślnie wyłączone."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Teraz: WŁ. - kliknij, aby wyłączyć"

@@ -26,6 +26,9 @@ $RGO_COOLDOWN_MONTHS = 6
 # ---------- 默认值开关（与 in_game/common/scripted_triggers/00_rgo_config.txt 对齐） ----------
 $RGO_DEFAULT_COST = 'no'
 $RGO_DEFAULT_COOLDOWN = 'no'
+# 地理条件开关：no = 不限地理条件（本国任意地点都能改成任意原材料）
+#               yes = 只列出原版允许该货物的地点（货物 location_potential：气候/植被/地形/区域）
+$RGO_DEFAULT_GEO = 'no'
 $RGO_DEFAULT_CATEGORIES = [ordered]@{
     mining     = 'yes'
     gathering  = 'yes'
@@ -42,6 +45,21 @@ $RGO_EXCLUDED_GOODS = @('slaves_goods')
 
 # 分类显示顺序（同时决定 generic_actions 的按钮顺序，GUI 前 N 个视为分类）
 $RGO_GROUP_ORDER = @('mining', 'gathering', 'crops', 'food', 'plantation', 'wild', 'produced')
+
+# ---------- 开关表（顺序 = 面板按钮顺序，全部排在分类按钮之后） ----------
+#   id      : generic action 的 RGO_toggle_<id>，同时决定本地化键 RGO_toggle_<id> 与 _desc
+#   var     : 玩家点开关时写入的国家变量（有变量则以变量为准）
+#   check   : 判断开关是否开启的 scripted trigger（生成在 00_rgo_config.txt）
+#   default : 没有变量时使用的文件级默认值触发器
+#   cleanup : 关闭开关时要顺手清理的东西（没有则 $null）
+$RGO_TOGGLES = @(
+    [pscustomobject]@{ id = 'cost';     var = 'rgo_var_cost';     check = 'RGO_cost_enabled';         default = 'RGO_cfg_cost_default';         cleanup = $null }
+    [pscustomobject]@{ id = 'cooldown'; var = 'rgo_var_cooldown'; check = 'RGO_cooldown_enabled';     default = 'RGO_cfg_cooldown_default';     cleanup = 'remove_country_modifier = rgo_change_cooldown' }
+    [pscustomobject]@{ id = 'produced'; var = 'rgo_var_produced'; check = 'RGO_cat_produced_enabled'; default = 'RGO_cfg_cat_produced_default'; cleanup = $null }
+    [pscustomobject]@{ id = 'geo';      var = 'rgo_var_geo';      check = 'RGO_geo_enabled';          default = 'RGO_cfg_geo_default';          cleanup = $null }
+)
+$RGO_TOGGLE_IDS   = @($RGO_TOGGLES | ForEach-Object { $_.id })
+$RGO_TOGGLE_COUNT = @($RGO_TOGGLES).Count
 
 # ---------- 路径 ----------
 function Get-RgoGoodsRoot {

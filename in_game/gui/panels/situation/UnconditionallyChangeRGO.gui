@@ -1,7 +1,7 @@
-﻿# 单个动作按钮（供分类 / 开关两个列表复用；几何参数沿用 1.0.3 的可用版本）
+﻿# 单个动作按钮（分类 / 开关共用；两列布局，一格 234x30，按钮 230x28）
 template rgo_action_button {
 	targetted_button_regular = {
-		size = { 476 28 }
+		size = { 230 28 }
 		parentanchor = top
 
 		text = "[GenericAction.GetNameWithNoTooltip]"
@@ -60,17 +60,18 @@ template rgo_action_button {
 # ============================================================
 # 局势面板
 #
-# 按钮外壳用引擎内建的 situation_card_actions（自带卡片背景与标题），
-# 但通过它官方提供的 actions_override 钩子自己排列按钮：
-#   [分类按钮…]  →  一个按钮高度的空位  →  [开关按钮…]
-# 这样既保留原生卡片外观，又能在分类与开关之间空出距离。
+# 按钮外壳仍用引擎内建的 situation_card_actions（原生卡片背景与标题），
+# 只通过它官方提供的 actions_override 钩子自己排列按钮：
 #
-# 为什么不用默认列表：默认实现把所有动作平铺在一张卡里，无法插入间隔。
+#   [分类 两列，最多 4 行]  →  18px 间隔  →  [开关 两列，2 行]
+#
+# 分组用 DataModelSubSpan(源, 起始索引, 数量) 逐个切片（原版 hre.gui /
+# heir_selection.gui 就是用这个做多列），所以不写死条目总数：
+#   分类 = 索引 0 起逐个取（分类数由 tools/rgo_common.ps1 决定）
+#   开关 = 末尾若干个，用 GetDataModelSize(源) - k 反推起始索引
+# 隐藏制成品时动作列表变短，最后一行的空格子自然为空，不会留下空行。
+#
 # 为什么关掉 situation_panel_main_actions：否则同一面板会出现两份按钮。
-#
-# 分组用动态切片，不写死数字（制成品按钮隐藏时列表会变短）：
-#   分类 = 去掉末尾 3 个后的全部动作
-#   开关 = 末尾 3 个动作（定义顺序：00_rgo_actions → 01_rgo_toggles）
 # ============================================================
 situation_panel = {
 
@@ -110,33 +111,59 @@ situation_panel = {
 								spacing = 4
 								margin = { 0 4 }
 
-								# ---------- 分类 ----------
-								vbox = {
+								# ============ 分类：两列 ============
+								# 第 1 行：分类 1、2
+								hbox = {
 									layoutpolicy_horizontal = expanding
-									datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)0', Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)3'))]"
-									item = {
-										widget = {
-											size = { 480 30 }
-											using = rgo_action_button
-										}
-									}
+									spacing = 4
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)0', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)1', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 								}
 
-								# ---------- 间隔：一个按钮高度 ----------
+								# 第 2 行：分类 3、4
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 4
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)2', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)3', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+								}
+
+								# 第 3 行：分类 5、6
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 4
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)4', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)5', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+								}
+
+								# 第 4 行：分类 7（制成品；该分类隐藏时这一行自然为空）
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 4
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, '(int32)6', '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+								}
+
+								# ============ 分类与开关之间的间隔 ============
 								widget = {
-									size = { 480 30 }
+									layoutpolicy_horizontal = expanding
+									size = { -1 18 }
 								}
 
-								# ---------- 开关 ----------
-								vbox = {
+								# ============ 开关：两列 ============
+								# 第 1 行：倒数第 4、3 个动作
+								hbox = {
 									layoutpolicy_horizontal = expanding
-									datamodel = "[DataModelLast(ActionGroup.GetActions, '(int32)3')]"
-									item = {
-										widget = {
-											size = { 480 30 }
-											using = rgo_action_button
-										}
-									}
+									spacing = 4
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)4'), '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)3'), '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+								}
+
+								# 第 2 行：倒数第 2、1 个动作
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 4
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)2'), '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
+									vbox = { layoutpolicy_horizontal = expanding datamodel = "[DataModelSubSpan(ActionGroup.GetActions, Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)1'), '(int32)1')]" item = { widget = { size = { 234 30 } using = rgo_action_button } } }
 								}
 							}
 						}
@@ -146,4 +173,3 @@ situation_panel = {
 		}
 	}
 }
-

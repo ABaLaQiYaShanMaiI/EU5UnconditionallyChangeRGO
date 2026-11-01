@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "原材料"
- hint_UnconditionallyChangeRGO_hint_text:0 "原材料\n\nカテゴリボタンを押し、原材料と地点を選びます。スイッチはクリックするたびに切り替わります。\n\n- 費用：選択した財の現地市場価格を6段階で支払います（約 5 / 10 / 16 / 24 / 34 / 50 金）。オフならすべて無料。\n- クールダウン：変更ごとに 6 か月のクールダウンが発生し、ボタンが無効になります。オフにすると進行中のクールダウンは即座に解除されます。\n- 加工品：既定ではオフ。加工品は建物が生産するため、原材料として使うのは本来の仕様ではなく、建物の生産を壊す可能性があります。\n\nボタンにカーソルを合わせると、そのカテゴリの財が表示されます。"
+ hint_UnconditionallyChangeRGO_hint_text:0 "原材料\n\nカテゴリボタンを押し、原材料と地点を選びます。スイッチはクリックするたびに切り替わります。\n\n- 費用：選択した財の現地市場価格を6段階で支払います（約 5 / 10 / 16 / 24 / 34 / 50 金）。オフならすべて無料。\n- クールダウン：変更ごとに 6 か月のクールダウンが発生し、ボタンが無効になります。オフにすると進行中のクールダウンは即座に解除されます。\n- 加工品：既定ではオフ。加工品は建物が生産するため、原材料として使うのは本来の仕様ではなく、建物の生産を壊す可能性があります。\n- 地理条件：既定ではオフ。オフなら気候・植生・地形が許さない場合でも自国のどの地点でも任意の原材料に変更できます。オンにすると原版で認められる地点だけが候補になります。\n\nボタンにカーソルを合わせると、そのカテゴリの財が表示されます。"
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "原材料の操作"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "加工品"
  RGO_change_produced_desc:0 "加工品（21 種）：ビール、書物、大砲、生地、高級生地、火器、家具、ガラス、宝飾品、漆器、革、酒、れんが、海軍用品、紙、磁器、陶器、鋼、タール、工具、武器。\n本来の仕様ではなく、建物の生産を壊す可能性があります。既定ではオフです。"
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "費用 オン/オフ"
  RGO_toggle_cost_desc:0 "オン：現地市場価格を6段階で請求します（約 5 / 10 / 16 / 24 / 34 / 50 金）。供給不足時は上の段階になります。オフ：完全無料。"
  RGO_toggle_cooldown:0 "クールダウン オン/オフ"
  RGO_toggle_cooldown_desc:0 "オン：変更ごとに 6 か月のクールダウン。オフ：クールダウンなし、進行中のものは即座に解除。"
  RGO_toggle_produced:0 "加工品 オン/オフ"
  RGO_toggle_produced_desc:0 "「加工品」ボタンの表示を切り替えます。既定ではオフ。"
+ RGO_toggle_geo:0 "地理条件 オン/オフ"
+ RGO_toggle_geo_desc:0 "オン：その財を原材料にできる地点（気候・植生・地形・地域）だけが候補になります。オフ：自国のどの地点でも任意の原材料に変更できます。既定ではオフ。"
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "現在：オン - クリックでオフ"

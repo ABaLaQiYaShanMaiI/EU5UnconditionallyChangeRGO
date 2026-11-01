@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "원자재"
- hint_UnconditionallyChangeRGO_hint_text:0 "원자재\n\n분류 버튼을 누른 뒤 원자재와 지역을 선택하세요. 스위치는 클릭할 때마다 전환됩니다.\n\n- 비용: 선택한 상품의 해당 지역 시장 실시간 가격을 6단계로 지불합니다(약 5 / 10 / 16 / 24 / 34 / 50 골드). 끄면 전부 무료.\n- 재사용 대기: 변경할 때마다 6개월 대기 시간이 생기고 버튼이 비활성화됩니다. 끄면 진행 중인 대기도 즉시 해제됩니다.\n- 가공품: 기본적으로 꺼져 있습니다. 가공품은 건물이 생산하므로 원자재로 쓰는 것은 원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다.\n\n버튼에 마우스를 올리면 해당 분류의 상품을 볼 수 있습니다."
+ hint_UnconditionallyChangeRGO_hint_text:0 "원자재\n\n분류 버튼을 누른 뒤 원자재와 지역을 선택하세요. 스위치는 클릭할 때마다 전환됩니다.\n\n- 비용: 선택한 상품의 해당 지역 시장 실시간 가격을 6단계로 지불합니다(약 5 / 10 / 16 / 24 / 34 / 50 골드). 끄면 전부 무료.\n- 재사용 대기: 변경할 때마다 6개월 대기 시간이 생기고 버튼이 비활성화됩니다. 끄면 진행 중인 대기도 즉시 해제됩니다.\n- 가공품: 기본적으로 꺼져 있습니다. 가공품은 건물이 생산하므로 원자재로 쓰는 것은 원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다.\n- 지리 조건: 기본적으로 꺼져 있습니다. 끄면 기후·식생·지형이 허용하지 않아도 모든 지역을 어떤 원자재로든 바꿀 수 있습니다. 켜면 원작에서 허용되는 지역만 표시됩니다.\n\n버튼에 마우스를 올리면 해당 분류의 상품을 볼 수 있습니다."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "원자재 작업"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "가공품"
  RGO_change_produced_desc:0 "가공품(21종): 맥주, 책, 대포, 옷감, 고급 옷감, 화기, 가구, 유리, 보석 세공품, 칠기, 가죽, 증류주, 석조, 해상 보급품, 종이, 자기, 도기, 강철, 타르, 도구, 무기.\n원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다. 기본적으로 꺼져 있습니다."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "비용 켜기/끄기"
  RGO_toggle_cost_desc:0 "켜기: 실시간 시장 가격을 6단계로 청구합니다(약 5 / 10 / 16 / 24 / 34 / 50 골드). 공급이 부족하면 더 높은 단계가 적용됩니다. 끄기: 완전 무료."
  RGO_toggle_cooldown:0 "재사용 대기 켜기/끄기"
  RGO_toggle_cooldown_desc:0 "켜기: 변경할 때마다 6개월 대기. 끄기: 대기 없음, 진행 중인 대기는 즉시 해제."
  RGO_toggle_produced:0 "가공품 켜기/끄기"
  RGO_toggle_produced_desc:0 "가공품 버튼을 표시하거나 숨깁니다. 기본적으로 꺼져 있습니다."
+ RGO_toggle_geo:0 "지리 조건 켜기/끄기"
+ RGO_toggle_geo_desc:0 "켜기: 게임이 해당 상품을 허용하는 지역(기후, 식생, 지형, 지방)만 표시됩니다. 끄기: 소유한 모든 지역을 어떤 원자재로든 바꿀 수 있습니다. 기본적으로 꺼져 있습니다."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "현재: 켜짐 - 클릭하면 꺼짐"

@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Raw Materials"
- hint_UnconditionallyChangeRGO_hint_text:0 "Raw Materials\n\nClick a category button, then pick a raw material and a location. Click a switch to toggle it.\n\n- Cost: pay the live market price of the chosen good in that market, on six tiers (about 5 / 10 / 16 / 24 / 34 / 50 gold). Off: everything is free.\n- Cooldown: every change starts a 6 month cooldown and the buttons grey out. Turning it off clears a running cooldown immediately.\n- Manufactured: off by default. Manufactured goods are made by buildings, so using them as raw materials is not vanilla behaviour and may break building output.\n\nHover a button to see which goods its category contains."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Raw Materials\n\nClick a category button, then pick a raw material and a location. Click a switch to toggle it.\n\n- Cost: pay the live market price of the chosen good in that market, on six tiers (about 5 / 10 / 16 / 24 / 34 / 50 gold). Off: everything is free.\n- Cooldown: every change starts a 6 month cooldown and the buttons grey out. Turning it off clears a running cooldown immediately.\n- Manufactured: off by default. Manufactured goods are made by buildings, so using them as raw materials is not vanilla behaviour and may break building output.\n- Geography switch: off by default. When off, any owned location can take any raw material even if its climate, vegetation or terrain would not allow it in vanilla. When on, only the locations the game accepts for that good are listed.\n\nHover a button to see which goods its category contains."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Raw Material Actions"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Manufactured"
  RGO_change_produced_desc:0 "Manufactured goods (21): Beer, Books, Cannon, Cloth, Fine Cloth, Firearms, Furniture, Glass, Jewelry, Lacquerware, Leather, Liquor, Masonry, Naval Supplies, Paper, Porcelain, Pottery, Steel, Tar, Tools, Weaponry.\nNot vanilla behaviour and may break building output. Off by default - enable it with the switch below."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "Cost on/off"
  RGO_toggle_cost_desc:0 "On: charges the chosen good's live market price on six tiers (about 5 / 10 / 16 / 24 / 34 / 50 gold); when supply runs short the price moves up a tier. Off: completely free."
  RGO_toggle_cooldown:0 "Cooldown on/off"
  RGO_toggle_cooldown_desc:0 "On: every change starts a 6 month cooldown. Off: no cooldown, and any running one is cleared immediately."
  RGO_toggle_produced:0 "Manufactured on/off"
  RGO_toggle_produced_desc:0 "Show or hide the Manufactured button. Off by default."
+ RGO_toggle_geo:0 "Geography on/off"
+ RGO_toggle_geo_desc:0 "On: only locations where the game itself allows this good (climate, vegetation, topography, region) are listed. Off: any owned location can take any raw material. Off by default."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Current: ON - click to turn it off"

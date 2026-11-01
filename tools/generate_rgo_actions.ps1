@@ -29,12 +29,9 @@ $togglesFile = Join-Path $modRoot 'in_game\common\generic_actions\01_rgo_toggles
 $guiFile     = Join-Path $modRoot 'in_game\gui\panels\situation\UnconditionallyChangeRGO.gui'
 $configFile  = Join-Path $modRoot 'in_game\common\scripted_triggers\00_rgo_config.txt'
 
-# 开关表：id / 国家变量名 / 判定用 scripted trigger / 关闭时要清理的东西
-$toggleDefs = @(
-    [pscustomobject]@{ id = 'cost';     var = 'rgo_var_cost';     check = 'RGO_cost_enabled';       cleanup = $null }
-    [pscustomobject]@{ id = 'cooldown'; var = 'rgo_var_cooldown'; check = 'RGO_cooldown_enabled';   cleanup = 'remove_country_modifier = rgo_change_cooldown' }
-    [pscustomobject]@{ id = 'produced'; var = 'rgo_var_produced'; check = 'RGO_cat_produced_enabled'; cleanup = $null }
-)
+# 开关表：统一来自 tools/rgo_common.ps1 的 $RGO_TOGGLES（顺序 = 面板按钮顺序）
+#   字段：id / var / check / default / cleanup
+$toggleDefs = $RGO_TOGGLES
 
 function Add-SituationStep($sb) {
     Add-RgoLine $sb 1 '# 1) 选局势：GUI 已代入 recipient，正常流程会自动跳过这一步'
@@ -74,7 +71,7 @@ function Add-GoodsStep($sb, $ids) {
 }
 
 function Add-LocationStep($sb) {
-    Add-RgoLine $sb 1 '# 3) 选地块：仅本国地块，且必须能产出所选原材料'
+    Add-RgoLine $sb 1 '# 3) 选地块：仅本国地块；地理条件开关开启时还要求该货物能作为此地原材料'
     Add-RgoLine $sb 1 'select_trigger = {'
     Add-RgoLine $sb 2 'looking_for_a = location'
     Add-RgoLine $sb 2 'target_flag = target_location'
@@ -90,11 +87,13 @@ function Add-LocationStep($sb) {
     Add-RgoLine $sb 4 '}'
     Add-RgoLine $sb 3 '}'
     Add-RgoLine $sb 2 '}'
-    # 原版 columbian_exchange 同样用这两个条件过滤候选地块：
-    #   is_goods_valid_for_location —— 该货物能否作为此地原材料（城市/地形/气候等限制）
+    # 候选地块的两个条件：
+    #   RGO_geo_allows_target —— 地理条件开关（默认关闭 = 恒为 yes，本国任意地点都能选；
+    #                            开启时才走原版 is_goods_valid_for_location，
+    #                            即货物 location_potential 里的气候/植被/地形/区域限制）
     #   排除已经是该货物的地块，避免花冤枉钱
     Add-RgoLine $sb 2 'visible = {'
-    Add-RgoLine $sb 3 'is_goods_valid_for_location = scope:target_good'
+    Add-RgoLine $sb 3 'RGO_geo_allows_target = yes'
     Add-RgoLine $sb 3 'NOT = { raw_material ?= scope:target_good }'
     Add-RgoLine $sb 2 '}'
     Add-RgoLine $sb 1 '}'
@@ -181,11 +180,11 @@ Write-RgoTextFile -Path $actionsFile -Text $actionsText -CheckOnly:$Check
 
 
 # ============================================================
-# 2. 三个开关
+# 2. 开关（数量与顺序来自 rgo_common.ps1 的 $RGO_TOGGLES）
 # ============================================================
 $tb = New-Object System.Text.StringBuilder
 Add-RgoLine $tb 0 '# ============================================================'
-Add-RgoLine $tb 0 '# 三个开关（与分类按钮同处局势面板的一张卡内，点击一次切换一次，免费）'
+Add-RgoLine $tb 0 ('# ' + $RGO_TOGGLE_COUNT + ' 个开关（与分类按钮同处局势面板的一张卡内，点击一次切换一次，免费）')
 foreach ($d in $toggleDefs) {
     Add-RgoLine $tb 0 ('#   RGO_toggle_' + $d.id + '  ->  国家变量 ' + $d.var)
 }
@@ -270,6 +269,9 @@ Add-RgoLine $cb 0 ''
 Add-RgoLine $cb 0 ('# --- 冷却开关（yes = 每次修改挂 ' + $RGO_COOLDOWN_MONTHS + ' 个月冷却 / no = 无冷却） ---')
 Add-RgoLine $cb 0 ('RGO_cfg_cooldown_default = { always = ' + $RGO_DEFAULT_COOLDOWN + ' }')
 Add-RgoLine $cb 0 ''
+Add-RgoLine $cb 0 '# --- 地理条件开关（yes = 只列出原版允许该货物的地点 / no = 不限地理条件） ---'
+Add-RgoLine $cb 0 ('RGO_cfg_geo_default = { always = ' + $RGO_DEFAULT_GEO + ' }')
+Add-RgoLine $cb 0 ''
 Add-RgoLine $cb 0 '# --- 七个分类的默认按钮开关 ---'
 foreach ($k in $RGO_DEFAULT_CATEGORIES.Keys) {
     $name = 'RGO_cfg_cat_' + $k + '_default'
@@ -280,14 +282,10 @@ Add-RgoLine $cb 0 '# ===========================================================
 Add-RgoLine $cb 0 '# 运行时判定（root 均为国家，可在任何国家作用域里直接调用）'
 Add-RgoLine $cb 0 '# ============================================================'
 
-$switchDefs = @(
-    [pscustomobject]@{ trigger = 'RGO_cost_enabled';         var = 'rgo_var_cost';      default = 'RGO_cfg_cost_default' }
-    [pscustomobject]@{ trigger = 'RGO_cooldown_enabled';     var = 'rgo_var_cooldown';  default = 'RGO_cfg_cooldown_default' }
-    [pscustomobject]@{ trigger = 'RGO_cat_produced_enabled'; var = 'rgo_var_produced';  default = 'RGO_cfg_cat_produced_default' }
-)
+$switchDefs = $RGO_TOGGLES
 foreach ($s in $switchDefs) {
     Add-RgoLine $cb 0 ''
-    Add-RgoLine $cb 0 ($s.trigger + ' = {')
+    Add-RgoLine $cb 0 ($s.check + ' = {')
     Add-RgoLine $cb 1 'OR = {'
     Add-RgoLine $cb 2 'AND = {'
     Add-RgoLine $cb 3 ('has_variable = ' + $s.var)
@@ -300,6 +298,24 @@ foreach ($s in $switchDefs) {
     Add-RgoLine $cb 1 '}'
     Add-RgoLine $cb 0 '}'
 }
+
+Add-RgoLine $cb 0 ''
+Add-RgoLine $cb 0 '# ============================================================'
+Add-RgoLine $cb 0 '# 地理条件限制（被各分类动作的「选地点」步骤调用）'
+Add-RgoLine $cb 0 '#   开关关闭（默认）：恒为 yes —— 本国任意地点都能改成任意原材料'
+Add-RgoLine $cb 0 '#   开关开启：沿用原版 is_goods_valid_for_location，即货物的 location_potential'
+Add-RgoLine $cb 0 '#             （气候 / 植被 / 地形 / 区域等静态地理条件，原版在开局缓存）'
+Add-RgoLine $cb 0 '# ============================================================'
+Add-RgoLine $cb 0 'RGO_geo_allows_target = {'
+Add-RgoLine $cb 1 'OR = {'
+Add-RgoLine $cb 2 'NOT = {'
+Add-RgoLine $cb 3 'scope:actor ?= {'
+Add-RgoLine $cb 4 'RGO_geo_enabled = yes'
+Add-RgoLine $cb 3 '}'
+Add-RgoLine $cb 2 '}'
+Add-RgoLine $cb 2 'is_goods_valid_for_location = scope:target_good'
+Add-RgoLine $cb 1 '}'
+Add-RgoLine $cb 0 '}'
 
 Add-RgoLine $cb 0 ''
 Add-RgoLine $cb 0 '# ============================================================'
@@ -342,7 +358,26 @@ if (Test-Path -LiteralPath $guiFile) {
     if ($guiText -notmatch 'blockoverride\s+"situation_panel_main_actions"') {
         throw 'GUI 没有关闭 situation_panel_main_actions，会与自定义卡片重复渲染'
     }
-    Write-Host '[一致] GUI：原生卡片 + actions_override 分组（中间留一个按钮高度）'
+    # 两列网格：分类逐个取索引 0..N-1，开关用 GetDataModelSize - k 反推起始索引
+    # 数量变化时 GUI 的行数必须同步，否则多出的按钮不会显示（这里直接报错提醒）
+    $missing = @()
+    for ($i = 0; $i -lt $catCount; $i++) {
+        $needle = "DataModelSubSpan(ActionGroup.GetActions, '(int32)$i', '(int32)1')"
+        if (([regex]::Matches($guiText, [regex]::Escape($needle))).Count -ne 1) { $missing += ('分类 ' + ($i + 1)) }
+    }
+    for ($k = $RGO_TOGGLE_COUNT; $k -ge 1; $k--) {
+        $needle = "DataModelSubSpan(ActionGroup.GetActions, Subtract_int32(GetDataModelSize(ActionGroup.GetActions), '(int32)$k'), '(int32)1')"
+        if (([regex]::Matches($guiText, [regex]::Escape($needle))).Count -ne 1) { $missing += ('开关 -' + $k) }
+    }
+    if ($missing.Count -gt 0) {
+        throw ('GUI 的两列切片与数据不一致（缺少或重复）: ' + ($missing -join ', ') + '。改完 rgo_common.ps1 后请同步 GUI 的行数。')
+    }
+    $expectedRows = [int]([Math]::Ceiling($catCount / 2) + [Math]::Ceiling($RGO_TOGGLE_COUNT / 2))
+    $guiRows = ([regex]::Matches($guiText, '(?m)^\t+hbox = \{')).Count
+    if ($guiRows -ne $expectedRows) {
+        throw ('GUI 的行数是 ' + $guiRows + '，按两列布局应为 ' + $expectedRows + ' 行（分类 ' + $catCount + ' 个 + 开关 ' + $RGO_TOGGLE_COUNT + ' 个）')
+    }
+    Write-Host ('[一致] GUI：原生卡片 + actions_override 两列网格（分类 ' + $catCount + ' 个 → ' + [Math]::Ceiling($catCount / 2) + ' 行，开关 ' + $RGO_TOGGLE_COUNT + ' 个 → ' + [Math]::Ceiling($RGO_TOGGLE_COUNT / 2) + ' 行，中间留 18px 间隔）')
 }
 else {
     Write-Warning ("找不到 GUI 文件，跳过一致性校验: " + $guiFile)

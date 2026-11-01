@@ -8,3 +8,6 @@ Thumbs.db
 
 # 个人本地文件
 *.log
+
+# 构建产物（tools\build_release.ps1 生成，不提交）
+dist/

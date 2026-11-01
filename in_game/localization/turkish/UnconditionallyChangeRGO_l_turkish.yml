@@ -8,7 +8,7 @@
 
  # Scriptable hint: short title in the list, long text in _hint_text
  hint_UnconditionallyChangeRGO:0 "Hammaddeler"
- hint_UnconditionallyChangeRGO_hint_text:0 "Hammaddeler\n\nBir kategoriye tıklayın, ardından hammaddeyi ve yeri seçin. Anahtarlar her tıklamada açılıp kapanır.\n\n- Maliyet: seçilen malın o yerin piyasasındaki güncel fiyatını altı kademede tahsil eder (yaklaşık 5 / 10 / 16 / 24 / 34 / 50 altın). Kapalı: her şey ücretsiz.\n- Bekleme: her değişiklik 6 ay bekleme başlatır ve düğmeler grileşir. Kapatmak süren beklemeyi hemen siler.\n- Mamul mallar: varsayılan olarak kapalı. Binalarda üretilirler; hammadde olarak kullanmak vanilla davranışı değildir ve üretimi bozabilir.\n\nKategorideki malları görmek için bir düğmenin üzerine gelin."
+ hint_UnconditionallyChangeRGO_hint_text:0 "Hammaddeler\n\nBir kategoriye tıklayın, ardından hammaddeyi ve yeri seçin. Anahtarlar her tıklamada açılıp kapanır.\n\n- Maliyet: seçilen malın o yerin piyasasındaki güncel fiyatını altı kademede tahsil eder (yaklaşık 5 / 10 / 16 / 24 / 34 / 50 altın). Kapalı: her şey ücretsiz.\n- Bekleme: her değişiklik 6 ay bekleme başlatır ve düğmeler grileşir. Kapatmak süren beklemeyi hemen siler.\n- Mamul mallar: varsayılan olarak kapalı. Binalarda üretilirler; hammadde olarak kullanmak vanilla davranışı değildir ve üretimi bozabilir.\n- Coğrafya: varsayılan olarak kapalı. Kapalıyken iklim, bitki örtüsü veya arazi izin vermese de her yer herhangi bir hammaddeye çevrilebilir. Açıkken yalnızca oyunun kabul ettiği yerler listelenir.\n\nKategorideki malları görmek için bir düğmenin üzerine gelin."
 
  # Action card title (overrides the engine UI-library placeholder title)
  RGO_CARD_HEADER:0 "Hammadde işlemleri"
@@ -35,13 +35,15 @@
  RGO_change_produced:0 "Mamul mallar"
  RGO_change_produced_desc:0 "Mamul mallar (21): Bira, Kitap, Top, Kumaş, Kaliteli Kumaş, Ateşli Silahlar, Mobilya, Cam, Mücevher, Lake Emtia, Deri, Likör, Tuğla, Denizcilik Malzemeleri, Kâğıt, Porselen, Çömlek, Çelik, Katran, Aletler, Silah.\nVanilla davranışı değildir, üretimi bozabilir. Varsayılan olarak kapalı."
 
- # Switches (3)
+ # Switches (4)
  RGO_toggle_cost:0 "Maliyet aç/kapa"
  RGO_toggle_cost_desc:0 "Açık: güncel piyasa fiyatını altı kademede tahsil eder (yaklaşık 5 / 10 / 16 / 24 / 34 / 50 altın); arz yetmezse kademe yükselir. Kapalı: tamamen ücretsiz."
  RGO_toggle_cooldown:0 "Bekleme aç/kapa"
  RGO_toggle_cooldown_desc:0 "Açık: her değişiklik 6 ay bekleme başlatır. Kapalı: bekleme yoktur ve süren bekleme hemen silinir."
  RGO_toggle_produced:0 "Mamul mallar aç/kapa"
  RGO_toggle_produced_desc:0 "Mamul mallar düğmesini gösterir veya gizler. Varsayılan olarak kapalı."
+ RGO_toggle_geo:0 "Coğrafya aç/kapa"
+ RGO_toggle_geo_desc:0 "Açık: yalnızca oyunun bu malı kabul ettiği yerler (iklim, bitki örtüsü, arazi, bölge) listelenir. Kapalı: sahip olduğunuz her yer herhangi bir hammaddeye çevrilebilir. Varsayılan olarak kapalı."
 
  # Current state shown in the switch tooltip (chosen by trigger at hover time)
  RGO_toggle_state_on:0 "Şu an: AÇIK - kapatmak için tıklayın"
