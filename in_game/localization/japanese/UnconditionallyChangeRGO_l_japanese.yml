@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "現在：オン - クリックでオフ"
  RGO_toggle_state_off:0 "現在：オフ - クリックでオン"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "原材料を変更"
+ RGO_PRICE_TIER:0 "その財の現地市場価格に応じて調整（6段階）"
+ RGO_PRICE_FREE:0 "無料：費用スイッチがオフ、またはその地点がいずれの市場にも属していない"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "原材料クールダウン"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "原材料の変更はクールダウン中です。終了まで再変更できません。"
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "原材料変更費用"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "地点の原材料を変更する費用に影響します。"

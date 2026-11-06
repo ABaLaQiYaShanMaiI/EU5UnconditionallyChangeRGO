@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "Ahora: ACTIVADO - pulsa para desactivar"
  RGO_toggle_state_off:0 "Ahora: DESACTIVADO - pulsa para activar"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "Cambiar materia prima"
+ RGO_PRICE_TIER:0 "Ajustado al precio real del mercado local (seis tramos)"
+ RGO_PRICE_FREE:0 "Gratis: el interruptor de coste está desactivado o el lugar no está en ningún mercado"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Enfriamiento de materias primas"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "El cambio de materia prima está en enfriamiento; no se pueden hacer más cambios hasta que termine."
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "Coste de cambio de materia prima"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "Influye en cuánto cuesta cambiar la materia prima de un lugar."

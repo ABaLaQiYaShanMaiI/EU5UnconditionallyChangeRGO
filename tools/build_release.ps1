@@ -136,15 +136,21 @@ $uploadDoc = @'
   dist\UnconditionallyChangeRGO_v__VERSION__.zip  备份 / 手动上传用
 
 二、为什么要用这份干净目录
-  游戏 mod 目录是 Junction，指向开发仓库（含 .git 659 KB、tools 90 KB、文档等）。
-  上一版工坊包是 1.222 MB，正是把 .git / tools 一起上传了；这次的干净包只有约 __SIZE__ KB。
-  直接从 Junction 上传会继续把开发文件打进去，所以请用 dist 里的副本。
+  开发模式下游戏 mod 目录是 Junction，指向开发仓库（含 .git、tools、文档等），
+  直接上传会把开发文件一起打进工坊包。
+  干净的 dist 副本只有 __FILES__ 个文件 / 约 __SIZE__ KB，所以请用 dist 里的副本。
 
 三、更新步骤（推荐）
-  1) 关闭游戏与启动器。
-  2) 仓库根目录运行：
-       powershell -ExecutionPolicy Bypass -File "tools\switch_to_release.ps1" -Install
-     它把 mod 目录的 Junction 备份为 UnconditionallyChangeRGO.dev，并换成干净副本。
+  1) 关闭游戏与启动器（启动器开着会缓存 mod 列表，上传前记得重开）。
+  2) 让 mod 目录里放的是「干净副本」，两种方式任选其一：
+       a. 仓库根目录运行（推荐，会先构建再部署并逐文件校验）：
+            powershell -ExecutionPolicy Bypass -File "tools\deploy_local.ps1"
+       b. 如果当前仍是开发模式的 Junction：
+            powershell -ExecutionPolicy Bypass -File "tools\switch_to_release.ps1" -Install
+          它会删掉指向仓库的 Junction，再换上干净副本（不会在 mod 目录里留 .dev 副本）。
+     判断依据：……\Europa Universalis V\mod\UnconditionallyChangeRGO 里有 .rgo-release 标记 = 干净副本。
+     注意：mod 目录里只能有一份本模组。游戏会挂载 mod 目录下所有含 in_game / main_menu 的子文件夹，
+           把开发仓库的 Junction（旧版的 .dev）留在里面会被当成第二个模组一起加载。
   3) 打开启动器 → 模组 → 选中「原产物无限制全修改」（应显示已发布状态）→ 上传/更新。
      上传对话框里：
        - 标题保持原来的三语标题（原产物无限制全修改-Unconditionally Change RGO-Неограниченное изменение сырья）
@@ -154,8 +160,8 @@ $uploadDoc = @'
   4) 上传完成后到工坊页面确认：
        - URL 仍是 id=3682897240
        - 「Updated」时间变成刚才
-       - File Size 从 1.222 MB 降到约 __SIZE__ KB
-  5) 恢复开发模式：
+       - File Size 约为 __SIZE__ KB
+  5) 恢复开发模式（把干净副本换回指向仓库的 Junction）：
        powershell -ExecutionPolicy Bypass -File "tools\switch_to_release.ps1" -Restore
 
 四、红线（避免变成新条目 / 丢内容）
@@ -164,11 +170,11 @@ $uploadDoc = @'
   - 若启动器只提供「新建/上传为新作品」而没有「更新」，先停止上传，说明条目绑定丢了
 
 五、手工更新（不用脚本）
-  1) 把原 Junction 改名备份，例如 UnconditionallyChangeRGO.dev
+  1) 先把当前 mod 目录改名备份（Junction 或旧副本都行）
   2) 把 dist\UnconditionallyChangeRGO 整个复制到
      …\Documents\Paradox Interactive\Europa Universalis V\mod\UnconditionallyChangeRGO
   3) 确保 mod 目录下有 UnconditionallyChangeRGO.mod（可用 dist 里的那份）
-  4) 启动器上传后，删除复制出来的目录，把 .dev 改回原名
+  4) 启动器上传后，删除复制出来的目录，把备份改回原名（恢复 Junction 开发模式）
 '@
 $uploadDoc = $uploadDoc.Replace('__VERSION__', $version).Replace('__FILES__', [string]$files.Count).Replace('__SIZE__', [string][Math]::Round($totalSize / 1KB, 1))
 [System.IO.File]::WriteAllText((Join-Path $distRoot 'UPLOAD-说明.txt'), $uploadDoc, (New-Object System.Text.UTF8Encoding($true)))

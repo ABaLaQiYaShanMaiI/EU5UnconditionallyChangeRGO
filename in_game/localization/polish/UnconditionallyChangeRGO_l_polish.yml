@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "Teraz: WŁ. - kliknij, aby wyłączyć"
  RGO_toggle_state_off:0 "Teraz: WYŁ. - kliknij, aby włączyć"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "Zmień surowiec"
+ RGO_PRICE_TIER:0 "Dostosowane do bieżącej ceny rynkowej towaru (sześć progów)"
+ RGO_PRICE_FREE:0 "Bezpłatnie: przełącznik kosztu jest wyłączony lub lokalizacja nie należy do żadnego rynku"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Odnowienie surowców"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "Zmiana surowca jest w trakcie odnowienia; do jego końca nie można wykonać kolejnych zmian."
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "Koszt zmiany surowca"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "Wpływa na koszt zmiany surowca lokalizacji."

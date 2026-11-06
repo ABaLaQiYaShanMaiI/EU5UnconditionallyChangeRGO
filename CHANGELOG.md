@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.0.9
+
+### 日志修复（依据 1.0.8 的 error.log / game.log）
+- **价格确认框的引擎断言**：
+  `Important assertion failed: Using Price rgo_change, Scale is not VONE, should be using a ScaleReason here`
+  —— `price_modifier` 的每个分支（含免费分支）都改成带 `desc` 的写法，与原版 `price_modifier` 一致：
+  `add = { desc = "RGO_PRICE_TIER" value = <系数> }`、免费档 `add = { desc = "RGO_PRICE_FREE" value = 0 }`
+- **修正器类型缺本地化**（游戏自动生成占位文本）：
+  `MODIFIER_TYPE_NAME_rgo_change_cost_modifier: "Rgo change cost modifier"`、
+  `MODIFIER_TYPE_DESC_rgo_change_cost_modifier: "TODO : Write a desc"`
+  —— 11 种语言补上 `MODIFIER_TYPE_NAME_rgo_change_cost_modifier` / `MODIFIER_TYPE_DESC_rgo_change_cost_modifier`
+- **修正器缺图标**：`[modifier_type.cpp]: Missing Icon for Modifier : rgo_change_cost_modifier`
+  —— 新增 `main_menu/common/modifier_icons/00_rgo_modifier_icons.txt`，
+  复用原版 `gfx/interface/icons/modifier_types/expand_rgo_cost_modifier.dds`（不额外打包贴图）
+
+### 校验
+- `generate_rgo_actions.ps1`：生成后自检 `RGO_PRICE_TIER` 数量 = 分类数 × 档位数、`RGO_PRICE_FREE` 数量 = 分类数
+- `validate_mod.ps1`：新增价格 ScaleReason、修正器图标映射、4 个新本地化键（×11 语言）的检查
+- 其余日志复查结论：`gui.log` 内没有本模组条目；动态货物判定（`goods_category` / `goods_method` / `is_food`）
+  在 error.log 中**没有任何报错**，说明 v1.0.8 的动态分类在游戏里正常工作；
+  其余条目均来自其它模组（作弊菜单重复键、拜占庭/奥斯曼模组重复键）或存档兼容（trade road/canal demand），与本模组无关
+
+### 工程（发布工具）
+- **修复“同一 mod 被挂载两份”**：`debug.log` 显示游戏会挂载 `mod` 目录下所有含 `in_game` / `main_menu`
+  的子文件夹，旧版 `switch_to_release.ps1 -Install` 留下的 `UnconditionallyChangeRGO.dev`（指回仓库的 Junction）
+  被当成第二个模组一起加载（且后挂载的旧副本会覆盖新的）。现在 `-Install` 只删除 Junction 再复制干净副本，
+  `-Restore` 删除副本并重建 Junction，**不在 mod 目录里留任何备份副本**
+- `tools/toggle_mod.ps1`：停用时把模组移到 `…\Europa Universalis V\_rgo_disabled\`（mod 目录之外），
+  避免“已停用”的文件夹仍被挂载导致 A/B 测试失真
+- `tools/deploy_local.ps1`：构建 + 部署一条龙（逐文件哈希校验后才删旧副本；目标是 Junction 时拒绝执行）
+- `dist\UPLOAD-说明.txt` 模板同步更新（不再提示 `.dev` 备份，新增“mod 目录只能有一份”警示）
+
+### 版本
+- 1.0.8 → 1.0.9
+
 ## 1.0.8
 
 ### 兼容：其它模组 / 游戏更新新增的原材料

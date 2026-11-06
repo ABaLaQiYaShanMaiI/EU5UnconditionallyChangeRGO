@@ -1,0 +1,10 @@
+﻿# 修正器图标映射（格式与 main_menu/common/modifier_icons/00_modifier_icons.txt 相同）
+#
+# 不提供这份映射时 error.log 会报：
+#   [modifier_type.cpp:1315]: Missing Icon for Modifier : rgo_change_cost_modifier
+#
+# 这里复用原版的「RGO 升级花费」图标（gfx/interface/icons/modifier_types/expand_rgo_cost_modifier.dds），
+# 不额外打包贴图；以后想换成自己的图标，改 positive 路径即可。
+rgo_change_cost_modifier = {
+	positive = "gfx/interface/icons/modifier_types/expand_rgo_cost_modifier.dds"
+}

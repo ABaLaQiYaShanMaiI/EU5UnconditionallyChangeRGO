@@ -1,7 +1,7 @@
 ﻿{
   "id": "UnconditionallyChangeRGO",
   "name": "原产物无限制全修改",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "supported_game_version": "1.*.*",
   "short_description": "免费或按市场价修改本国任意地点的原材料：七个分类按货物自身属性动态判定，兼容其它模组与后续版本新增的货物；制成品默认关闭，地理条件限制可选。Change the raw material of any owned location for free or at market price: the seven categories resolve dynamically from the goods themselves, so goods added by other mods or later patches work automatically; manufactured goods optional, geography limits optional.",
   "tags": ["Utilities", "Trade and Economics"],

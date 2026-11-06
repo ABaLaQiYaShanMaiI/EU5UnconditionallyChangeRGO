@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "Şu an: AÇIK - kapatmak için tıklayın"
  RGO_toggle_state_off:0 "Şu an: KAPALI - açmak için tıklayın"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "Hammaddeyi değiştir"
+ RGO_PRICE_TIER:0 "Malın güncel piyasa fiyatına göre ayarlanır (altı kademe)"
+ RGO_PRICE_FREE:0 "Ücretsiz: maliyet anahtarı kapalı veya yer herhangi bir piyasada değil"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Hammadde beklemesi"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "Hammadde değişikliği beklemede; süre bitene kadar yeni değişiklik yapılamaz."
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "Hammadde Değişim Maliyeti"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "Bir yerin hammaddesini değiştirmenin maliyetini etkiler."

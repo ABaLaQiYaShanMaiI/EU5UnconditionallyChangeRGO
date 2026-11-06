@@ -126,17 +126,24 @@ foreach ($g in $groups.Keys) {
     Add-RgoLine $sb 0 ''
 
     # 价格：基础价 x 市场价系数；六档阈值统一放在 00_rgo_config.txt
+    # 每个分支都必须带 desc：引擎要求“非 1 的倍率”提供 ScaleReason，
+    # 否则打开确认框时 error.log 会断言失败：
+    #   Using Price rgo_change, Scale is not VONE, should be using a ScaleReason here
     Add-RgoLine $sb 1 ('# 花费 = price:rgo_change（' + $RGO_BASE_PRICE + ' 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）')
+    Add-RgoLine $sb 1 '# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由'
     Add-RgoLine $sb 1 'price = price:rgo_change'
     Add-RgoLine $sb 1 'price_modifier = {'
     for ($i = 0; $i -lt $RGO_PRICE_TIERS.Count; $i++) {
         $t = $RGO_PRICE_TIERS[$i]
         $kw = if ($i -eq 0) { 'if' } else { 'else_if' }
         $factor = $t.factor.ToString([System.Globalization.CultureInfo]::InvariantCulture)
-        Add-RgoLine $sb 2 ($kw + ' = { limit = { RGO_price_tier_' + $t.tier + ' = yes } value = ' + $factor + ' }')
+        Add-RgoLine $sb 2 ($kw + ' = {')
+        Add-RgoLine $sb 3 ('limit = { RGO_price_tier_' + $t.tier + ' = yes }')
+        Add-RgoLine $sb 3 ('add = { desc = "RGO_PRICE_TIER" value = ' + $factor + ' }')
+        Add-RgoLine $sb 2 '}'
     }
     Add-RgoLine $sb 2 'else = {'
-    Add-RgoLine $sb 3 'value = 0'
+    Add-RgoLine $sb 3 'add = { desc = "RGO_PRICE_FREE" value = 0 }'
     Add-RgoLine $sb 2 '}'
     Add-RgoLine $sb 1 '}'
     Add-RgoLine $sb 0 ''
@@ -462,6 +469,17 @@ foreach ($g in $groups.Keys) {
 }
 if ($actionsText -match 'this = goods:') {
     throw '00_rgo_actions.txt 里仍有写死的货物清单（this = goods:），模组新增货物会被漏掉'
+}
+
+# 价格倍率必须带 ScaleReason（desc）：否则打开确认框时 error.log 会断言失败
+$tierDesc = ([regex]::Matches($actionsText, 'desc = "RGO_PRICE_TIER"')).Count
+$freeDesc = ([regex]::Matches($actionsText, 'desc = "RGO_PRICE_FREE"')).Count
+$expectedTierDesc = $catCount * $RGO_PRICE_TIERS.Count
+if ($tierDesc -ne $expectedTierDesc) {
+    throw ('price_modifier 的档位 desc 数量是 ' + $tierDesc + '（应为 ' + $expectedTierDesc + '）：每个分类每一档都要 desc = "RGO_PRICE_TIER"')
+}
+if ($freeDesc -ne $catCount) {
+    throw ('price_modifier 的免费 desc 数量是 ' + $freeDesc + '（应为 ' + $catCount + '）：每个分类的 else 都要 desc = "RGO_PRICE_FREE"')
 }
 
 if ($actionCount -ne $catCount) { throw "分类动作数量（$actionCount）与分类数（$catCount）不一致" }

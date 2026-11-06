@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "현재: 켜짐 - 클릭하면 꺼짐"
  RGO_toggle_state_off:0 "현재: 꺼짐 - 클릭하면 켜짐"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "원자재 변경"
+ RGO_PRICE_TIER:0 "해당 상품의 현지 시장 가격에 따라 조정(6단계)"
+ RGO_PRICE_FREE:0 "무료: 비용 스위치가 꺼져 있거나 해당 지역이 어떤 시장에도 속해 있지 않음"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "원자재 재사용 대기"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "원자재 변경이 재사용 대기 중입니다. 끝날 때까지 다시 변경할 수 없습니다."
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "원자재 변경 비용"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "지역의 원자재를 변경하는 비용에 영향을 줍니다."

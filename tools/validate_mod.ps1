@@ -173,8 +173,26 @@ Check "no fixed goods list in actions" (-not ($actionsText -match 'this = goods:
 Check "every goods step iterates every_goods" ([regex]::Matches($actionsText, 'every_goods = \{').Count -eq $catCount)
 Check "config classifies goods dynamically" (($configText -match 'goods_category = raw_material') -and ($configText -match 'goods_category = produced') -and ($configText -match 'goods_method = mining') -and ($configText -match 'goods_method = farming') -and ($configText -match 'is_food = yes'))
 Check "plantation stays a generated whitelist" ($configText -match 'RGO_goods_in_plantation = \{' -and $configText -match 'this = goods:')
+
+# 7c. 价格倍率必须带 ScaleReason（desc），否则确认框会触发引擎断言
+$tierDesc = [regex]::Matches($actionsText, 'desc = "RGO_PRICE_TIER"').Count
+$freeDesc = [regex]::Matches($actionsText, 'desc = "RGO_PRICE_FREE"').Count
+Check ("price scale reason per tier x" + $tierDesc) ($tierDesc -eq ($catCount * $RGO_PRICE_TIERS.Count))
+Check ("price scale reason for free x" + $freeDesc) ($freeDesc -eq $catCount)
+
+# 7d. 价格成本修正器：类型定义 / 图标映射 / 本地化
 $modType = Join-Path $root 'main_menu\common\modifier_type_definitions\00_rgo_modifier_types.txt'
-Check "price cost-modifier type defined" ((Test-Path $modType) -and ([System.IO.File]::ReadAllText($modType) -match 'rgo_change_cost_modifier'))
+$iconMap = Join-Path $root 'main_menu\common\modifier_icons\00_rgo_modifier_icons.txt'
+Check "price cost-modifier type defined" ((Test-Path -LiteralPath $modType) -and ([System.IO.File]::ReadAllText($modType) -match 'rgo_change_cost_modifier'))
+Check "price cost-modifier icon mapped" ((Test-Path -LiteralPath $iconMap) -and ([System.IO.File]::ReadAllText($iconMap) -match 'rgo_change_cost_modifier\s*=\s*\{') -and ([System.IO.File]::ReadAllText($iconMap) -match 'gfx/interface/icons/modifier_types/.+\.dds'))
+$uiKeys = @('RGO_PRICE_TIER', 'RGO_PRICE_FREE', 'MODIFIER_TYPE_NAME_rgo_change_cost_modifier', 'MODIFIER_TYPE_DESC_rgo_change_cost_modifier')
+$uiMissing = @()
+foreach ($l in $langs) {
+    $p = Join-Path $root ("in_game\localization\{0}\UnconditionallyChangeRGO_l_{0}.yml" -f $l)
+    $text = [System.IO.File]::ReadAllText($p)
+    foreach ($k in $uiKeys) { if ($text -notmatch ('(?m)^\s*' + $k + ':0\s+"')) { $uiMissing += ($l + ':' + $k) } }
+}
+Check ("price/modifier keys localized x" + $uiKeys.Count) ($uiMissing.Count -eq 0) ($uiMissing -join ', ')
 Check "gui: hint button present" ($gui -match "selected_hint = hint_UnconditionallyChangeRGO")
 Check "loc: switch state keys present" (@(foreach ($l in $langs) {
             $p = Join-Path $root ("in_game\localization\{0}\UnconditionallyChangeRGO_l_{0}.yml" -f $l)

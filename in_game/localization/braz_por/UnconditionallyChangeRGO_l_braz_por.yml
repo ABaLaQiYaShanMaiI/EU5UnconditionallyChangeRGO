@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "Agora: LIGADO - clique para desligar"
  RGO_toggle_state_off:0 "Agora: DESLIGADO - clique para ligar"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "Mudar matéria-prima"
+ RGO_PRICE_TIER:0 "Ajustado ao preço real do mercado local (seis faixas)"
+ RGO_PRICE_FREE:0 "Grátis: o interruptor de custo está desligado ou o local não está em nenhum mercado"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "Recarga de matérias-primas"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "A mudança de matéria-prima está em recarga; não é possível mudar novamente até acabar."
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "Custo de Mudança de Matéria-Prima"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "Afeta quanto custa mudar a matéria-prima de um local."

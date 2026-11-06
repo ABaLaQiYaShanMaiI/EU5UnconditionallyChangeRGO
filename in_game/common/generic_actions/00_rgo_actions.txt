@@ -15,16 +15,35 @@ RGO_change_mining = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 
@@ -108,16 +127,35 @@ RGO_change_gathering = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 
@@ -201,16 +239,35 @@ RGO_change_crops = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 
@@ -294,16 +351,35 @@ RGO_change_food = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 
@@ -387,16 +463,35 @@ RGO_change_plantation = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 
@@ -480,16 +575,35 @@ RGO_change_wild = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 
@@ -573,16 +687,35 @@ RGO_change_produced = {
 	show_message_to_target = no
 
 	# 花费 = price:rgo_change（10 金）x 市场价系数；花费开关关闭或地点无市场 => 0（免费）
+	# 每个倍率都带 desc（ScaleReason），供确认框解释收费理由
 	price = price:rgo_change
 	price_modifier = {
-		if = { limit = { RGO_price_tier_1 = yes } value = 0.5 }
-		else_if = { limit = { RGO_price_tier_2 = yes } value = 1 }
-		else_if = { limit = { RGO_price_tier_3 = yes } value = 1.6 }
-		else_if = { limit = { RGO_price_tier_4 = yes } value = 2.4 }
-		else_if = { limit = { RGO_price_tier_5 = yes } value = 3.4 }
-		else_if = { limit = { RGO_price_tier_6 = yes } value = 5 }
+		if = {
+			limit = { RGO_price_tier_1 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 0.5 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_2 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_3 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 1.6 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_4 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 2.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_5 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 3.4 }
+		}
+		else_if = {
+			limit = { RGO_price_tier_6 = yes }
+			add = { desc = "RGO_PRICE_TIER" value = 5 }
+		}
 		else = {
-			value = 0
+			add = { desc = "RGO_PRICE_FREE" value = 0 }
 		}
 	}
 

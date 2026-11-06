@@ -108,17 +108,48 @@ powershell -ExecutionPolicy Bypass -File "tools\generate_rgo_actions.ps1" -Goods
 | 脚本 | 作用 |
 |---|---|
 | `tools/build_release.ps1` | 生成创意工坊上传用的干净目录：`dist\UnconditionallyChangeRGO`、`dist\UnconditionallyChangeRGO.mod`、`dist\UnconditionallyChangeRGO_v<版本>.zip`（**不含** `.mod`，只给工坊用） |
+| `tools/deploy_local.ps1` | 构建 + 部署一条龙：跑 `build_release.ps1`，再把干净副本装进游戏 mod 目录，逐文件比对哈希后才删旧副本；目标是 Junction 时拒绝执行（防止误删仓库） |
+| `tools/switch_to_release.ps1` | 开发模式（Junction → 仓库）与发布副本之间切换：`-Install` 删掉 Junction 并换上干净副本，`-Restore` 删除副本并重建 Junction。**不会**在 mod 目录里留 `.dev` 副本（会被游戏当成第二个模组一起挂载） |
 | `tools/build_share.ps1` | 生成网盘分享包 `dist\UnconditionallyChangeRGO_v<版本>_网盘安装包.zip`（文件夹 + `.mod` + 安装说明），自检压缩包根层结构与文件数，并输出 SHA256 和 `dist\网盘分享说明.txt` |
 | `tools/validate_mod.ps1` | 全量校验：生成物是否最新、11 种语言键集合是否一致、脚本引用的键是否都有本地化、括号是否平衡、UTF-8 BOM 是否齐全、动作/开关数量、分类是否走动态判定、模拟新增货物能否正确归类 |
 | `tools/test_dynamic_goods.ps1` | 兼容性自检：把原版 `common/goods` 复制到临时目录并追加一个模拟 mod 的货物文件，断言新货物仍落到预期分类（采矿/采集/农耕/食物/林业/制成品），不启动游戏 |
 | `tools/ensure_utf8_bom.ps1` | 给 `.ps1` / `.txt` / `.gui` / `.yml` 补 UTF-8 BOM（Windows PowerShell 5.1 无 BOM 时会按 ANSI 解析导致中文乱码） |
-| `tools/toggle_mod.ps1` | 一键停用 / 恢复本模组，用于 A/B 隔离排错 |
+| `tools/toggle_mod.ps1` | 一键停用 / 恢复本模组，用于 A/B 隔离排错（停用时把模组移到 `…\Europa Universalis V\_rgo_disabled\`，不留在 mod 目录里） |
 
 提交前推荐：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File "tools\validate_mod.ps1"
 ```
+
+## 本地部署 → 工坊 / 网盘
+
+```powershell
+# 1) 构建 + 部署到游戏 mod 目录（装的正是工坊要上传的那份干净副本）
+powershell -ExecutionPolicy Bypass -File "tools\deploy_local.ps1"
+
+# 2) 进游戏测试；有报错看 …\Paradox Interactive\Europa Universalis V\logs\error.log
+
+# 3) 创意工坊：启动器 → 模组 → 选中本模组 → 上传/更新（说明见 dist\UPLOAD-说明.txt）
+
+# 4) 网盘包（含 .mod + 安装说明 + SHA256）
+powershell -ExecutionPolicy Bypass -File "tools\build_share.ps1"
+
+# 5) 想回到开发模式（mod 目录重新指向本仓库）
+powershell -ExecutionPolicy Bypass -File "tools\switch_to_release.ps1" -Restore
+```
+
+| 发布物 | 路径 | 用途 |
+|---|---|---|
+| 工坊上传目录 | `dist\UnconditionallyChangeRGO` + `dist\UnconditionallyChangeRGO.mod` | 启动器从 mod 目录上传，**不要**用指向仓库的 Junction（会把 `.git`、`tools` 一起上传） |
+| 网盘安装包 | `dist\UnconditionallyChangeRGO_v<版本>_网盘安装包.zip` | 玩家解压即用（文件夹 + `.mod` 必须同级） |
+| 工坊备份包 | `dist\UnconditionallyChangeRGO_v<版本>.zip` | 只有模组文件夹，玩家手动安装时扫不到，别当网盘包发 |
+
+> **mod 目录里只能有一份本模组**：游戏会挂载 `mod` 目录下所有含 `in_game` / `main_menu` 的子文件夹。
+> 旧版脚本会把开发仓库的 Junction 备份成 `UnconditionallyChangeRGO.dev` 留在 mod 目录里，
+> `debug.log` 里能看到两份都被挂载（`Mounted Data: .../UnconditionallyChangeRGO.dev/in_game`），
+> 后挂载的那份会覆盖前一份，A/B 测试与发版测试都会失真。
+> 现在 `switch_to_release.ps1` 只删/重建 Junction，不再留 `.dev`。
 
 ## 兼容性说明
 
@@ -151,7 +182,7 @@ powershell -ExecutionPolicy Bypass -File "tools\validate_mod.ps1"
 
 ## 版本
 
-见 [CHANGELOG.md](CHANGELOG.md)。当前 **1.0.8**。
+见 [CHANGELOG.md](CHANGELOG.md)。当前 **1.0.9**。
 
 ## License
 

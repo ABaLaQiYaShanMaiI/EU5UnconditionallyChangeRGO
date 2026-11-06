@@ -513,6 +513,79 @@ $compatTexts = @{
     braz_por     = 'Compatibilidade: as categorias são decididas em tempo de execução pelos dados do próprio bem (categoria, método de extração, valor alimentício), então bens de outros mods ou de patches futuros entram na categoria certa automaticamente. Apenas Plantação usa uma lista fixada na compilação do mod.'
 }
 
+# 价格倍率的 ScaleReason 与修正器类型文案（11 种语言）
+#   priceTier / priceFree : price_modifier 每个分支的 desc，解释“为什么是这个倍率”
+#                           （缺了它 error.log 会断言：Scale is not VONE, should be using a ScaleReason）
+#   modName / modDesc     : MODIFIER_TYPE_NAME_/DESC_（缺了会显示 "Rgo change cost modifier" / "TODO : Write a desc"）
+$uiTexts = @{
+    english      = @{
+        priceTier = 'Adjusted to the live market price of the good (six tiers)'
+        priceFree = 'Free: the cost switch is off, or the location is not in a market'
+        modName   = 'Raw Material Change Cost'
+        modDesc   = 'This impacts how much it costs to change the raw material of a location.'
+    }
+    simp_chinese = @{
+        priceTier = '按该货物在本地市场的实时价格分档调整（共六档）'
+        priceFree = '免费：花费开关已关闭，或该地点不在任何市场内'
+        modName   = '原材料修改花费'
+        modDesc   = '影响修改地点原材料所需的费用。'
+    }
+    russian      = @{
+        priceTier = 'Скорректировано по текущей рыночной цене товара (шесть уровней)'
+        priceFree = 'Бесплатно: переключатель стоимости выключен или территория вне рынка'
+        modName   = 'Стоимость изменения сырья'
+        modDesc   = 'Влияет на стоимость изменения сырья территории.'
+    }
+    french       = @{
+        priceTier = "Ajusté au prix réel du marché local (six paliers)"
+        priceFree = "Gratuit : l'interrupteur de coût est désactivé ou le lieu n'est dans aucun marché"
+        modName   = "Coût du changement de matière première"
+        modDesc   = "Influe sur le coût du changement de matière première d'un lieu."
+    }
+    german       = @{
+        priceTier = 'An den aktuellen Marktpreis der Ware angepasst (sechs Stufen)'
+        priceFree = 'Kostenlos: Kostenschalter aus oder der Ort liegt in keinem Markt'
+        modName   = 'Kosten der Rohstoffänderung'
+        modDesc   = 'Beeinflusst, wie viel es kostet, den Rohstoff eines Ortes zu ändern.'
+    }
+    spanish      = @{
+        priceTier = 'Ajustado al precio real del mercado local (seis tramos)'
+        priceFree = 'Gratis: el interruptor de coste está desactivado o el lugar no está en ningún mercado'
+        modName   = 'Coste de cambio de materia prima'
+        modDesc   = 'Influye en cuánto cuesta cambiar la materia prima de un lugar.'
+    }
+    polish       = @{
+        priceTier = 'Dostosowane do bieżącej ceny rynkowej towaru (sześć progów)'
+        priceFree = 'Bezpłatnie: przełącznik kosztu jest wyłączony lub lokalizacja nie należy do żadnego rynku'
+        modName   = 'Koszt zmiany surowca'
+        modDesc   = 'Wpływa na koszt zmiany surowca lokalizacji.'
+    }
+    turkish      = @{
+        priceTier = 'Malın güncel piyasa fiyatına göre ayarlanır (altı kademe)'
+        priceFree = 'Ücretsiz: maliyet anahtarı kapalı veya yer herhangi bir piyasada değil'
+        modName   = 'Hammadde Değişim Maliyeti'
+        modDesc   = 'Bir yerin hammaddesini değiştirmenin maliyetini etkiler.'
+    }
+    japanese     = @{
+        priceTier = 'その財の現地市場価格に応じて調整（6段階）'
+        priceFree = '無料：費用スイッチがオフ、またはその地点がいずれの市場にも属していない'
+        modName   = '原材料変更費用'
+        modDesc   = '地点の原材料を変更する費用に影響します。'
+    }
+    korean       = @{
+        priceTier = '해당 상품의 현지 시장 가격에 따라 조정(6단계)'
+        priceFree = '무료: 비용 스위치가 꺼져 있거나 해당 지역이 어떤 시장에도 속해 있지 않음'
+        modName   = '원자재 변경 비용'
+        modDesc   = '지역의 원자재를 변경하는 비용에 영향을 줍니다.'
+    }
+    braz_por     = @{
+        priceTier = 'Ajustado ao preço real do mercado local (seis faixas)'
+        priceFree = 'Grátis: o interruptor de custo está desligado ou o local não está em nenhum mercado'
+        modName   = 'Custo de Mudança de Matéria-Prima'
+        modDesc   = 'Afeta quanto custa mudar a matéria-prima de um local.'
+    }
+}
+
 # 动作卡片标题（原版 situation_card_actions 的默认标题是 UI 库占位文字，必须覆盖）
 $cardHeaders = @{
     english      = 'Raw Material Actions'
@@ -561,6 +634,10 @@ foreach ($lang in $languages) {
 
     # 兼容性说明（独立表，与地理条件一样插到提示正文最后一段之前）
     if (-not $compatTexts.ContainsKey($lang)) { throw "缺少兼容性说明文案: $lang" }
+
+    # 价格 ScaleReason 与 rgo_change_cost_modifier 的本地化文案
+    if (-not $uiTexts.ContainsKey($lang)) { throw "缺少价格/修正器文案: $lang" }
+    $ui = $uiTexts[$lang]
 
     $hintMap = @{ tiers = $tierText; months = $RGO_COOLDOWN_MONTHS; cats = $catCount; toggles = $toggleCount }
 
@@ -611,12 +688,18 @@ foreach ($lang in $languages) {
     Add-LocLine $sb ('RGO_toggle_state_off:0 "' + $t.stateOff + '"')
     Add-LocLine $sb ''
 
-    Add-LocLine $sb '# Price name (confirmation dialog)'
+    Add-LocLine $sb '# Price name (confirmation dialog) + price scale reasons (ScaleReason)'
     Add-LocLine $sb ('rgo_change:0 "' + $t.price + '"')
+    Add-LocLine $sb ('RGO_PRICE_TIER:0 "' + $ui.priceTier + '"')
+    Add-LocLine $sb ('RGO_PRICE_FREE:0 "' + $ui.priceFree + '"')
     Add-LocLine $sb ''
     Add-LocLine $sb '# Cooldown static modifier'
     Add-LocLine $sb ('STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "' + $t.modName + '"')
     Add-LocLine $sb ('STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "' + $t.modDesc + '"')
+    Add-LocLine $sb ''
+    Add-LocLine $sb '# Price cost-modifier type (rgo_change_cost_modifier)'
+    Add-LocLine $sb ('MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "' + $ui.modName + '"')
+    Add-LocLine $sb ('MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "' + $ui.modDesc + '"')
 
     $outFile = Join-Path $modRoot ('in_game\localization\' + $lang + '\UnconditionallyChangeRGO_l_' + $lang + '.yml')
     Write-RgoTextFile -Path $outFile -Text $sb.ToString() -CheckOnly:$Check

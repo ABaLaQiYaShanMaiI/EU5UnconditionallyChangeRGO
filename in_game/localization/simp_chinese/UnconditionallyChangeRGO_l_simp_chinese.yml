@@ -49,9 +49,15 @@
  RGO_toggle_state_on:0 "当前：开启 —— 点击后关闭"
  RGO_toggle_state_off:0 "当前：关闭 —— 点击后开启"
 
- # Price name (confirmation dialog)
+ # Price name (confirmation dialog) + price scale reasons (ScaleReason)
  rgo_change:0 "修改原材料"
+ RGO_PRICE_TIER:0 "按该货物在本地市场的实时价格分档调整（共六档）"
+ RGO_PRICE_FREE:0 "免费：花费开关已关闭，或该地点不在任何市场内"
 
  # Cooldown static modifier
  STATIC_MODIFIER_NAME_rgo_change_cooldown:0 "原材料冷却"
  STATIC_MODIFIER_DESC_rgo_change_cooldown:0 "原材料的修改仍在冷却中，冷却结束前无法再次修改。"
+
+ # Price cost-modifier type (rgo_change_cost_modifier)
+ MODIFIER_TYPE_NAME_rgo_change_cost_modifier:0 "原材料修改花费"
+ MODIFIER_TYPE_DESC_rgo_change_cost_modifier:0 "影响修改地点原材料所需的费用。"
