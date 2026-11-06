@@ -1,6 +1,7 @@
 ﻿# ============================================================
 # 共享数据层（被 generate_rgo_actions.ps1 / generate_rgo_localization.ps1 引用）
 #   - 原版货物解析与分组
+#   - 分类判定规则（运行时按货物自身字段动态判定，兼容模组/版本新增货物）
 #   - 价格阶梯 / 冷却月数 / 排除货物 的唯一真值源
 # 修改这里的数值后，重跑两个生成器即可同步脚本与 11 种语言的文案。
 # ============================================================
@@ -85,6 +86,7 @@ function Get-RgoGoodsRoot {
 function Get-RgoGameRoot {
     param([string]$GoodsRoot)
     # <game>\in_game\common\goods -> <game>
+    # 仅供开发时定位原版文件（生成器本身只读 goods 目录）
     return (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $GoodsRoot)))
 }
 
@@ -103,16 +105,18 @@ function Get-RgoGoodsRows {
         $cur = $null
         $cat = 'raw_material'
         $method = 'farming'
+        $food = 0.0
         foreach ($line in [System.IO.File]::ReadAllLines($f.FullName)) {
             # 顶层定义：id = {
             if ($line -cmatch '^([a-z_0-9]+)\s*=\s*\{') {
-                if ($cur) { $rows += [pscustomobject]@{ id = $cur; cat = $cat; method = $method; file = $f.Name } }
-                $cur = $Matches[1]; $cat = 'raw_material'; $method = 'farming'
+                if ($cur) { $rows += [pscustomobject]@{ id = $cur; cat = $cat; method = $method; food = $food; file = $f.Name } }
+                $cur = $Matches[1]; $cat = 'raw_material'; $method = 'farming'; $food = 0.0
             }
             elseif ($line -cmatch '^\s+category\s*=\s*([a-z_]+)') { $cat = $Matches[1] }
             elseif ($line -cmatch '^\s+method\s*=\s*([a-z_]+)') { $method = $Matches[1] }
+            elseif ($line -cmatch '^\s+food\s*=\s*([0-9.]+)') { $food = [double]::Parse($Matches[1], [System.Globalization.CultureInfo]::InvariantCulture) }
         }
-        if ($cur) { $rows += [pscustomobject]@{ id = $cur; cat = $cat; method = $method; file = $f.Name } }
+        if ($cur) { $rows += [pscustomobject]@{ id = $cur; cat = $cat; method = $method; food = $food; file = $f.Name } }
     }
     if ($rows.Count -eq 0) { throw "解析原版货物失败: $GoodsRoot" }
     return $rows
@@ -125,19 +129,92 @@ function Get-RgoGroups {
         @($Rows | Where-Object $filter | ForEach-Object { $_.id } | Sort-Object -Unique)
     }
 
+    # 这里的判定规则必须与运行时生成的 RGO_goods_in_<分类> 一致
+    # （见 Get-RgoGroupFilterLines）。原版数据下两者结果相同，生成器的报告与
+    # 完整性断言才有意义；运行时则不受写死的货物 id 清单限制。
+    $plantationIds = @(Pick { $_.file -eq '01_plantation_goods.txt' })
+
     $groups = [ordered]@{}
-    $groups['mining']     = @(Pick { $_.method -eq 'mining' })
-    $groups['gathering']  = @(Pick { $_.method -eq 'gathering' })
-    $groups['crops']      = @(Pick { $_.file -eq '00_raw_materials.txt' -and $_.method -eq 'farming' })
-    $groups['food']       = @(Pick { $_.file -eq '03_food.txt' -and $_.method -eq 'farming' })
-    $groups['plantation'] = @(Pick { $_.file -eq '01_plantation_goods.txt' })
-    $groups['wild']       = @(Pick { $_.method -eq 'hunting' -or $_.method -eq 'forestry' })
+    $groups['mining']     = @(Pick { $_.cat -eq 'raw_material' -and $_.method -eq 'mining' })
+    $groups['gathering']  = @(Pick { $_.cat -eq 'raw_material' -and $_.method -eq 'gathering' })
+    $groups['crops']      = @(Pick { $_.cat -eq 'raw_material' -and $_.method -eq 'farming' -and $_.food -le 0 -and $plantationIds -notcontains $_.id })
+    $groups['food']       = @(Pick { $_.cat -eq 'raw_material' -and $_.method -eq 'farming' -and $_.food -gt 0 })
+    $groups['plantation'] = @($plantationIds)
+    $groups['wild']       = @(Pick { $_.cat -eq 'raw_material' -and $_.method -notin @('mining', 'gathering', 'farming') })
     $groups['produced']   = @(Pick { $_.cat -eq 'produced' } | Where-Object { $RGO_EXCLUDED_GOODS -notcontains $_ })
 
     # 顺序固定为 $RGO_GROUP_ORDER
     $ordered = [ordered]@{}
     foreach ($k in $RGO_GROUP_ORDER) { $ordered[$k] = @($groups[$k]) }
     return $ordered
+}
+
+# ---------- 分类判定规则（动态：兼容其它模组 / 游戏更新新增的货物） ----------
+# 每个分类都会在 in_game/common/scripted_triggers/00_rgo_config.txt 里生成一个
+# RGO_goods_in_<分类> 触发器（root = goods 作用域），只读货物自身字段：
+#   goods_category : raw_material / produced
+#   goods_method   : mining / farming / hunting / gathering / forestry
+#   is_food        : 该货物是否提供食物
+# 因此其它模组或游戏更新新增的货物，只要字段合法就会自动进入对应分类，
+# 不需要重新生成、也不会被写死的货物 id 清单漏掉。
+#
+# 两处例外（原版没有可判定的字段，只能用生成时的静态清单）：
+#   1) 种植园：只能取原版 01_plantation_goods.txt 的货物
+#   2) 排除货物：$RGO_EXCLUDED_GOODS（奴隶不是制成品）
+function Get-RgoGroupFilterLines {
+    param([string]$Group, $Groups)
+
+    switch ($Group) {
+        'mining' { return @(
+                'goods_category = raw_material'
+                'goods_method = mining'
+            ) }
+        'gathering' { return @(
+                'goods_category = raw_material'
+                'goods_method = gathering'
+            ) }
+        # 经济作物 = 农耕类原材料里既不是食物、也不是种植园作物的部分
+        'crops' { return @(
+                'goods_category = raw_material'
+                'goods_method = farming'
+                'NOT = { is_food = yes }'
+                'NOT = { RGO_goods_in_plantation = yes }'
+            ) }
+        # 食物 = 农耕类原材料里提供食物的部分（鱼类/野味等按原版仍是采集/狩猎）
+        'food' { return @(
+                'goods_category = raw_material'
+                'goods_method = farming'
+                'is_food = yes'
+            ) }
+        'plantation' {
+            $ids = @($Groups['plantation'])
+            if ($ids.Count -eq 0) { throw '种植园分类为空，无法生成静态清单（请检查 01_plantation_goods.txt）' }
+            $list = ($ids | ForEach-Object { 'this = goods:' + $_ }) -join ' '
+            return @(
+                'goods_category = raw_material'
+                'goods_method = farming'
+                ('OR = { ' + $list + ' }')
+            )
+        }
+        # 狩猎林业 = 原材料里不是采矿/采集/农耕的其余部分
+        # （这样 hunting / forestry 以及将来新增的采集方式都不会漏，且不必写死 forestry）
+        'wild' { return @(
+                'goods_category = raw_material'
+                'NOT = { goods_method = mining }'
+                'NOT = { goods_method = gathering }'
+                'NOT = { goods_method = farming }'
+            ) }
+        # 制成品 = 分类为 produced 的货物，排除奴隶
+        'produced' {
+            if (@($RGO_EXCLUDED_GOODS).Count -eq 0) { return @('goods_category = produced') }
+            $list = ($RGO_EXCLUDED_GOODS | ForEach-Object { 'this = goods:' + $_ }) -join ' '
+            return @(
+                'goods_category = produced'
+                ('NOT = { OR = { ' + $list + ' } }')
+            )
+        }
+        default { throw ("未知分类: " + $Group) }
+    }
 }
 
 # ---------- 完整性断言 ----------
@@ -168,21 +245,6 @@ function Assert-RgoGroups {
     if (($classified + $excluded) -ne @($Rows).Count) {
         throw "归类数量不一致: 原版 $($Rows.Count) 种，已归类 $classified 种，排除 $excluded 种。"
     }
-}
-
-# ---------- 原版货物译名 ----------
-function Get-RgoGoodsNames {
-    param([string]$GameRoot, [string]$Language)
-
-    $file = Join-Path $GameRoot ("main_menu\localization\{0}\goods_l_{0}.yml" -f $Language)
-    if (-not (Test-Path -LiteralPath $file)) { throw "找不到原版货物本地化文件: $file" }
-
-    $names = @{}
-    foreach ($line in [System.IO.File]::ReadAllLines($file)) {
-        $m = [regex]::Match($line, '^\s*([a-z_0-9]+):(?:\d+)?\s+"(.*)"\s*$')
-        if ($m.Success) { $names[$m.Groups[1].Value] = $m.Groups[2].Value }
-    }
-    return $names
 }
 
 # ---------- 写文件（统一 UTF-8 BOM，与 Paradox 脚本一致） ----------

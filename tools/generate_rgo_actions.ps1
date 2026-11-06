@@ -1,8 +1,13 @@
 ﻿# 生成 in_game/common/generic_actions/00_rgo_actions.txt（7 个分类动作）
-#   与 in_game/common/generic_actions/01_rgo_toggles.txt（3 个开关）
+#   与 in_game/common/generic_actions/01_rgo_toggles.txt + 00_rgo_config.txt
 # 同时校验 GUI 的分组方式（不能再用写死的 DataModelFirst/SkipFirst 切片）。
 #
-# 数据来源：原版 common\goods\*.txt；价格阶梯 / 冷却 / 默认值见 tools\rgo_common.ps1
+# 分类成员不再写死货物 id：动作里只调用 RGO_goods_in_<分类>，
+# 由 00_rgo_config.txt 按货物自身字段（goods_category / goods_method / is_food）
+# 动态判定，因此其它模组或游戏更新新增的货物会自动出现。
+#
+# 数据来源：原版 common\goods\*.txt（只用于报告数量与种植园静态清单）；
+#           价格阶梯 / 冷却 / 默认值 / 判定规则见 tools\rgo_common.ps1
 #
 # 用法（在仓库根目录执行）：
 #   powershell -ExecutionPolicy Bypass -File "tools\generate_rgo_actions.ps1"
@@ -47,8 +52,8 @@ function Add-SituationStep($sb) {
     Add-RgoLine $sb 1 '}'
 }
 
-function Add-GoodsStep($sb, $ids) {
-    Add-RgoLine $sb 1 ('# 2) 选原材料：本分类 ' + $ids.Count + ' 种')
+function Add-GoodsStep($sb, $group) {
+    Add-RgoLine $sb 1 '# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）'
     Add-RgoLine $sb 1 'select_trigger = {'
     Add-RgoLine $sb 2 'looking_for_a = goods'
     Add-RgoLine $sb 2 'target_flag = target_good'
@@ -60,9 +65,7 @@ function Add-GoodsStep($sb, $ids) {
     Add-RgoLine $sb 2 'interaction_source_list = {'
     Add-RgoLine $sb 3 'every_goods = {'
     Add-RgoLine $sb 4 'limit = {'
-    Add-RgoLine $sb 5 'OR = {'
-    foreach ($id in $ids) { Add-RgoLine $sb 6 ('this = goods:' + $id) }
-    Add-RgoLine $sb 5 '}'
+    Add-RgoLine $sb 5 ('RGO_goods_in_' + $group + ' = yes')
     Add-RgoLine $sb 4 '}'
     Add-RgoLine $sb 4 'add_to_list = source'
     Add-RgoLine $sb 3 '}'
@@ -106,14 +109,13 @@ $sb = New-Object System.Text.StringBuilder
 Add-RgoLine $sb 0 '########################################################################'
 Add-RgoLine $sb 0 '# 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改'
 Add-RgoLine $sb 0 '# 七个分类：矿物 / 采集 / 经济作物 / 食物 / 种植园 / 狩猎林业 / 制成品'
-Add-RgoLine $sb 0 '# 货物清单来自原版 common\goods\*.txt；新增或改动货物后重跑生成器即可'
-Add-RgoLine $sb 0 '# 价格阶梯、冷却月数、分类默认值统一在 tools\rgo_common.ps1 里维护'
+Add-RgoLine $sb 0 '# 每个分类的货物清单由 00_rgo_config.txt 的 RGO_goods_in_<分类> 动态判定，'
+Add-RgoLine $sb 0 '# 因此其它模组 / 游戏更新新增的货物会自动出现在列表里（无需重建本模组）'
+Add-RgoLine $sb 0 '# 价格阶梯、冷却月数、分类默认值、判定规则统一在 tools\rgo_common.ps1 里维护'
 Add-RgoLine $sb 0 '########################################################################'
 Add-RgoLine $sb 0 ''
 
 foreach ($g in $groups.Keys) {
-    $ids = $groups[$g]
-
     Add-RgoLine $sb 0 ('RGO_change_' + $g + ' = {')
     Add-RgoLine $sb 1 'type = situation'
     Add-RgoLine $sb 0 ''
@@ -164,7 +166,7 @@ foreach ($g in $groups.Keys) {
 
     Add-SituationStep $sb
     Add-RgoLine $sb 0 ''
-    Add-GoodsStep $sb $ids
+    Add-GoodsStep $sb $g
     Add-RgoLine $sb 0 ''
     Add-LocationStep $sb
 
@@ -341,6 +343,26 @@ foreach ($t in $RGO_PRICE_TIERS) {
     Add-RgoLine $cb 0 '}'
 }
 
+Add-RgoLine $cb 0 ''
+Add-RgoLine $cb 0 '# ============================================================'
+Add-RgoLine $cb 0 '# 货物分类判定（root = goods 作用域；被各分类动作的「选原材料」步骤调用）'
+Add-RgoLine $cb 0 '#   动态判定：只读货物自身字段，不写死货物 id ——'
+Add-RgoLine $cb 0 '#     goods_category = raw_material / produced'
+Add-RgoLine $cb 0 '#     goods_method   = mining / farming / hunting / gathering / forestry'
+Add-RgoLine $cb 0 '#     is_food        = 该货物是否提供食物'
+Add-RgoLine $cb 0 '#   因此其它模组或游戏更新新增的货物会自动进入对应分类。'
+Add-RgoLine $cb 0 '#   例外：种植园只能按原版 01_plantation_goods.txt 的清单（生成时写入）；'
+Add-RgoLine $cb 0 '#         制成品排除 $RGO_EXCLUDED_GOODS（奴隶）。'
+Add-RgoLine $cb 0 '# ============================================================'
+foreach ($g in $groups.Keys) {
+    Add-RgoLine $cb 0 ''
+    Add-RgoLine $cb 0 ('RGO_goods_in_' + $g + ' = {')
+    foreach ($line in (Get-RgoGroupFilterLines -Group $g -Groups $groups)) {
+        Add-RgoLine $cb 1 $line
+    }
+    Add-RgoLine $cb 0 '}'
+}
+
 $configText = $cb.ToString()
 Write-RgoTextFile -Path $configFile -Text $configText -CheckOnly:$Check
 
@@ -426,10 +448,21 @@ $toggleCount = ([regex]::Matches($togglesText, '(?m)^RGO_toggle_[a-z_]+ = \{')).
 
 Write-Host ''
 Write-Host ("原版货物 {0} 种 -> {1} 个分类（排除: {2}）" -f $rows.Count, $catCount, ($RGO_EXCLUDED_GOODS -join ', '))
+Write-Host '以下按原版数据统计；运行时按货物字段动态判定，其它模组 / 新版本的货物无需重建即可入选'
 foreach ($k in $groups.Keys) {
     Write-Host ("  {0,-11} {1,3} 种  {2}" -f $k, $groups[$k].Count, ($groups[$k] -join ', '))
 }
 Write-Host ("分类动作 {0} 个 / 开关 {1} 个" -f $actionCount, $toggleCount)
+
+# 每类必须调用自己的动态判定触发器，且动作里不能再出现写死的货物清单
+foreach ($g in $groups.Keys) {
+    $calls = ([regex]::Matches($actionsText, '(?m)^\t{5}RGO_goods_in_' + $g + ' = yes\r?$')).Count
+    if ($calls -ne 1) { throw ("分类 $g 调用 RGO_goods_in_$g 的次数是 $calls（应为 1）") }
+    if ($configText -notmatch ('(?m)^RGO_goods_in_' + $g + ' = \{')) { throw ("00_rgo_config.txt 缺少 RGO_goods_in_$g 判定触发器") }
+}
+if ($actionsText -match 'this = goods:') {
+    throw '00_rgo_actions.txt 里仍有写死的货物清单（this = goods:），模组新增货物会被漏掉'
+}
 
 if ($actionCount -ne $catCount) { throw "分类动作数量（$actionCount）与分类数（$catCount）不一致" }
 if ($toggleCount -ne $toggleDefs.Count) { throw "开关数量（$toggleCount）与开关表（$($toggleDefs.Count)）不一致" }

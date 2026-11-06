@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.0.8
+
+### 兼容：其它模组 / 游戏更新新增的原材料
+- **分类不再写死货物 id**：`00_rgo_actions.txt` 的「选原材料」步骤只调用
+  `00_rgo_config.txt` 的 `RGO_goods_in_<分类>`，由游戏在运行时按货物自身字段判定：
+  `goods_category`（`raw_material` / `produced`）、`goods_method`（`mining` / `farming` /
+  `hunting` / `gathering` / `forestry`）、`is_food`
+- 因此玩家装了增加原产物的模组、或游戏更新加入了新货物，**不需要本模组同步更新**，
+  新货物会自动进入对应分类（采矿→矿物、采集→采集、农耕且非食物非种植园→经济作物、
+  农耕且提供食物→食物、其余原材料→狩猎林业、`produced` 且非奴隶→制成品）
+- 「狩猎林业」用「不是采矿 / 采集 / 农耕的原材料」判定：覆盖 `hunting` / `forestry`，
+  也不会漏掉将来新增的采集方式，同时避免写死 `forestry`（原版触发器文档只列了 4 种 method）
+- 仍有两处静态清单（货物没有可判定字段）：种植园按 `01_plantation_goods.txt` 生成，
+  排除货物（奴隶）写进 `RGO_goods_in_produced`；其它模组的种植园类作物会落到「经济作物」，照样能改
+- 重新生成后 `00_rgo_actions.txt` 里不再有任何 `this = goods:` 白名单
+  （每个分类的「选原材料」块从「枚举该分类全部货物」变成固定 9 行）
+
+### 文案
+- 7 个分类的悬停说明改为**规则描述**（不再枚举具体货物与数量），
+  避免模组 / 版本新增货物后出现「写着 13 种、实际 15 种」这类过期信息
+- 提示正文新增「兼容性」条目（11 种语言），说明分类在运行时按货物属性判定
+- 提示正文结尾由「查看该分类包含哪些货物」改为「查看该分类的判定规则」
+- 生成器不再需要原版 `goods_l_<lang>.yml` 的货物译名（货物名与图标由游戏 / 对应模组自己提供）
+
+### 工程
+- `tools/rgo_common.ps1`：新增 `Get-RgoGroupFilterLines`（分类判定规则的唯一真值源）；
+  `Get-RgoGroups` 改为按同一套规则映射（供生成器统计与完整性断言），解析货物时额外读取 `food`
+- `generate_rgo_actions.ps1`：动作改为 `every_goods` + `RGO_goods_in_*`；
+  生成后自检「每类恰好调用 1 次」「动作里没有 `this = goods:`」「config 有对应触发器」
+- `generate_rgo_localization.ps1`：分类说明改为规则文案；新增 `$compatTexts`（11 种语言）
+  并追加到提示正文
+- `validate_mod.ps1`：新增动态判定检查（每类触发器、无静态清单、config 使用货物字段、
+  模拟新增货物归类正确）
+- 新增 `tools/test_dynamic_goods.ps1`：把原版 goods 复制到临时目录并追加一个模拟 mod 的货物文件，
+  断言新货物仍落到预期分类（不启动游戏）；`validate_mod.ps1` 会自动调用它
+- 版本 1.0.7 → 1.0.8
+
 ## 1.0.7
 
 ### 界面：两列布局
@@ -24,6 +61,9 @@
 - `generate_rgo_actions.ps1`：GUI 校验改为「每个分类索引 / 开关倒数索引的切片必须存在且唯一」
   +「行数 = ceil(分类数/2) + ceil(开关数/2)」，改数据没同步 GUI 会直接报错
 - `validate_mod.ps1`：新增两列切片完整性检查（替换原来的 `DataModelLast` / 切片数字检查）
+- `build_share.ps1`：新增「网盘分享包」构建 —— 把模组文件夹、`UnconditionallyChangeRGO.mod`
+  和玩家版安装说明打进同一个 zip；打包后自检根层结构（不能多套一层、不能缺 .mod）
+  与文件数，并输出 SHA256 和 `dist\网盘分享说明.txt`
 - 版本 1.0.6 → 1.0.7
 
 ## 1.0.6

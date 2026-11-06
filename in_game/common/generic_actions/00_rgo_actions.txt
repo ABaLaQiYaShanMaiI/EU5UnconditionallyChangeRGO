@@ -1,8 +1,9 @@
 ﻿########################################################################
 # 本文件由 tools\generate_rgo_actions.ps1 自动生成，请勿手改
 # 七个分类：矿物 / 采集 / 经济作物 / 食物 / 种植园 / 狩猎林业 / 制成品
-# 货物清单来自原版 common\goods\*.txt；新增或改动货物后重跑生成器即可
-# 价格阶梯、冷却月数、分类默认值统一在 tools\rgo_common.ps1 里维护
+# 每个分类的货物清单由 00_rgo_config.txt 的 RGO_goods_in_<分类> 动态判定，
+# 因此其它模组 / 游戏更新新增的货物会自动出现在列表里（无需重建本模组）
+# 价格阶梯、冷却月数、分类默认值、判定规则统一在 tools\rgo_common.ps1 里维护
 ########################################################################
 
 RGO_change_mining = {
@@ -53,7 +54,7 @@ RGO_change_mining = {
 		}
 	}
 
-	# 2) 选原材料：本分类 13 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -65,21 +66,7 @@ RGO_change_mining = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:alum
-						this = goods:coal
-						this = goods:copper
-						this = goods:gems
-						this = goods:goods_gold
-						this = goods:iron
-						this = goods:lead
-						this = goods:marble
-						this = goods:mercury
-						this = goods:saltpeter
-						this = goods:silver
-						this = goods:stone
-						this = goods:tin
-					}
+					RGO_goods_in_mining = yes
 				}
 				add_to_list = source
 			}
@@ -160,7 +147,7 @@ RGO_change_gathering = {
 		}
 	}
 
-	# 2) 选原材料：本分类 7 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -172,15 +159,7 @@ RGO_change_gathering = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:amber
-						this = goods:clay
-						this = goods:fish
-						this = goods:medicaments
-						this = goods:pearls
-						this = goods:salt
-						this = goods:sand
-					}
+					RGO_goods_in_gathering = yes
 				}
 				add_to_list = source
 			}
@@ -261,7 +240,7 @@ RGO_change_crops = {
 		}
 	}
 
-	# 2) 选原材料：本分类 14 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -273,22 +252,7 @@ RGO_change_crops = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:camels
-						this = goods:chili
-						this = goods:cloves
-						this = goods:cocoa
-						this = goods:coffee
-						this = goods:dyes
-						this = goods:elephants
-						this = goods:fiber_crops
-						this = goods:incense
-						this = goods:pepper
-						this = goods:saffron
-						this = goods:silk
-						this = goods:tea
-						this = goods:wine
-					}
+					RGO_goods_in_crops = yes
 				}
 				add_to_list = source
 			}
@@ -369,7 +333,7 @@ RGO_change_food = {
 		}
 	}
 
-	# 2) 选原材料：本分类 12 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -381,20 +345,7 @@ RGO_change_food = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:beeswax
-						this = goods:fruit
-						this = goods:horses
-						this = goods:legumes
-						this = goods:livestock
-						this = goods:maize
-						this = goods:millet
-						this = goods:olives
-						this = goods:potato
-						this = goods:rice
-						this = goods:wheat
-						this = goods:wool
-					}
+					RGO_goods_in_food = yes
 				}
 				add_to_list = source
 			}
@@ -475,7 +426,7 @@ RGO_change_plantation = {
 		}
 	}
 
-	# 2) 选原材料：本分类 3 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -487,11 +438,7 @@ RGO_change_plantation = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:cotton
-						this = goods:sugar
-						this = goods:tobacco
-					}
+					RGO_goods_in_plantation = yes
 				}
 				add_to_list = source
 			}
@@ -572,7 +519,7 @@ RGO_change_wild = {
 		}
 	}
 
-	# 2) 选原材料：本分类 4 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -584,12 +531,7 @@ RGO_change_wild = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:fur
-						this = goods:ivory
-						this = goods:lumber
-						this = goods:wild_game
-					}
+					RGO_goods_in_wild = yes
 				}
 				add_to_list = source
 			}
@@ -670,7 +612,7 @@ RGO_change_produced = {
 		}
 	}
 
-	# 2) 选原材料：本分类 21 种
+	# 2) 选原材料：运行时按货物自身字段动态筛选（见 00_rgo_config.txt 的 RGO_goods_in_*）
 	select_trigger = {
 		looking_for_a = goods
 		target_flag = target_good
@@ -682,29 +624,7 @@ RGO_change_produced = {
 		interaction_source_list = {
 			every_goods = {
 				limit = {
-					OR = {
-						this = goods:beer
-						this = goods:books
-						this = goods:cannons
-						this = goods:cloth
-						this = goods:fine_cloth
-						this = goods:firearms
-						this = goods:furniture
-						this = goods:glass
-						this = goods:jewelry
-						this = goods:lacquerware
-						this = goods:leather
-						this = goods:liquor
-						this = goods:masonry
-						this = goods:naval_supplies
-						this = goods:paper
-						this = goods:porcelain
-						this = goods:pottery
-						this = goods:steel
-						this = goods:tar
-						this = goods:tools
-						this = goods:weaponry
-					}
+					RGO_goods_in_produced = yes
 				}
 				add_to_list = source
 			}

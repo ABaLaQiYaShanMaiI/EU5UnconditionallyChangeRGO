@@ -1,7 +1,7 @@
 ﻿# 生成 in_game/localization/<lang>/UnconditionallyChangeRGO_l_<lang>.yml（11 种官方语言）
 #
-# 货物清单与分类数量来自原版 common\goods\*.txt（经 tools\rgo_common.ps1 解析），
-# 货物译名直接读取原版 goods_l_<lang>.yml，保证与游戏内术语完全一致。
+# 分类数量与开关数量来自 tools\rgo_common.ps1（分类成员在运行时按货物字段动态判定，
+# 因此分类说明描述「判定规则」而不是枚举货物，模组 / 版本新增的货物不会让文案过期）。
 #
 # 用法（在仓库根目录执行）：
 #   powershell -ExecutionPolicy Bypass -File "tools\generate_rgo_localization.ps1"
@@ -18,7 +18,6 @@ $ErrorActionPreference = 'Stop'
 
 $modRoot  = Split-Path -Parent $PSScriptRoot
 $goodsDir = Get-RgoGoodsRoot -GoodsRoot $GoodsRoot
-$gameRoot = Get-RgoGameRoot -GoodsRoot $goodsDir
 $rows     = Get-RgoGoodsRows -GoodsRoot $goodsDir
 $groups   = Get-RgoGroups -Rows $rows
 Assert-RgoGroups -Rows $rows -Groups $groups
@@ -42,20 +41,20 @@ $locales['english'] = @{
     situation       = 'Raw Materials'
     desc            = 'Change the raw material of any location you own - free of charge or at market price.'
     hintTitle       = 'Raw Materials'
-    hintText        = "Raw Materials\n\nClick a category button, then pick a raw material and a location. Click a switch to toggle it.\n\n- Cost: pay the live market price of the chosen good in that market, on six tiers (about {tiers} gold). Off: everything is free.\n- Cooldown: every change starts a {months} month cooldown and the buttons grey out. Turning it off clears a running cooldown immediately.\n- Manufactured: off by default. Manufactured goods are made by buildings, so using them as raw materials is not vanilla behaviour and may break building output.\n\nHover a button to see which goods its category contains."
+    hintText        = "Raw Materials\n\nClick a category button, then pick a raw material and a location. Click a switch to toggle it.\n\n- Cost: pay the live market price of the chosen good in that market, on six tiers (about {tiers} gold). Off: everything is free.\n- Cooldown: every change starts a {months} month cooldown and the buttons grey out. Turning it off clears a running cooldown immediately.\n- Manufactured: off by default. Manufactured goods are made by buildings, so using them as raw materials is not vanilla behaviour and may break building output.\n\nHover a button to see the rule its category uses."
     stepGoods       = 'Select Raw Material'
     stepLocation    = 'Select Location'
     noGoods         = 'No raw materials available'
     noLocations     = 'No eligible locations available'
     cat             = [ordered]@{ mining = 'Mining'; gathering = 'Gathering'; crops = 'Cash Crops'; food = 'Food'; plantation = 'Plantation'; wild = 'Hunting'; produced = 'Manufactured' }
     catDesc         = [ordered]@{
-        mining     = 'Mining goods ({n}): {goods}.'
-        gathering  = 'Gathered goods ({n}): {goods}.'
-        crops      = 'Cash crops and luxury raw materials ({n}): {goods}.'
-        food       = 'Food goods ({n}): {goods}.'
-        plantation = 'Plantation goods ({n}): {goods}.'
-        wild       = 'Hunting and forestry goods ({n}): {goods}.'
-        produced   = 'Manufactured goods ({n}): {goods}.\nNot vanilla behaviour and may break building output. Off by default - enable it with the switch below.'
+        mining     = 'Mining raw materials: goods whose gathering method is mining.'
+        gathering  = 'Gathered raw materials: goods whose gathering method is gathering.'
+        crops      = 'Cash crops: farming raw materials that are neither food nor plantation goods.'
+        food       = 'Food: farming raw materials that provide food.'
+        plantation = 'Plantation goods: the vanilla plantation crops.'
+        wild       = 'Hunting and forestry raw materials: raw materials that are neither mined, gathered nor farmed.'
+        produced   = 'Manufactured goods: goods of the manufactured category (slaves excluded).\nNot vanilla behaviour and may break building output. Off by default - enable it with the switch below.'
     }
     toggle          = [ordered]@{ cost = 'Cost on/off'; cooldown = 'Cooldown on/off'; produced = 'Manufactured on/off' }
     toggleDesc      = [ordered]@{
@@ -77,20 +76,20 @@ $locales['simp_chinese'] = @{
     situation       = '原材料'
     desc            = '免费或按市场价，修改本国任意地点的原材料。'
     hintTitle       = '原材料'
-    hintText        = "原材料\n\n上方 {cats} 个分类按钮：点一次后先选原材料，再选地点。下方 {toggles} 个开关：点一次切换一次。\n\n- 花费开关：开启后按所选货物在该地点市场的实时价格分六档收费（约 {tiers} 金）；供不应求时收费跳到更高一档。关闭则免费\n- 冷却开关：开启后每次修改产生 {months} 个月冷却，期间按钮变灰；关闭会立即清除冷却\n- 制成品开关：默认关闭。制成品是建筑产出，作为原材料属非原生玩法，可能影响建筑产出\n\n悬停任意按钮可看到该分类包含哪些货物。"
+    hintText        = "原材料\n\n上方 {cats} 个分类按钮：点一次后先选原材料，再选地点。下方 {toggles} 个开关：点一次切换一次。\n\n- 花费开关：开启后按所选货物在该地点市场的实时价格分六档收费（约 {tiers} 金）；供不应求时收费跳到更高一档。关闭则免费\n- 冷却开关：开启后每次修改产生 {months} 个月冷却，期间按钮变灰；关闭会立即清除冷却\n- 制成品开关：默认关闭。制成品是建筑产出，作为原材料属非原生玩法，可能影响建筑产出\n\n悬停任意按钮可看到该分类的判定规则。"
     stepGoods       = '选择原材料'
     stepLocation    = '选择地点'
     noGoods         = '没有可选的原材料'
     noLocations     = '没有符合条件的地点'
     cat             = [ordered]@{ mining = '矿物'; gathering = '采集'; crops = '经济作物'; food = '食物'; plantation = '种植园'; wild = '狩猎林业'; produced = '制成品' }
     catDesc         = [ordered]@{
-        mining     = '改为矿物类（{n} 种）：{goods}。'
-        gathering  = '改为采集类（{n} 种）：{goods}。'
-        crops      = '改为经济作物 / 奢侈原料（{n} 种）：{goods}。'
-        food       = '改为食物类（{n} 种）：{goods}。'
-        plantation = '改为种植园作物（{n} 种）：{goods}。'
-        wild       = '改为狩猎 / 林业类（{n} 种）：{goods}。'
-        produced   = '改为制成品（{n} 种）：{goods}。\n非原生玩法，可能影响建筑产出。默认关闭，需先在下方开启。'
+        mining     = '改为矿物类：采集方式为「采矿」的原材料。'
+        gathering  = '改为采集类：采集方式为「采集」的原材料。'
+        crops      = '改为经济作物 / 奢侈原料：采集方式为「农耕」、既不是食物也不是种植园作物的原材料。'
+        food       = '改为食物类：采集方式为「农耕」且能提供食物的原材料。'
+        plantation = '改为种植园作物：原版种植园清单中的作物。'
+        wild       = '改为狩猎 / 林业类：既不是采矿、采集也不是农耕的原材料。'
+        produced   = '改为制成品：分类为「制成品」的货物（奴隶除外）。\n非原生玩法，可能影响建筑产出。默认关闭，需先在下方开启。'
     }
     toggle          = [ordered]@{ cost = '花费开关'; cooldown = '冷却开关'; produced = '制成品开关' }
     toggleDesc      = [ordered]@{
@@ -112,20 +111,20 @@ $locales['russian'] = @{
     situation       = 'Ресурсы'
     desc            = 'Меняет сырьё любой принадлежащей вам территории: бесплатно или по рыночной цене.'
     hintTitle       = 'Ресурсы'
-    hintText        = "Ресурсы\n\nНажмите кнопку категории, затем выберите сырьё и территорию. Переключатели срабатывают по нажатию.\n\n- Стоимость: оплата по текущей рыночной цене выбранного товара на рынке этой территории, шесть уровней (примерно {tiers} золота). Выкл.: всё бесплатно.\n- Перезарядка: каждое изменение даёт {months} месяцев перезарядки, кнопки становятся неактивными. Выключение сразу снимает текущую перезарядку.\n- Изделия: по умолчанию выключено. Изделия производят здания, поэтому использование их как сырья не является ванильным поведением и может нарушить производство.\n\nНаведите курсор на кнопку, чтобы увидеть список товаров категории."
+    hintText        = "Ресурсы\n\nНажмите кнопку категории, затем выберите сырьё и территорию. Переключатели срабатывают по нажатию.\n\n- Стоимость: оплата по текущей рыночной цене выбранного товара на рынке этой территории, шесть уровней (примерно {tiers} золота). Выкл.: всё бесплатно.\n- Перезарядка: каждое изменение даёт {months} месяцев перезарядки, кнопки становятся неактивными. Выключение сразу снимает текущую перезарядку.\n- Изделия: по умолчанию выключено. Изделия производят здания, поэтому использование их как сырья не является ванильным поведением и может нарушить производство.\n\nНаведите курсор на кнопку, чтобы увидеть правило категории."
     stepGoods       = 'Выбрать сырьё'
     stepLocation    = 'Выбрать территорию'
     noGoods         = 'Нет доступного сырья'
     noLocations     = 'Нет подходящих территорий'
     cat             = [ordered]@{ mining = 'Добыча'; gathering = 'Сбор'; crops = 'Технические культуры'; food = 'Продовольствие'; plantation = 'Плантации'; wild = 'Охота и лес'; produced = 'Изделия' }
     catDesc         = [ordered]@{
-        mining     = 'Добываемое сырьё ({n}): {goods}.'
-        gathering  = 'Собираемое сырьё ({n}): {goods}.'
-        crops      = 'Технические культуры и роскошь ({n}): {goods}.'
-        food       = 'Продовольствие ({n}): {goods}.'
-        plantation = 'Плантационные культуры ({n}): {goods}.'
-        wild       = 'Охотничье и лесное сырьё ({n}): {goods}.'
-        produced   = 'Изделия ({n}): {goods}.\nНе ванильное поведение, может нарушить производство. По умолчанию выключено.'
+        mining     = 'Добываемое сырьё: товары со способом добычи «горное дело».'
+        gathering  = 'Собираемое сырьё: товары со способом добычи «сбор».'
+        crops      = 'Технические культуры: сельскохозяйственное сырьё, не являющееся ни продовольствием, ни плантационной культурой.'
+        food       = 'Продовольствие: сельскохозяйственное сырьё, дающее еду.'
+        plantation = 'Плантационные культуры: культуры из ванильного списка плантаций.'
+        wild       = 'Охотничье и лесное сырьё: сырьё, которое не добывается, не собирается и не выращивается.'
+        produced   = 'Изделия: товары категории «изделия» (кроме рабов).\nНе ванильное поведение, может нарушить производство. По умолчанию выключено, включите переключателем ниже.'
     }
     toggle          = [ordered]@{ cost = 'Стоимость вкл/выкл'; cooldown = 'Перезарядка вкл/выкл'; produced = 'Изделия вкл/выкл' }
     toggleDesc      = [ordered]@{
@@ -148,20 +147,20 @@ $locales['french'] = @{
     situation       = 'Matières premières'
     desc            = "Change la matière première de n'importe quel lieu vous appartenant, gratuitement ou au prix du marché."
     hintTitle       = 'Matières premières'
-    hintText        = "Matières premières\n\nCliquez sur une catégorie, puis choisissez une matière première et un lieu. Les interrupteurs se basculent au clic.\n\n- Coût : paie le prix réel du marché local, en six paliers (environ {tiers} or). Désactivé : tout est gratuit.\n- Recharge : chaque changement impose {months} mois de recharge et grise les boutons. La désactiver annule immédiatement la recharge en cours.\n- Produits manufacturés : désactivé par défaut. Ils sont fabriqués par des bâtiments ; les utiliser comme matières premières n'est pas le comportement vanilla et peut perturber la production.\n\nSurvolez un bouton pour voir les biens de sa catégorie."
+    hintText        = "Matières premières\n\nCliquez sur une catégorie, puis choisissez une matière première et un lieu. Les interrupteurs se basculent au clic.\n\n- Coût : paie le prix réel du marché local, en six paliers (environ {tiers} or). Désactivé : tout est gratuit.\n- Recharge : chaque changement impose {months} mois de recharge et grise les boutons. La désactiver annule immédiatement la recharge en cours.\n- Produits manufacturés : désactivé par défaut. Ils sont fabriqués par des bâtiments ; les utiliser comme matières premières n'est pas le comportement vanilla et peut perturber la production.\n\nSurvolez un bouton pour voir la règle de sa catégorie."
     stepGoods       = 'Choisir une matière première'
     stepLocation    = 'Choisir un lieu'
     noGoods         = 'Aucune matière première disponible'
     noLocations     = 'Aucun lieu éligible'
     cat             = [ordered]@{ mining = 'Mines'; gathering = 'Cueillette'; crops = 'Cultures commerciales'; food = 'Nourriture'; plantation = 'Plantations'; wild = 'Chasse et forêt'; produced = 'Produits manufacturés' }
     catDesc         = [ordered]@{
-        mining     = 'Biens miniers ({n}) : {goods}.'
-        gathering  = 'Biens de cueillette ({n}) : {goods}.'
-        crops      = 'Cultures commerciales et matières premières de luxe ({n}) : {goods}.'
-        food       = 'Biens alimentaires ({n}) : {goods}.'
-        plantation = 'Biens de plantation ({n}) : {goods}.'
-        wild       = 'Biens de chasse et de forêt ({n}) : {goods}.'
-        produced   = 'Produits manufacturés ({n}) : {goods}.\nComportement non vanilla, peut perturber la production. Désactivé par défaut.'
+        mining     = "Matières premières minières : biens dont la méthode d'extraction est « mines »."
+        gathering  = "Matières premières de cueillette : biens dont la méthode d'extraction est « cueillette »."
+        crops      = "Cultures commerciales : matières premières agricoles qui ne sont ni alimentaires ni des cultures de plantation."
+        food       = "Nourriture : matières premières agricoles qui fournissent de la nourriture."
+        plantation = "Biens de plantation : les cultures de plantation vanilla."
+        wild       = "Matières premières de chasse et de forêt : matières premières ni minières, ni cueillies, ni cultivées."
+        produced   = "Produits manufacturés : biens de la catégorie manufacturés (hors esclaves).\nComportement non vanilla, peut perturber la production. Désactivé par défaut ; activez-le avec l'interrupteur ci-dessous."
     }
     toggle          = [ordered]@{ cost = 'Coût act./dés.'; cooldown = 'Recharge act./dés.'; produced = 'Manufacturés act./dés.' }
     toggleDesc      = [ordered]@{
@@ -184,20 +183,20 @@ $locales['german'] = @{
     situation       = 'Rohstoffe'
     desc            = 'Ändert den Rohstoff jedes Ortes in eurem Besitz - kostenlos oder zum Marktpreis.'
     hintTitle       = 'Rohstoffe'
-    hintText        = "Rohstoffe\n\nKlickt auf eine Kategorie und wählt dann einen Rohstoff und einen Ort. Die Schalter lassen sich per Klick umlegen.\n\n- Kosten: zahlt den aktuellen Marktpreis der Ware am Markt des Ortes in sechs Stufen (etwa {tiers} Gold). Aus: alles kostenlos.\n- Abklingzeit: Jede Änderung erzeugt {months} Monate Abklingzeit, die Buttons werden ausgegraut. Beim Ausschalten wird eine laufende Abklingzeit sofort entfernt.\n- Fertigwaren: standardmäßig aus. Fertigwaren entstehen in Gebäuden; sie als Rohstoff zu nutzen ist kein Vanilla-Verhalten und kann die Gebäudeproduktion stören.\n\nFahrt über einen Button, um die Waren der Kategorie zu sehen."
+    hintText        = "Rohstoffe\n\nKlickt auf eine Kategorie und wählt dann einen Rohstoff und einen Ort. Die Schalter lassen sich per Klick umlegen.\n\n- Kosten: zahlt den aktuellen Marktpreis der Ware am Markt des Ortes in sechs Stufen (etwa {tiers} Gold). Aus: alles kostenlos.\n- Abklingzeit: Jede Änderung erzeugt {months} Monate Abklingzeit, die Buttons werden ausgegraut. Beim Ausschalten wird eine laufende Abklingzeit sofort entfernt.\n- Fertigwaren: standardmäßig aus. Fertigwaren entstehen in Gebäuden; sie als Rohstoff zu nutzen ist kein Vanilla-Verhalten und kann die Gebäudeproduktion stören.\n\nFahrt über einen Button, um die Regel der Kategorie zu sehen."
     stepGoods       = 'Rohstoff wählen'
     stepLocation    = 'Ort wählen'
     noGoods         = 'Keine Rohstoffe verfügbar'
     noLocations     = 'Keine geeigneten Orte verfügbar'
     cat             = [ordered]@{ mining = 'Bergbau'; gathering = 'Sammeln'; crops = 'Marktfrüchte'; food = 'Nahrung'; plantation = 'Plantagen'; wild = 'Jagd und Forst'; produced = 'Fertigwaren' }
     catDesc         = [ordered]@{
-        mining     = 'Bergbauwaren ({n}): {goods}.'
-        gathering  = 'Sammelwaren ({n}): {goods}.'
-        crops      = 'Marktfrüchte und Luxusrohstoffe ({n}): {goods}.'
-        food       = 'Nahrungswaren ({n}): {goods}.'
-        plantation = 'Plantagenwaren ({n}): {goods}.'
-        wild       = 'Jagd- und Forstwaren ({n}): {goods}.'
-        produced   = 'Fertigwaren ({n}): {goods}.\nKein Vanilla-Verhalten, kann die Gebäudeproduktion stören. Standardmäßig aus.'
+        mining     = 'Bergbauwaren: Waren mit der Gewinnungsart Bergbau.'
+        gathering  = 'Sammelwaren: Waren mit der Gewinnungsart Sammeln.'
+        crops      = 'Marktfrüchte: landwirtschaftliche Rohstoffe, die weder Nahrung noch Plantagenwaren sind.'
+        food       = 'Nahrungswaren: landwirtschaftliche Rohstoffe, die Nahrung liefern.'
+        plantation = 'Plantagenwaren: die Plantagenfrüchte des Grundspiels.'
+        wild       = 'Jagd- und Forstwaren: Rohstoffe, die weder abgebaut, gesammelt noch angebaut werden.'
+        produced   = 'Fertigwaren: Waren der Kategorie Fertigwaren (ohne Sklaven).\nKein Vanilla-Verhalten, kann die Gebäudeproduktion stören. Standardmäßig aus, mit dem Schalter unten aktivierbar.'
     }
     toggle          = [ordered]@{ cost = 'Kosten an/aus'; cooldown = 'Abklingzeit an/aus'; produced = 'Fertigwaren an/aus' }
     toggleDesc      = [ordered]@{
@@ -220,20 +219,20 @@ $locales['spanish'] = @{
     situation       = 'Materias primas'
     desc            = 'Cambia la materia prima de cualquier lugar que poseas: gratis o a precio de mercado.'
     hintTitle       = 'Materias primas'
-    hintText        = "Materias primas\n\nPulsa una categoría y elige después una materia prima y un lugar. Los interruptores se cambian con un clic.\n\n- Coste: cobra el precio real del mercado del lugar en seis tramos (unos {tiers} de oro). Desactivado: todo gratis.\n- Enfriamiento: cada cambio impone {months} meses de enfriamiento y los botones se atenúan. Al desactivarlo se elimina de inmediato el enfriamiento activo.\n- Manufacturas: desactivado por defecto. Se fabrican en edificios; usarlas como materia prima no es comportamiento vanilla y puede afectar a la producción.\n\nPasa el cursor por un botón para ver las mercancías de su categoría."
+    hintText        = "Materias primas\n\nPulsa una categoría y elige después una materia prima y un lugar. Los interruptores se cambian con un clic.\n\n- Coste: cobra el precio real del mercado del lugar en seis tramos (unos {tiers} de oro). Desactivado: todo gratis.\n- Enfriamiento: cada cambio impone {months} meses de enfriamiento y los botones se atenúan. Al desactivarlo se elimina de inmediato el enfriamiento activo.\n- Manufacturas: desactivado por defecto. Se fabrican en edificios; usarlas como materia prima no es comportamiento vanilla y puede afectar a la producción.\n\nPasa el cursor por un botón para ver la regla de su categoría."
     stepGoods       = 'Elegir materia prima'
     stepLocation    = 'Elegir lugar'
     noGoods         = 'No hay materias primas disponibles'
     noLocations     = 'No hay lugares válidos'
     cat             = [ordered]@{ mining = 'Minería'; gathering = 'Recolección'; crops = 'Cultivos comerciales'; food = 'Alimentos'; plantation = 'Plantaciones'; wild = 'Caza y bosque'; produced = 'Manufacturas' }
     catDesc         = [ordered]@{
-        mining     = 'Mercancías mineras ({n}): {goods}.'
-        gathering  = 'Mercancías de recolección ({n}): {goods}.'
-        crops      = 'Cultivos comerciales y materias primas de lujo ({n}): {goods}.'
-        food       = 'Mercancías alimentarias ({n}): {goods}.'
-        plantation = 'Mercancías de plantación ({n}): {goods}.'
-        wild       = 'Mercancías de caza y bosque ({n}): {goods}.'
-        produced   = 'Manufacturas ({n}): {goods}.\nComportamiento no vanilla, puede afectar a la producción. Desactivado por defecto.'
+        mining     = 'Mercancías mineras: bienes cuyo método de extracción es la minería.'
+        gathering  = 'Mercancías de recolección: bienes cuyo método de extracción es la recolección.'
+        crops      = 'Cultivos comerciales: materias primas agrícolas que no son alimento ni cultivos de plantación.'
+        food       = 'Mercancías alimentarias: materias primas agrícolas que aportan alimento.'
+        plantation = 'Mercancías de plantación: los cultivos de plantación del juego base.'
+        wild       = 'Mercancías de caza y bosque: materias primas que no se extraen, recolectan ni cultivan.'
+        produced   = 'Manufacturas: bienes de la categoría manufacturas (sin esclavos).\nComportamiento no vanilla, puede afectar a la producción. Desactivado por defecto; actívalo con el interruptor de abajo.'
     }
     toggle          = [ordered]@{ cost = 'Coste on/off'; cooldown = 'Enfriamiento on/off'; produced = 'Manufacturas on/off' }
     toggleDesc      = [ordered]@{
@@ -256,20 +255,20 @@ $locales['polish'] = @{
     situation       = 'Surowce'
     desc            = 'Zmienia surowiec dowolnej należącej do was lokalizacji: bez opłat lub po cenie rynkowej.'
     hintTitle       = 'Surowce'
-    hintText        = "Surowce\n\nKliknij kategorię, a następnie wybierz surowiec i lokalizację. Przełączniki zmieniają stan po kliknięciu.\n\n- Koszt: opłata według bieżącej ceny rynkowej towaru w sześciu progach (około {tiers} złota). Wył.: wszystko bezpłatnie.\n- Odnowienie: każde użycie daje {months} miesięcy odnowienia, a przyciski szarzeją. Wyłączenie natychmiast usuwa trwające odnowienie.\n- Wyroby: domyślnie wyłączone. Wyroby powstają w budynkach, więc użycie ich jako surowca nie jest zachowaniem vanilla i może zakłócić produkcję.\n\nNajedź na przycisk, aby zobaczyć towary w kategorii."
+    hintText        = "Surowce\n\nKliknij kategorię, a następnie wybierz surowiec i lokalizację. Przełączniki zmieniają stan po kliknięciu.\n\n- Koszt: opłata według bieżącej ceny rynkowej towaru w sześciu progach (około {tiers} złota). Wył.: wszystko bezpłatnie.\n- Odnowienie: każde użycie daje {months} miesięcy odnowienia, a przyciski szarzeją. Wyłączenie natychmiast usuwa trwające odnowienie.\n- Wyroby: domyślnie wyłączone. Wyroby powstają w budynkach, więc użycie ich jako surowca nie jest zachowaniem vanilla i może zakłócić produkcję.\n\nNajedź na przycisk, aby zobaczyć regułę kategorii."
     stepGoods       = 'Wybierz surowiec'
     stepLocation    = 'Wybierz lokalizację'
     noGoods         = 'Brak dostępnych surowców'
     noLocations     = 'Brak odpowiednich lokalizacji'
     cat             = [ordered]@{ mining = 'Górnictwo'; gathering = 'Zbieractwo'; crops = 'Uprawy towarowe'; food = 'Żywność'; plantation = 'Plantacje'; wild = 'Łowiectwo i las'; produced = 'Wyroby' }
     catDesc         = [ordered]@{
-        mining     = 'Surowce górnicze ({n}): {goods}.'
-        gathering  = 'Surowce zbierane ({n}): {goods}.'
-        crops      = 'Uprawy towarowe i surowce luksusowe ({n}): {goods}.'
-        food       = 'Surowce żywnościowe ({n}): {goods}.'
-        plantation = 'Surowce plantacyjne ({n}): {goods}.'
-        wild       = 'Surowce łowieckie i leśne ({n}): {goods}.'
-        produced   = 'Wyroby ({n}): {goods}.\nZachowanie inne niż vanilla, może zakłócić produkcję. Domyślnie wyłączone.'
+        mining     = 'Surowce górnicze: towary, których sposób pozyskiwania to górnictwo.'
+        gathering  = 'Surowce zbierane: towary, których sposób pozyskiwania to zbieractwo.'
+        crops      = 'Uprawy towarowe: surowce rolne, które nie są żywnością ani uprawami plantacyjnymi.'
+        food       = 'Surowce żywnościowe: surowce rolne dające żywność.'
+        plantation = 'Surowce plantacyjne: uprawy plantacyjne z wersji podstawowej.'
+        wild       = 'Surowce łowieckie i leśne: surowce, których nie wydobywa się, nie zbiera ani nie uprawia.'
+        produced   = 'Wyroby: towary z kategorii wyrobów (bez niewolników).\nZachowanie inne niż vanilla, może zakłócić produkcję. Domyślnie wyłączone - włącz przełącznikiem poniżej.'
     }
     toggle          = [ordered]@{ cost = 'Koszt wł./wył.'; cooldown = 'Odnowienie wł./wył.'; produced = 'Wyroby wł./wył.' }
     toggleDesc      = [ordered]@{
@@ -292,20 +291,20 @@ $locales['turkish'] = @{
     situation       = 'Hammaddeler'
     desc            = 'Sahip olduğunuz herhangi bir yerin hammaddesini ücretsiz veya piyasa fiyatıyla değiştirir.'
     hintTitle       = 'Hammaddeler'
-    hintText        = "Hammaddeler\n\nBir kategoriye tıklayın, ardından hammaddeyi ve yeri seçin. Anahtarlar her tıklamada açılıp kapanır.\n\n- Maliyet: seçilen malın o yerin piyasasındaki güncel fiyatını altı kademede tahsil eder (yaklaşık {tiers} altın). Kapalı: her şey ücretsiz.\n- Bekleme: her değişiklik {months} ay bekleme başlatır ve düğmeler grileşir. Kapatmak süren beklemeyi hemen siler.\n- Mamul mallar: varsayılan olarak kapalı. Binalarda üretilirler; hammadde olarak kullanmak vanilla davranışı değildir ve üretimi bozabilir.\n\nKategorideki malları görmek için bir düğmenin üzerine gelin."
+    hintText        = "Hammaddeler\n\nBir kategoriye tıklayın, ardından hammaddeyi ve yeri seçin. Anahtarlar her tıklamada açılıp kapanır.\n\n- Maliyet: seçilen malın o yerin piyasasındaki güncel fiyatını altı kademede tahsil eder (yaklaşık {tiers} altın). Kapalı: her şey ücretsiz.\n- Bekleme: her değişiklik {months} ay bekleme başlatır ve düğmeler grileşir. Kapatmak süren beklemeyi hemen siler.\n- Mamul mallar: varsayılan olarak kapalı. Binalarda üretilirler; hammadde olarak kullanmak vanilla davranışı değildir ve üretimi bozabilir.\n\nKategorinin kuralını görmek için bir düğmenin üzerine gelin."
     stepGoods       = 'Hammadde seç'
     stepLocation    = 'Yer seç'
     noGoods         = 'Uygun hammadde yok'
     noLocations     = 'Uygun yer yok'
     cat             = [ordered]@{ mining = 'Madencilik'; gathering = 'Toplayıcılık'; crops = 'Ticari bitkiler'; food = 'Gıda'; plantation = 'Plantasyon'; wild = 'Avcılık ve orman'; produced = 'Mamul mallar' }
     catDesc         = [ordered]@{
-        mining     = 'Madencilik malları ({n}): {goods}.'
-        gathering  = 'Toplanan mallar ({n}): {goods}.'
-        crops      = 'Ticari bitkiler ve lüks hammaddeler ({n}): {goods}.'
-        food       = 'Gıda malları ({n}): {goods}.'
-        plantation = 'Plantasyon malları ({n}): {goods}.'
-        wild       = 'Avcılık ve orman malları ({n}): {goods}.'
-        produced   = 'Mamul mallar ({n}): {goods}.\nVanilla davranışı değildir, üretimi bozabilir. Varsayılan olarak kapalı.'
+        mining     = 'Madencilik malları: toplama yöntemi madencilik olan mallar.'
+        gathering  = 'Toplanan mallar: toplama yöntemi toplayıcılık olan mallar.'
+        crops      = 'Ticari bitkiler: gıda veya plantasyon ürünü olmayan tarımsal hammaddeler.'
+        food       = 'Gıda malları: gıda sağlayan tarımsal hammaddeler.'
+        plantation = 'Plantasyon malları: oyunun temel plantasyon ürünleri.'
+        wild       = 'Avcılık ve orman malları: madencilik, toplayıcılık veya tarım dışındaki hammaddeler.'
+        produced   = 'Mamul mallar: mamul kategorisindeki mallar (köleler hariç).\nVanilla davranışı değildir, üretimi bozabilir. Varsayılan olarak kapalı; aşağıdaki anahtarla açın.'
     }
     toggle          = [ordered]@{ cost = 'Maliyet aç/kapa'; cooldown = 'Bekleme aç/kapa'; produced = 'Mamul mallar aç/kapa' }
     toggleDesc      = [ordered]@{
@@ -328,20 +327,20 @@ $locales['japanese'] = @{
     situation       = '原材料'
     desc            = '自国が所有する任意の地点の原材料を、無料または市場価格で変更します。'
     hintTitle       = '原材料'
-    hintText        = "原材料\n\nカテゴリボタンを押し、原材料と地点を選びます。スイッチはクリックするたびに切り替わります。\n\n- 費用：選択した財の現地市場価格を6段階で支払います（約 {tiers} 金）。オフならすべて無料。\n- クールダウン：変更ごとに {months} か月のクールダウンが発生し、ボタンが無効になります。オフにすると進行中のクールダウンは即座に解除されます。\n- 加工品：既定ではオフ。加工品は建物が生産するため、原材料として使うのは本来の仕様ではなく、建物の生産を壊す可能性があります。\n\nボタンにカーソルを合わせると、そのカテゴリの財が表示されます。"
+    hintText        = "原材料\n\nカテゴリボタンを押し、原材料と地点を選びます。スイッチはクリックするたびに切り替わります。\n\n- 費用：選択した財の現地市場価格を6段階で支払います（約 {tiers} 金）。オフならすべて無料。\n- クールダウン：変更ごとに {months} か月のクールダウンが発生し、ボタンが無効になります。オフにすると進行中のクールダウンは即座に解除されます。\n- 加工品：既定ではオフ。加工品は建物が生産するため、原材料として使うのは本来の仕様ではなく、建物の生産を壊す可能性があります。\n\nボタンにカーソルを合わせると、そのカテゴリの判定ルールが表示されます。"
     stepGoods       = '原材料を選択'
     stepLocation    = '地点を選択'
     noGoods         = '選択できる原材料がありません'
     noLocations     = '条件を満たす地点がありません'
     cat             = [ordered]@{ mining = '鉱物'; gathering = '採集'; crops = '商品作物'; food = '食糧'; plantation = 'プランテーション'; wild = '狩猟・林業'; produced = '加工品' }
     catDesc         = [ordered]@{
-        mining     = '鉱物系（{n} 種）：{goods}。'
-        gathering  = '採集系（{n} 種）：{goods}。'
-        crops      = '商品作物・奢侈原材料（{n} 種）：{goods}。'
-        food       = '食糧系（{n} 種）：{goods}。'
-        plantation = 'プランテーション作物（{n} 種）：{goods}。'
-        wild       = '狩猟・林業系（{n} 種）：{goods}。'
-        produced   = '加工品（{n} 種）：{goods}。\n本来の仕様ではなく、建物の生産を壊す可能性があります。既定ではオフです。'
+        mining     = '鉱物系：採取方法が「採掘」の原材料。'
+        gathering  = '採集系：採取方法が「採集」の原材料。'
+        crops      = '商品作物・奢侈原材料：採取方法が「農耕」で、食糧でもプランテーション作物でもない原材料。'
+        food       = '食糧系：採取方法が「農耕」で食糧を生む原材料。'
+        plantation = 'プランテーション作物：原版のプランテーション作物。'
+        wild       = '狩猟・林業系：採掘・採集・農耕のいずれでもない原材料。'
+        produced   = '加工品：カテゴリが「加工品」の財（奴隷を除く）。\n本来の仕様ではなく、建物の生産を壊す可能性があります。既定ではオフ。下のスイッチで有効化できます。'
     }
     toggle          = [ordered]@{ cost = '費用 オン/オフ'; cooldown = 'クールダウン オン/オフ'; produced = '加工品 オン/オフ' }
     toggleDesc      = [ordered]@{
@@ -364,20 +363,20 @@ $locales['korean'] = @{
     situation       = '원자재'
     desc            = '보유한 모든 지역의 원자재를 무료 또는 시장 가격으로 변경합니다.'
     hintTitle       = '원자재'
-    hintText        = "원자재\n\n분류 버튼을 누른 뒤 원자재와 지역을 선택하세요. 스위치는 클릭할 때마다 전환됩니다.\n\n- 비용: 선택한 상품의 해당 지역 시장 실시간 가격을 6단계로 지불합니다(약 {tiers} 골드). 끄면 전부 무료.\n- 재사용 대기: 변경할 때마다 {months}개월 대기 시간이 생기고 버튼이 비활성화됩니다. 끄면 진행 중인 대기도 즉시 해제됩니다.\n- 가공품: 기본적으로 꺼져 있습니다. 가공품은 건물이 생산하므로 원자재로 쓰는 것은 원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다.\n\n버튼에 마우스를 올리면 해당 분류의 상품을 볼 수 있습니다."
+    hintText        = "원자재\n\n분류 버튼을 누른 뒤 원자재와 지역을 선택하세요. 스위치는 클릭할 때마다 전환됩니다.\n\n- 비용: 선택한 상품의 해당 지역 시장 실시간 가격을 6단계로 지불합니다(약 {tiers} 골드). 끄면 전부 무료.\n- 재사용 대기: 변경할 때마다 {months}개월 대기 시간이 생기고 버튼이 비활성화됩니다. 끄면 진행 중인 대기도 즉시 해제됩니다.\n- 가공품: 기본적으로 꺼져 있습니다. 가공품은 건물이 생산하므로 원자재로 쓰는 것은 원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다.\n\n버튼에 마우스를 올리면 해당 분류의 판정 규칙을 볼 수 있습니다."
     stepGoods       = '원자재 선택'
     stepLocation    = '지역 선택'
     noGoods         = '선택 가능한 원자재가 없습니다'
     noLocations     = '조건에 맞는 지역이 없습니다'
     cat             = [ordered]@{ mining = '광물'; gathering = '채집'; crops = '상품 작물'; food = '식량'; plantation = '플랜테이션'; wild = '수렵·임업'; produced = '가공품' }
     catDesc         = [ordered]@{
-        mining     = '광물류({n}종): {goods}.'
-        gathering  = '채집류({n}종): {goods}.'
-        crops      = '상품 작물 및 사치 원자재({n}종): {goods}.'
-        food       = '식량류({n}종): {goods}.'
-        plantation = '플랜테이션 작물({n}종): {goods}.'
-        wild       = '수렵·임업류({n}종): {goods}.'
-        produced   = '가공품({n}종): {goods}.\n원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다. 기본적으로 꺼져 있습니다.'
+        mining     = '광물류: 채굴 방식으로 얻는 원자재.'
+        gathering  = '채집류: 채집 방식으로 얻는 원자재.'
+        crops      = '상품 작물: 농사 방식이면서 식량도 플랜테이션 작물도 아닌 원자재.'
+        food       = '식량류: 농사 방식이며 식량을 제공하는 원자재.'
+        plantation = '플랜테이션 작물: 원작의 플랜테이션 작물.'
+        wild       = '수렵·임업류: 채굴·채집·농사 어느 것도 아닌 원자재.'
+        produced   = '가공품: 분류가 가공품인 상품(노예 제외).\n원작 동작이 아니며 건물 생산을 깨뜨릴 수 있습니다. 기본적으로 꺼져 있으며 아래 스위치로 켭니다.'
     }
     toggle          = [ordered]@{ cost = '비용 켜기/끄기'; cooldown = '재사용 대기 켜기/끄기'; produced = '가공품 켜기/끄기' }
     toggleDesc      = [ordered]@{
@@ -400,20 +399,20 @@ $locales['braz_por'] = @{
     situation       = 'Matérias-primas'
     desc            = 'Muda a matéria-prima de qualquer local que você possua: de graça ou pelo preço de mercado.'
     hintTitle       = 'Matérias-primas'
-    hintText        = "Matérias-primas\n\nClique em uma categoria e escolha a matéria-prima e o local. Os interruptores alternam a cada clique.\n\n- Custo: cobra o preço real do mercado local em seis faixas (cerca de {tiers} de ouro). Desligado: tudo grátis.\n- Recarga: cada mudança gera {months} meses de recarga e os botões ficam cinzas. Desligar remove a recarga em andamento na hora.\n- Manufaturados: desligado por padrão. São produzidos por edifícios; usá-los como matéria-prima não é o comportamento vanilla e pode afetar a produção.\n\nPasse o mouse sobre um botão para ver os bens da categoria."
+    hintText        = "Matérias-primas\n\nClique em uma categoria e escolha a matéria-prima e o local. Os interruptores alternam a cada clique.\n\n- Custo: cobra o preço real do mercado local em seis faixas (cerca de {tiers} de ouro). Desligado: tudo grátis.\n- Recarga: cada mudança gera {months} meses de recarga e os botões ficam cinzas. Desligar remove a recarga em andamento na hora.\n- Manufaturados: desligado por padrão. São produzidos por edifícios; usá-los como matéria-prima não é o comportamento vanilla e pode afetar a produção.\n\nPasse o mouse sobre um botão para ver a regra da categoria."
     stepGoods       = 'Escolher matéria-prima'
     stepLocation    = 'Escolher local'
     noGoods         = 'Nenhuma matéria-prima disponível'
     noLocations     = 'Nenhum local elegível'
     cat             = [ordered]@{ mining = 'Mineração'; gathering = 'Coleta'; crops = 'Culturas comerciais'; food = 'Alimentos'; plantation = 'Plantações'; wild = 'Caça e floresta'; produced = 'Manufaturados' }
     catDesc         = [ordered]@{
-        mining     = 'Bens minerais ({n}): {goods}.'
-        gathering  = 'Bens de coleta ({n}): {goods}.'
-        crops      = 'Culturas comerciais e matérias-primas de luxo ({n}): {goods}.'
-        food       = 'Bens alimentícios ({n}): {goods}.'
-        plantation = 'Bens de plantação ({n}): {goods}.'
-        wild       = 'Bens de caça e floresta ({n}): {goods}.'
-        produced   = 'Manufaturados ({n}): {goods}.\nComportamento não vanilla, pode afetar a produção. Desligado por padrão.'
+        mining     = 'Bens minerais: bens cujo método de extração é mineração.'
+        gathering  = 'Bens de coleta: bens cujo método de extração é coleta.'
+        crops      = 'Culturas comerciais: matérias-primas agrícolas que não são alimento nem cultura de plantação.'
+        food       = 'Bens alimentícios: matérias-primas agrícolas que fornecem alimento.'
+        plantation = 'Bens de plantação: as culturas de plantação do jogo base.'
+        wild       = 'Bens de caça e floresta: matérias-primas que não são mineradas, coletadas nem cultivadas.'
+        produced   = 'Manufaturados: bens da categoria manufaturados (exceto escravos).\nComportamento não vanilla, pode afetar a produção. Desligado por padrão; ative com o interruptor abaixo.'
     }
     toggle          = [ordered]@{ cost = 'Custo lig/desl'; cooldown = 'Recarga lig/desl'; produced = 'Manufaturados lig/desl' }
     toggleDesc      = [ordered]@{
@@ -497,7 +496,22 @@ $geoTexts = @{
 # ============================================================
 # 生成
 # ============================================================
-$catTextSep = @{ simp_chinese = '、'; japanese = '、'; korean = ', ' }
+
+# 兼容性说明（追加到提示正文最后一段之前的条目，不用写开头的 "- "）
+#   v1.0.8 起分类按货物自身字段在运行时判定，因此模组 / 版本新增的货物会自动入选
+$compatTexts = @{
+    english      = 'Compatibility: categories are decided at runtime from the goods themselves (category, gathering method, food value), so goods added by other mods or later patches appear automatically. Only the Plantation category uses a list captured when the mod was built.'
+    simp_chinese = '兼容性：分类在运行时按货物自身属性（分类、采集方式、食物值）判定，其它模组或后续版本新增的货物会自动归入对应分类；只有「种植园」用的是打包时的原版清单。'
+    russian      = 'Совместимость: категории определяются на лету по свойствам самого товара (категория, способ добычи, пищевая ценность), поэтому товары из других модов и будущих патчей попадают в нужную категорию автоматически. Только «Плантации» используют список, зафиксированный при сборке мода.'
+    french       = "Compatibilité : les catégories sont déterminées à l'exécution d'après les données du bien (catégorie, méthode d'extraction, valeur alimentaire) ; les biens ajoutés par d'autres mods ou de futurs patchs apparaissent donc automatiquement. Seule la catégorie Plantations utilise une liste figée lors de la compilation du mod."
+    german       = 'Kompatibilität: Die Kategorien werden zur Laufzeit aus den Waren-Daten (Kategorie, Gewinnungsart, Nahrungswert) bestimmt, daher erscheinen Waren aus anderen Mods oder späteren Patches automatisch in der richtigen Kategorie. Nur Plantagen nutzt eine beim Bau des Mods festgehaltene Liste.'
+    spanish      = 'Compatibilidad: las categorías se deciden en tiempo de ejecución según los datos del propio bien (categoría, método de extracción, valor alimenticio), así que los bienes de otros mods o de parches futuros aparecen automáticamente. Solo Plantaciones usa una lista fijada al compilar el mod.'
+    polish       = 'Zgodność: kategorie są ustalane w czasie działania na podstawie danych towaru (kategoria, sposób pozyskiwania, wartość żywnościowa), więc towary z innych modów i przyszłych patchy trafiają do właściwej kategorii automatycznie. Tylko kategoria Plantacje korzysta z listy zapisanej przy budowaniu moda.'
+    turkish      = 'Uyumluluk: kategoriler çalışma anında malın kendi verilerine (kategori, toplama yöntemi, gıda değeri) göre belirlenir; bu yüzden diğer modların veya sonraki yamaların eklediği mallar doğru kategoriye otomatik girer. Yalnızca Plantasyon, mod derlenirken alınan listeyi kullanır.'
+    japanese     = '互換性：分類は実行時に財自身のデータ（カテゴリ・採取方法・食糧値）から判定するため、他の MOD や今後のパッチで追加された財も自動的に正しい分類に入ります。「プランテーション」だけは MOD のビルド時の原版リストを使います。'
+    korean       = '호환성: 분류는 실행 중에 상품 자체의 데이터(분류, 채집 방식, 식량 값)로 판정하므로 다른 모드나 이후 패치가 추가한 상품도 알맞은 분류에 자동으로 들어갑니다. 다만 플랜테이션만은 모드 빌드 시의 원작 목록을 사용합니다.'
+    braz_por     = 'Compatibilidade: as categorias são decididas em tempo de execução pelos dados do próprio bem (categoria, método de extração, valor alimentício), então bens de outros mods ou de patches futuros entram na categoria certa automaticamente. Apenas Plantação usa uma lista fixada na compilação do mod.'
+}
 
 # 动作卡片标题（原版 situation_card_actions 的默认标题是 UI 库占位文字，必须覆盖）
 $cardHeaders = @{
@@ -527,10 +541,10 @@ function Resolve-RgoText([string]$text, [hashtable]$map) {
 
 # 在提示正文的最后一个空行（“悬停查看”说明之前）插入一条列表项
 # 注意：正文里的换行是字面量 \n（两个字符），与 Paradox yml 一致
-function Add-RgoGeoHintBullet([string]$Text, [string]$Bullet) {
+function Add-RgoHintBullet([string]$Text, [string]$Bullet) {
     $sep = '\n\n'
     $idx = $Text.LastIndexOf($sep)
-    if ($idx -lt 0) { throw ('提示正文里找不到空行，无法插入地理条件条目: ' + $Text) }
+    if ($idx -lt 0) { throw ('提示正文里找不到空行，无法插入条目: ' + $Text) }
     return $Text.Substring(0, $idx) + '\n- ' + $Bullet + $Text.Substring($idx)
 }
 
@@ -545,15 +559,8 @@ foreach ($lang in $languages) {
     $t.toggle['geo'] = $geo.toggle
     $t.toggleDesc['geo'] = $geo.desc
 
-    # 该语言的官方货物译名
-    $names = Get-RgoGoodsNames -GameRoot $gameRoot -Language $lang
-    $missingNames = @($groups.Values | ForEach-Object { $_ } | Where-Object { -not $names.ContainsKey($_) })
-    if ($missingNames.Count -gt 0) {
-        throw ("语言 " + $lang + " 缺少以下货物的官方译名: " + ($missingNames -join ', '))
-    }
-
-    $sep = ', '
-    if ($catTextSep.ContainsKey($lang)) { $sep = $catTextSep[$lang] }
+    # 兼容性说明（独立表，与地理条件一样插到提示正文最后一段之前）
+    if (-not $compatTexts.ContainsKey($lang)) { throw "缺少兼容性说明文案: $lang" }
 
     $hintMap = @{ tiers = $tierText; months = $RGO_COOLDOWN_MONTHS; cats = $catCount; toggles = $toggleCount }
 
@@ -561,7 +568,7 @@ foreach ($lang in $languages) {
     # 语言头必须顶格（带缩进会被引擎判为 Invalid localization header indentation）
     [void]$sb.Append(('l_' + $lang + ':') + "`r`n")
     Add-LocLine $sb '# Generated by tools\generate_rgo_localization.ps1 - do not edit by hand'
-    Add-LocLine $sb '# Goods names come from the vanilla goods_l_<lang>.yml; counts and lists from common\goods'
+    Add-LocLine $sb '# Category descriptions describe the runtime goods rules (no fixed goods list)'
     Add-LocLine $sb ''
     Add-LocLine $sb '# Situation'
     Add-LocLine $sb ('UnconditionallyChangeRGO:0 "' + $t.situation + '"')
@@ -569,7 +576,8 @@ foreach ($lang in $languages) {
     Add-LocLine $sb ''
     Add-LocLine $sb '# Scriptable hint: short title in the list, long text in _hint_text'
     Add-LocLine $sb ('hint_UnconditionallyChangeRGO:0 "' + $t.hintTitle + '"')
-    $hintBody = Add-RgoGeoHintBullet -Text (Resolve-RgoText $t.hintText $hintMap) -Bullet $geo.hint
+    $hintBody = Add-RgoHintBullet -Text (Resolve-RgoText $t.hintText $hintMap) -Bullet $geo.hint
+    $hintBody = Add-RgoHintBullet -Text $hintBody -Bullet $compatTexts[$lang]
     Add-LocLine $sb ('hint_UnconditionallyChangeRGO_hint_text:0 "' + $hintBody + '"')
     Add-LocLine $sb ''
     Add-LocLine $sb '# Action card title (overrides the engine UI-library placeholder title)'
@@ -584,9 +592,8 @@ foreach ($lang in $languages) {
 
     Add-LocLine $sb ('# Category buttons (' + $catCount + ')')
     foreach ($g in $groups.Keys) {
-        $ids = $groups[$g]
-        $goodsText = (($ids | ForEach-Object { $names[$_] }) -join $sep)
-        $desc = Resolve-RgoText $t.catDesc[$g] @{ n = $ids.Count; goods = $goodsText }
+        # 分类成员在运行时动态判定，这里只描述规则（不再枚举货物，避免模组/版本更新后文案过期）
+        $desc = Resolve-RgoText $t.catDesc[$g] @{}
         Add-LocLine $sb ('RGO_change_' + $g + ':0 "' + $t.cat[$g] + '"')
         Add-LocLine $sb ('RGO_change_' + $g + '_desc:0 "' + $desc + '"')
     }

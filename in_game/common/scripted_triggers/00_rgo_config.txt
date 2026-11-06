@@ -138,3 +138,55 @@ RGO_price_tier_5 = {
 RGO_price_tier_6 = {
 	RGO_chargeable = yes
 }
+
+# ============================================================
+# 货物分类判定（root = goods 作用域；被各分类动作的「选原材料」步骤调用）
+#   动态判定：只读货物自身字段，不写死货物 id ——
+#     goods_category = raw_material / produced
+#     goods_method   = mining / farming / hunting / gathering / forestry
+#     is_food        = 该货物是否提供食物
+#   因此其它模组或游戏更新新增的货物会自动进入对应分类。
+#   例外：种植园只能按原版 01_plantation_goods.txt 的清单（生成时写入）；
+#         制成品排除 $RGO_EXCLUDED_GOODS（奴隶）。
+# ============================================================
+
+RGO_goods_in_mining = {
+	goods_category = raw_material
+	goods_method = mining
+}
+
+RGO_goods_in_gathering = {
+	goods_category = raw_material
+	goods_method = gathering
+}
+
+RGO_goods_in_crops = {
+	goods_category = raw_material
+	goods_method = farming
+	NOT = { is_food = yes }
+	NOT = { RGO_goods_in_plantation = yes }
+}
+
+RGO_goods_in_food = {
+	goods_category = raw_material
+	goods_method = farming
+	is_food = yes
+}
+
+RGO_goods_in_plantation = {
+	goods_category = raw_material
+	goods_method = farming
+	OR = { this = goods:cotton this = goods:sugar this = goods:tobacco }
+}
+
+RGO_goods_in_wild = {
+	goods_category = raw_material
+	NOT = { goods_method = mining }
+	NOT = { goods_method = gathering }
+	NOT = { goods_method = farming }
+}
+
+RGO_goods_in_produced = {
+	goods_category = produced
+	NOT = { OR = { this = goods:slaves_goods } }
+}

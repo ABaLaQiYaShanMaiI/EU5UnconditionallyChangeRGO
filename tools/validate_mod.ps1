@@ -160,6 +160,19 @@ Check "geo gate keeps vanilla location_potential" ($configText -match 'is_goods_
 Check "geo gate honours the geo switch" (($configText -match '(?m)^RGO_geo_allows_target = \{') -and ($configText -match 'RGO_geo_enabled = yes'))
 Check "geo restriction off by default" ($configText -match 'RGO_cfg_geo_default = \{ always = no \}')
 Check "location filtered by current raw material" ([regex]::Matches($actionsText, 'NOT = \{ raw_material \?= scope:target_good \}').Count -eq $catCount)
+
+# 7b. 动态货物判定（v1.0.8）：动作里不能出现写死的货物清单，每类都要调用自己的 RGO_goods_in_*
+$dynamicGaps = @()
+foreach ($g in $RGO_GROUP_ORDER) {
+    $calls = [regex]::Matches($actionsText, '(?m)^\t{5}RGO_goods_in_' + $g + ' = yes\r?$').Count
+    if ($calls -ne 1) { $dynamicGaps += ('actions:' + $g + '=' + $calls) }
+    if (-not ($configText -match ('(?m)^RGO_goods_in_' + $g + ' = \{'))) { $dynamicGaps += ('config:' + $g) }
+}
+Check "dynamic goods filter per category" ($dynamicGaps.Count -eq 0) ($dynamicGaps -join ', ')
+Check "no fixed goods list in actions" (-not ($actionsText -match 'this = goods:'))
+Check "every goods step iterates every_goods" ([regex]::Matches($actionsText, 'every_goods = \{').Count -eq $catCount)
+Check "config classifies goods dynamically" (($configText -match 'goods_category = raw_material') -and ($configText -match 'goods_category = produced') -and ($configText -match 'goods_method = mining') -and ($configText -match 'goods_method = farming') -and ($configText -match 'is_food = yes'))
+Check "plantation stays a generated whitelist" ($configText -match 'RGO_goods_in_plantation = \{' -and $configText -match 'this = goods:')
 $modType = Join-Path $root 'main_menu\common\modifier_type_definitions\00_rgo_modifier_types.txt'
 Check "price cost-modifier type defined" ((Test-Path $modType) -and ([System.IO.File]::ReadAllText($modType) -match 'rgo_change_cost_modifier'))
 Check "gui: hint button present" ($gui -match "selected_hint = hint_UnconditionallyChangeRGO")
@@ -168,6 +181,12 @@ Check "loc: switch state keys present" (@(foreach ($l in $langs) {
             $text = [System.IO.File]::ReadAllText($p)
             if (-not ($text -match 'RGO_toggle_state_on:0' -and $text -match 'RGO_toggle_state_off:0')) { $l }
         }).Count -eq 0)
+
+# 8. 新增货物兼容性自检：把原版 goods 复制到临时目录，追加模拟 mod 的货物，
+#    断言新货物仍落到预期分类（不启动游戏，纯数据层回归）
+$testScript = Join-Path $PSScriptRoot 'test_dynamic_goods.ps1'
+$testOut = (& powershell -NoProfile -ExecutionPolicy Bypass -File $testScript 2>&1 | Out-String)
+Check "dynamic goods compatibility (simulated mod goods)" ($LASTEXITCODE -eq 0) (($testOut -split "`r?`n" | Where-Object { $_ -match '\[FAIL\]|FAILED' }) -join ' | ')
 
 Write-Host ''
 if ($fail -eq 0) { Write-Host "ALL CHECKS PASSED" } else { Write-Host ("FAILED: " + $fail); exit 1 }
